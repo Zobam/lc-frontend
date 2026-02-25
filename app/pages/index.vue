@@ -266,7 +266,7 @@ const galleryImages = [
 .section-title {
     font-size: 1.85rem;
     font-weight: 800;
-    color: #1a1a2e;
+    color: var(--lc-dark);
 }
 
 .section-header {
@@ -277,7 +277,7 @@ const galleryImages = [
 }
 
 .view-all {
-    color: #c8a84b;
+    color: var(--lc-gold);
     font-weight: 600;
     font-size: 0.9rem;
     text-decoration: none;
@@ -301,14 +301,14 @@ const galleryImages = [
 }
 
 .btn-gold {
-    background: #c8a84b;
+    background: var(--lc-gold);
     color: #fff;
-    border-color: #c8a84b;
+    border-color: var(--lc-gold);
 }
 
 .btn-gold:hover {
-    background: #a8883b;
-    border-color: #a8883b;
+    background: var(--lc-gold-hover);
+    border-color: var(--lc-gold-hover);
     transform: translateY(-2px);
 }
 
@@ -325,7 +325,7 @@ const galleryImages = [
 .btn-gold-sm {
     display: inline-block;
     padding: 7px 18px;
-    background: #c8a84b;
+    background: var(--lc-gold);
     color: #fff;
     border-radius: 4px;
     font-weight: 600;
@@ -335,17 +335,17 @@ const galleryImages = [
 }
 
 .btn-gold-sm:hover {
-    background: #a8883b;
+    background: var(--lc-gold-hover);
 }
 
 .btn-ghost {
     display: inline-block;
     margin-top: 0.75rem;
-    color: #c8a84b;
+    color: var(--lc-gold);
     font-weight: 600;
     font-size: 0.85rem;
     text-decoration: none;
-    border-bottom: 1px solid #c8a84b;
+    border-bottom: 1px solid var(--lc-gold);
     padding-bottom: 1px;
     transition: opacity 0.2s;
 }
@@ -388,7 +388,7 @@ const galleryImages = [
 }
 
 .hero-label {
-    color: #c8a84b;
+    color: var(--lc-gold);
     font-weight: 600;
     font-size: 0.85rem;
     letter-spacing: 0.15em;
@@ -420,7 +420,7 @@ const galleryImages = [
 
 /* ───── Broadcast Bar ───── */
 .broadcast-bar {
-    background: #1a1a2e;
+    background: var(--lc-dark);
     color: #ccc;
     padding: 10px 24px;
     display: flex;
@@ -431,7 +431,7 @@ const galleryImages = [
 }
 
 .bar-label {
-    color: #c8a84b;
+    color: var(--lc-gold);
     font-weight: 700;
     flex-shrink: 0;
 }
@@ -479,7 +479,7 @@ const galleryImages = [
 
 .bc-label {
     display: inline-block;
-    background: #c8a84b;
+    background: var(--lc-gold);
     color: #fff;
     font-size: 0.75rem;
     font-weight: 700;
@@ -497,7 +497,7 @@ const galleryImages = [
 .bc-info .bc-tag {
     font-size: 0.7rem;
     font-weight: 700;
-    color: #c8a84b;
+    color: var(--lc-gold);
     text-transform: uppercase;
     letter-spacing: 0.1em;
 }
@@ -505,7 +505,7 @@ const galleryImages = [
 .bc-info h3 {
     font-size: 1.2rem;
     font-weight: 700;
-    color: #1a1a2e;
+    color: var(--lc-dark);
     margin: 0.4rem 0;
 }
 
@@ -544,13 +544,13 @@ const galleryImages = [
 .bc-date {
     font-size: 0.7rem;
     font-weight: 700;
-    color: #c8a84b;
+    color: var(--lc-gold);
 }
 
 .bc-info-mini h4 {
     font-size: 0.9rem;
     font-weight: 700;
-    color: #1a1a2e;
+    color: var(--lc-dark);
     margin: 0.25rem 0;
 }
 
@@ -665,7 +665,7 @@ const galleryImages = [
 
 .cl-cross {
     font-size: 3rem;
-    color: #c8a84b;
+    color: var(--lc-gold);
     margin: 0.5rem 0 1.5rem;
 }
 
@@ -718,13 +718,13 @@ const galleryImages = [
 }
 
 .play-btn:hover {
-    color: #c8a84b;
+    color: var(--lc-gold);
 }
 
 .video-title {
     font-size: 1.1rem;
     font-weight: 700;
-    color: #1a1a2e;
+    color: var(--lc-dark);
     margin: 1rem 0 0.25rem;
 }
 
@@ -765,7 +765,7 @@ const galleryImages = [
 .sidebar-item h4 {
     font-size: 0.85rem;
     font-weight: 700;
-    color: #1a1a2e;
+    color: var(--lc-dark);
     margin: 0 0 0.25rem;
     line-height: 1.3;
 }
@@ -828,7 +828,7 @@ const galleryImages = [
 .stat h3 {
     font-size: 2.5rem;
     font-weight: 900;
-    color: #c8a84b;
+    color: var(--lc-gold);
     margin: 0;
 }
 
@@ -841,7 +841,7 @@ const galleryImages = [
 /* ───── Focus Cards ───── */
 .focus-cards {
     padding: 4rem 0;
-    background: #1a1a2e;
+    background: var(--lc-dark);
 }
 
 .focus-cards .section-title {
@@ -866,12 +866,12 @@ const galleryImages = [
 
 .focus-card:hover {
     background: rgba(200, 168, 75, 0.12);
-    border-color: #c8a84b;
+    border-color: var(--lc-gold);
 }
 
 .focus-icon {
     font-size: 2.5rem;
-    color: #c8a84b;
+    color: var(--lc-gold);
     margin-bottom: 1rem;
 }
 

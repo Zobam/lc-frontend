@@ -138,7 +138,7 @@ const worship = [
 .section-title {
     font-size: 1.75rem;
     font-weight: 800;
-    color: #1a1a2e;
+    color: var(--lc-dark);
     margin-bottom: 2rem;
 }
 
@@ -178,7 +178,7 @@ const worship = [
 }
 
 .ph-label {
-    color: #c8a84b;
+    color: var(--lc-gold);
     font-size: 0.78rem;
     font-weight: 700;
     letter-spacing: 0.15em;
@@ -239,13 +239,13 @@ const worship = [
 }
 
 .play-btn:hover {
-    color: #c8a84b;
+    color: var(--lc-gold);
 }
 
 .featured-video h3 {
     font-size: 1.1rem;
     font-weight: 700;
-    color: #1a1a2e;
+    color: var(--lc-dark);
     margin: 1rem 0 0.25rem;
 }
 
@@ -257,7 +257,7 @@ const worship = [
 .featured-aside h4 {
     font-size: 1rem;
     font-weight: 700;
-    color: #1a1a2e;
+    color: var(--lc-dark);
     margin-bottom: 1.25rem;
 }
 
@@ -281,7 +281,7 @@ const worship = [
 .mini-sermon h5 {
     font-size: 0.85rem;
     font-weight: 700;
-    color: #1a1a2e;
+    color: var(--lc-dark);
     margin: 0 0 0.25rem;
 }
 
@@ -378,7 +378,7 @@ const worship = [
 .sc-series {
     font-size: 0.68rem;
     font-weight: 700;
-    color: #c8a84b;
+    color: var(--lc-gold);
     text-transform: uppercase;
     letter-spacing: 0.08em;
 }
@@ -386,7 +386,7 @@ const worship = [
 .sc-info h4 {
     font-size: 0.95rem;
     font-weight: 700;
-    color: #1a1a2e;
+    color: var(--lc-dark);
     margin: 0.3rem 0 0.25rem;
 }
 
@@ -399,7 +399,7 @@ const worship = [
 /* Worship */
 .worship-section {
     padding: 4rem 0 5rem;
-    background: #1a1a2e;
+    background: var(--lc-dark);
 }
 
 .worship-grid {
@@ -439,7 +439,7 @@ const worship = [
     display: flex;
     align-items: center;
     justify-content: center;
-    color: #c8a84b;
+    color: var(--lc-gold);
     font-size: 2rem;
 }
 

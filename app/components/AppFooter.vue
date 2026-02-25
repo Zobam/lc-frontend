@@ -92,7 +92,7 @@
 
 <style scoped>
 .site-footer {
-    background: #1a1a2e;
+    background: var(--lc-dark);
     color: #ccc;
     font-size: 0.9rem;
 }
@@ -121,7 +121,7 @@
     width: 42px;
     height: 42px;
     border-radius: 50%;
-    background: linear-gradient(135deg, #4a3f8f, #c8a84b);
+    background: linear-gradient(135deg, #4a3f8f, var(--lc-gold));
     display: flex;
     align-items: center;
     justify-content: center;
@@ -166,7 +166,7 @@
 }
 
 .footer-socials a:hover {
-    background: #c8a84b;
+    background: var(--lc-gold);
     color: #fff;
 }
 
@@ -176,7 +176,7 @@
     font-weight: 700;
     margin-bottom: 1.25rem;
     padding-bottom: 0.5rem;
-    border-bottom: 2px solid #c8a84b;
+    border-bottom: 2px solid var(--lc-gold);
     display: inline-block;
 }
 
@@ -197,7 +197,7 @@
 }
 
 .footer-col ul li .iconify {
-    color: #c8a84b;
+    color: var(--lc-gold);
     font-size: 1rem;
     flex-shrink: 0;
 }
@@ -209,7 +209,7 @@
 }
 
 .footer-col a:hover {
-    color: #c8a84b;
+    color: var(--lc-gold);
 }
 
 .footer-bottom {

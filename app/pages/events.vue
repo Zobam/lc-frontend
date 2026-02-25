@@ -115,7 +115,7 @@ const filteredEvents = computed(() =>
 }
 
 .ph-label {
-    color: #c8a84b;
+    color: var(--lc-gold);
     font-size: 0.78rem;
     font-weight: 700;
     letter-spacing: 0.15em;
@@ -163,9 +163,9 @@ const filteredEvents = computed(() =>
 
 .filter-btn.active,
 .filter-btn:hover {
-    background: #1a1a2e;
+    background: var(--lc-dark);
     color: #fff;
-    border-color: #1a1a2e;
+    border-color: var(--lc-dark);
 }
 
 .events-grid {
@@ -202,7 +202,7 @@ const filteredEvents = computed(() =>
     position: absolute;
     top: 12px;
     right: 12px;
-    background: #c8a84b;
+    background: var(--lc-gold);
     color: #fff;
     font-size: 0.7rem;
     font-weight: 700;
@@ -221,7 +221,7 @@ const filteredEvents = computed(() =>
     display: flex;
     flex-direction: column;
     align-items: center;
-    background: #1a1a2e;
+    background: var(--lc-dark);
     color: #fff;
     border-radius: 8px;
     padding: 0.75rem;
@@ -245,7 +245,7 @@ const filteredEvents = computed(() =>
 .event-info h3 {
     font-size: 1rem;
     font-weight: 700;
-    color: #1a1a2e;
+    color: var(--lc-dark);
     margin: 0 0 0.5rem;
 }
 
@@ -268,7 +268,7 @@ const filteredEvents = computed(() =>
 .btn-register {
     display: inline-block;
     padding: 7px 18px;
-    background: #c8a84b;
+    background: var(--lc-gold);
     color: #fff;
     border-radius: 4px;
     font-size: 0.78rem;
@@ -278,7 +278,7 @@ const filteredEvents = computed(() =>
 }
 
 .btn-register:hover {
-    background: #a8883b;
+    background: var(--lc-gold-hover);
 }
 
 @media (max-width: 900px) {

@@ -124,7 +124,7 @@ const leaders = [
 .section-title {
     font-size: 2rem;
     font-weight: 800;
-    color: #1a1a2e;
+    color: var(--lc-dark);
     text-align: center;
     margin-bottom: 2.5rem;
 }
@@ -134,7 +134,7 @@ const leaders = [
     font-weight: 700;
     letter-spacing: 0.15em;
     text-transform: uppercase;
-    color: #c8a84b;
+    color: var(--lc-gold);
 }
 
 /* Page Hero */
@@ -169,7 +169,7 @@ const leaders = [
 }
 
 .ph-label {
-    color: #c8a84b;
+    color: var(--lc-gold);
     font-size: 0.8rem;
     font-weight: 700;
     letter-spacing: 0.15em;
@@ -207,7 +207,7 @@ const leaders = [
     border-radius: 12px;
     padding: 2.25rem;
     box-shadow: 0 2px 16px rgba(0, 0, 0, 0.06);
-    border-top: 4px solid #c8a84b;
+    border-top: 4px solid var(--lc-gold);
     transition: transform 0.25s;
 }
 
@@ -217,14 +217,14 @@ const leaders = [
 
 .mv-icon {
     font-size: 2rem;
-    color: #c8a84b;
+    color: var(--lc-gold);
     margin-bottom: 1rem;
 }
 
 .mv-card h3 {
     font-size: 1.1rem;
     font-weight: 800;
-    color: #1a1a2e;
+    color: var(--lc-dark);
     margin-bottom: 0.75rem;
 }
 
@@ -257,7 +257,7 @@ const leaders = [
 .story-text h2 {
     font-size: 2rem;
     font-weight: 800;
-    color: #1a1a2e;
+    color: var(--lc-dark);
     margin: 0.5rem 0 1.25rem;
 }
 
@@ -284,7 +284,7 @@ const leaders = [
     display: block;
     font-size: 2rem;
     font-weight: 900;
-    color: #c8a84b;
+    color: var(--lc-gold);
 }
 
 .ss span {
@@ -297,7 +297,7 @@ const leaders = [
 /* Leadership */
 .leadership-section {
     padding: 5rem 0;
-    background: #1a1a2e;
+    background: var(--lc-dark);
 }
 
 .leadership-section .section-title {
@@ -320,7 +320,7 @@ const leaders = [
     border-radius: 50%;
     overflow: hidden;
     margin: 0 auto 1rem;
-    border: 3px solid #c8a84b;
+    border: 3px solid var(--lc-gold);
 }
 
 .leader-img img {
@@ -337,7 +337,7 @@ const leaders = [
 }
 
 .leader-card p {
-    color: #c8a84b;
+    color: var(--lc-gold);
     font-size: 0.8rem;
     margin: 0;
 }

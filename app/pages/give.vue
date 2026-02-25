@@ -146,7 +146,7 @@ const givingOptions = [
 .section-title {
     font-size: 1.75rem;
     font-weight: 800;
-    color: #1a1a2e;
+    color: var(--lc-dark);
     text-align: center;
     margin-bottom: 2.5rem;
 }
@@ -156,7 +156,7 @@ const givingOptions = [
     font-weight: 700;
     letter-spacing: 0.15em;
     text-transform: uppercase;
-    color: #c8a84b;
+    color: var(--lc-gold);
 }
 
 /* Hero */
@@ -193,7 +193,7 @@ const givingOptions = [
 }
 
 .ph-label {
-    color: #c8a84b;
+    color: var(--lc-gold);
     font-size: 0.78rem;
     font-weight: 700;
     letter-spacing: 0.15em;
@@ -230,7 +230,7 @@ const givingOptions = [
 .wg-text h2 {
     font-size: 2rem;
     font-weight: 800;
-    color: #1a1a2e;
+    color: var(--lc-dark);
     margin: 0.5rem 0 1.25rem;
 }
 
@@ -257,7 +257,7 @@ const givingOptions = [
     display: block;
     font-size: 1.75rem;
     font-weight: 900;
-    color: #c8a84b;
+    color: var(--lc-gold);
 }
 
 .gs span {
@@ -290,20 +290,20 @@ const givingOptions = [
     border-radius: 12px;
     padding: 2rem;
     box-shadow: 0 2px 12px rgba(0, 0, 0, 0.06);
-    border-top: 3px solid #c8a84b;
+    border-top: 3px solid var(--lc-gold);
     text-align: center;
 }
 
 .giving-icon {
     font-size: 2.5rem;
-    color: #c8a84b;
+    color: var(--lc-gold);
     margin-bottom: 1rem;
 }
 
 .giving-card h3 {
     font-size: 1.1rem;
     font-weight: 800;
-    color: #1a1a2e;
+    color: var(--lc-dark);
     margin-bottom: 0.75rem;
 }
 
@@ -339,7 +339,7 @@ const givingOptions = [
 }
 
 .bd-value {
-    color: #1a1a2e;
+    color: var(--lc-dark);
     font-weight: 700;
 }
 
@@ -347,7 +347,7 @@ const givingOptions = [
     display: inline-block;
     margin-top: 1rem;
     padding: 10px 24px;
-    background: #1a1a2e;
+    background: var(--lc-dark);
     color: #fff;
     border-radius: 6px;
     font-weight: 700;
@@ -357,13 +357,13 @@ const givingOptions = [
 }
 
 .btn-give:hover {
-    background: #c8a84b;
+    background: var(--lc-gold);
 }
 
 /* Give Form */
 .give-form-section {
     padding: 4rem 0 5rem;
-    background: #1a1a2e;
+    background: var(--lc-dark);
 }
 
 .give-form-card {
@@ -412,9 +412,9 @@ const givingOptions = [
 
 .amt-btn.active,
 .amt-btn:hover {
-    background: #c8a84b;
+    background: var(--lc-gold);
     color: #fff;
-    border-color: #c8a84b;
+    border-color: var(--lc-gold);
 }
 
 .custom-input {
@@ -452,7 +452,7 @@ const givingOptions = [
     display: block;
     width: 100%;
     padding: 14px;
-    background: #c8a84b;
+    background: var(--lc-gold);
     color: #fff;
     border: none;
     border-radius: 8px;
@@ -465,7 +465,7 @@ const givingOptions = [
 }
 
 .btn-give-main:hover {
-    background: #a8883b;
+    background: var(--lc-gold-hover);
 }
 
 .give-secure {

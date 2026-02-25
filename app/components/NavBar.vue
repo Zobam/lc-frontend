@@ -30,7 +30,8 @@
                 <!-- Logo -->
                 <NuxtLink to="/" class="nav-logo">
                     <div class="logo-circle">
-                        <Icon name="mdi:church" class="logo-icon" />
+                        <!-- <Icon name="mdi:church" class="logo-icon" /> -->
+                        <img src="/lc_logo.png" alt="Logo" class="logo-icon" />
                     </div>
                     <span class="logo-text">Light City</span>
                 </NuxtLink>
@@ -83,7 +84,7 @@ const menuOpen = ref(false);
 
 /* Top Bar */
 .topbar {
-    background: #1a1a2e;
+    background: var(--lc-dark);
     padding: 6px 0;
 }
 
@@ -113,11 +114,11 @@ const menuOpen = ref(false);
 }
 
 .topbar-left a:hover {
-    color: #c8a84b;
+    color: var(--lc-gold);
 }
 
 .topbar-right .welcome-text {
-    color: #c8a84b;
+    color: var(--lc-gold);
     font-size: 0.75rem;
     font-weight: 500;
     font-style: italic;
@@ -126,7 +127,7 @@ const menuOpen = ref(false);
 /* Main Navbar */
 .navbar {
     background: #ffffff;
-    border-bottom: 3px solid #c8a84b;
+    border-bottom: 3px solid var(--lc-gold);
     box-shadow: 0 2px 12px rgba(0, 0, 0, 0.08);
 }
 
@@ -151,21 +152,21 @@ const menuOpen = ref(false);
     width: 44px;
     height: 44px;
     border-radius: 50%;
-    background: linear-gradient(135deg, #1a1a2e, #4a3f8f);
+    background: linear-gradient(135deg, var(--lc-dark), #4a3f8f);
     display: flex;
     align-items: center;
     justify-content: center;
 }
 
 .logo-icon {
-    color: #c8a84b;
+    color: var(--lc-gold);
     font-size: 1.5rem;
 }
 
 .logo-text {
     font-size: 1.3rem;
     font-weight: 800;
-    color: #1a1a2e;
+    color: var(--lc-dark);
     letter-spacing: -0.5px;
 }
 
@@ -197,14 +198,14 @@ const menuOpen = ref(false);
     left: 14px;
     right: 14px;
     height: 2px;
-    background: #c8a84b;
+    background: var(--lc-gold);
     transform: scaleX(0);
     transition: transform 0.25s;
 }
 
 .nav-link:hover,
 .nav-link.router-link-active {
-    color: #c8a84b;
+    color: var(--lc-gold);
 }
 
 .nav-link:hover::after,
@@ -213,7 +214,7 @@ const menuOpen = ref(false);
 }
 
 .nav-link-give {
-    background: #c8a84b;
+    background: var(--lc-gold);
     color: #fff !important;
     border-radius: 20px;
     padding: 8px 20px;
@@ -224,7 +225,7 @@ const menuOpen = ref(false);
 }
 
 .nav-link-give:hover {
-    background: #a8883b;
+    background: var(--lc-gold-hover);
     color: #fff !important;
     transform: translateY(-1px);
 }
@@ -244,7 +245,7 @@ const menuOpen = ref(false);
     display: block;
     width: 26px;
     height: 2px;
-    background: #1a1a2e;
+    background: var(--lc-dark);
     border-radius: 2px;
     transition: all 0.3s;
 }
@@ -280,7 +281,7 @@ const menuOpen = ref(false);
         flex-direction: column;
         padding: 1rem;
         box-shadow: 0 8px 20px rgba(0, 0, 0, 0.12);
-        border-top: 2px solid #c8a84b;
+        border-top: 2px solid var(--lc-gold);
         gap: 0.25rem;
     }
 

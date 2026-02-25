@@ -169,10 +169,10 @@
 .contact-info h2 {
     font-size: 1.75rem;
     font-weight: 800;
-    color: #1a1a2e;
+    color: var(--lc-dark);
     margin-bottom: 2rem;
     padding-bottom: 0.75rem;
-    border-bottom: 3px solid #c8a84b;
+    border-bottom: 3px solid var(--lc-gold);
     display: inline-block;
 }
 
@@ -186,19 +186,19 @@
 .ci-icon {
     width: 42px;
     height: 42px;
-    background: #1a1a2e;
+    background: var(--lc-dark);
     border-radius: 50%;
     display: flex;
     align-items: center;
     justify-content: center;
-    color: #c8a84b;
+    color: var(--lc-gold);
     font-size: 1.1rem;
     flex-shrink: 0;
 }
 
 .contact-item h4 {
     font-weight: 700;
-    color: #1a1a2e;
+    color: var(--lc-dark);
     margin: 0 0 0.25rem;
 }
 
@@ -220,7 +220,7 @@
 .contact-form-card h3 {
     font-size: 1.4rem;
     font-weight: 800;
-    color: #1a1a2e;
+    color: var(--lc-dark);
     margin-bottom: 1.75rem;
 }
 
@@ -260,13 +260,13 @@
 .form-group textarea:focus,
 .form-group select:focus {
     outline: none;
-    border-color: #c8a84b;
+    border-color: var(--lc-gold);
 }
 
 .btn-submit {
     width: 100%;
     padding: 13px;
-    background: #1a1a2e;
+    background: var(--lc-dark);
     color: #fff;
     border: none;
     border-radius: 6px;
@@ -278,7 +278,7 @@
 }
 
 .btn-submit:hover {
-    background: #c8a84b;
+    background: var(--lc-gold);
 }
 
 @media (max-width: 768px) {
