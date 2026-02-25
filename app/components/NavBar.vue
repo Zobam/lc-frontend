@@ -19,7 +19,7 @@
                     </a>
                 </div>
                 <div class="topbar-right">
-                    <span class="welcome-text">Welcome to Light City Evangelical Collective</span>
+                    <span class="welcome-text">Welcome to Light City Evangelical Center Int'l</span>
                 </div>
             </div>
         </div>

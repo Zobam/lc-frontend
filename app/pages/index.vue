@@ -8,7 +8,7 @@
             <img src="https://images.unsplash.com/photo-1516450360452-9312f5e86fc7?w=1920&h=900&fit=crop"
                 alt="Church worship service" class="hero-bg" />
             <div class="hero-content">
-                <p class="hero-label">Light City Evangelical Collective</p>
+                <p class="hero-label">Light City Evangelical Center Int'l</p>
                 <h1 class="hero-title">Giving Your Life<br>a Meaning</h1>
                 <p class="hero-subtitle">
                     Join us in worship, fellowship, and service as we grow together in faith and love.
@@ -31,7 +31,7 @@
         <section class="broadcasts">
             <div class="container">
                 <div class="section-header">
-                    <h2 class="section-title">Upcoming Broadcasts</h2>
+                    <h2 class="section-title">Upcoming Events</h2>
                     <NuxtLink to="/events" class="view-all">View All →</NuxtLink>
                 </div>
                 <div class="broadcasts-grid">
@@ -60,19 +60,18 @@
             </div>
         </section>
 
-        <!-- Ministries Grid -->
-        <section class="ministries">
+        <!-- Words of the Spirit -->
+        <section class="wos-section">
             <div class="container">
-                <div class="section-header">
-                    <h2 class="section-title">Our Ministries</h2>
-                    <NuxtLink to="/about" class="view-all">Explore All →</NuxtLink>
-                </div>
-                <div class="ministries-grid">
-                    <div class="ministry-card" v-for="m in ministries" :key="m.title">
-                        <img :src="m.img" :alt="m.title" />
-                        <div class="ministry-overlay">
-                            <h3>{{ m.title }}</h3>
-                            <p>{{ m.desc }}</p>
+                <h2 class="wos-label">Words of the Spirit</h2>
+                <div class="wos-grid">
+                    <div class="wos-card" v-for="w in wordsOfTheSpirit" :key="w.title">
+                        <div class="wos-img">
+                            <img :src="w.img" :alt="w.title" />
+                        </div>
+                        <div class="wos-body">
+                            <h3>{{ w.title }}</h3>
+                            <p>{{ w.desc }}</p>
                         </div>
                     </div>
                 </div>
@@ -160,6 +159,25 @@
             </div>
         </section>
 
+        <!-- Ministries Grid -->
+        <section class="ministries">
+            <div class="container">
+                <div class="section-header">
+                    <h2 class="section-title">Our Ministries</h2>
+                    <NuxtLink to="/about" class="view-all">Explore All →</NuxtLink>
+                </div>
+                <div class="ministries-grid">
+                    <div class="ministry-card" v-for="m in ministries" :key="m.title">
+                        <img :src="m.img" :alt="m.title" />
+                        <div class="ministry-overlay">
+                            <h3>{{ m.title }}</h3>
+                            <p>{{ m.desc }}</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
         <!-- Ministry Focus Cards -->
         <section class="focus-cards">
             <div class="container">
@@ -210,6 +228,12 @@ const sideEvents = [
         img: 'https://images.unsplash.com/photo-1529156069898-49953e39b3ac?w=300&h=160&fit=crop',
         desc: 'Empowering the next generation for kingdom impact.'
     },
+    {
+        title: 'Nsukka Mission Work',
+        date: 'MAY 22',
+        img: 'https://images.unsplash.com/photo-1517457373958-b7bdd4587205?w=300&h=160&fit=crop',
+        desc: 'Spreading the gospel to the nooks and crannies of Nsukka.'
+    },
 ];
 
 const ministries = [
@@ -219,6 +243,49 @@ const ministries = [
     { title: 'Prayer Ministry', desc: 'Interceding for individuals, families and nations.', img: 'https://images.unsplash.com/photo-1545987796-200677ee1011?w=400&h=280&fit=crop' },
     { title: 'Women\'s Ministry', desc: 'Empowering women to walk in their God-given purpose.', img: 'https://images.unsplash.com/photo-1573497019940-1c28c88b4f3e?w=400&h=280&fit=crop' },
     { title: 'Men\'s Fellowship', desc: 'Building men of integrity, faith, and family.', img: 'https://images.unsplash.com/photo-1529156069898-49953e39b3ac?w=400&h=280&fit=crop' },
+];
+
+const wordsOfTheSpirit = [
+    {
+        title: 'You Were Called to a Greater Life!',
+        desc: 'God has not called you to mediocrity. Rise above every limitation and walk boldly in the fullness of your divine calling.',
+        img: 'https://images.unsplash.com/photo-1543857778-c4a1a9e0615f?w=400&h=260&fit=crop',
+    },
+    {
+        title: 'The Power of Prayer Cannot Be Overstated',
+        desc: 'Prayer is the breath of the believer. Every breakthrough you seek begins in the secret place of prayer and communion with God.',
+        img: 'https://images.unsplash.com/photo-1504052434569-70ad5836ab65?w=400&h=260&fit=crop',
+    },
+    {
+        title: 'Walk Together, Grow Together',
+        desc: 'Iron sharpens iron. Community is not optional in the kingdom. Find your people, lock arms, and run this race together.',
+        img: 'https://images.unsplash.com/photo-1529156069898-49953e39b3ac?w=400&h=260&fit=crop',
+    },
+    {
+        title: 'Enter His Courts With Praise',
+        desc: 'Worship is not a program — it is a lifestyle. Every moment is an invitation to encounter the living God in His glory.',
+        img: 'https://images.unsplash.com/photo-1519451241324-20b4ea2c4220?w=400&h=260&fit=crop',
+    },
+    {
+        title: 'Let Your Light Shine Before Men',
+        desc: 'You are the light of the world. Do not hide your gift, your testimony, or your faith. The world is waiting for what God put in you.',
+        img: 'https://images.unsplash.com/photo-1429962714451-bb934ecdc4ec?w=400&h=260&fit=crop',
+    },
+    {
+        title: 'Seek First the Kingdom of God',
+        desc: 'When you put God first, everything else finds its rightful place. His kingdom is not coming — it is already here, within you.',
+        img: 'https://images.unsplash.com/photo-1516450360452-9312f5e86fc7?w=400&h=260&fit=crop',
+    },
+    {
+        title: 'Faith Without Works Is Dead',
+        desc: 'Your belief must move your feet. Step out in obedience, take the risk God is calling you to, and watch faith come alive.',
+        img: 'https://images.unsplash.com/photo-1491438590914-bc09fcaaf77a?w=400&h=260&fit=crop',
+    },
+    {
+        title: 'Prayer Changes Everything',
+        desc: 'There is nothing too hard for God, and there is no situation that the power of persistent, faith-filled prayer cannot transform.',
+        img: 'https://images.unsplash.com/photo-1545987796-200677ee1011?w=400&h=260&fit=crop',
+    },
 ];
 
 const sermons = [
@@ -558,6 +625,81 @@ const galleryImages = [
     font-size: 0.8rem;
     color: #888;
     line-height: 1.4;
+    margin: 0;
+}
+
+/* ───── Words of the Spirit ───── */
+.wos-section {
+    padding: 3rem 0 4rem;
+    /* background: #111; */
+}
+
+.wos-label {
+    font-size: 0.82rem;
+    font-weight: 700;
+    color: #ccc;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    margin-bottom: 1.25rem;
+    border: 1px solid #333;
+    display: inline-block;
+    padding: 4px 12px;
+    border-radius: 3px;
+}
+
+.wos-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 1.25rem;
+}
+
+.wos-card {
+    background: #fff;
+    border-radius: 6px;
+    overflow: hidden;
+    cursor: pointer;
+    transition: transform 0.25s, box-shadow 0.25s;
+}
+
+.wos-card:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 10px 28px rgba(0, 0, 0, 0.4);
+}
+
+.wos-img {
+    width: 100%;
+    aspect-ratio: 4/3;
+    overflow: hidden;
+}
+
+.wos-img img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+    transition: transform 0.4s;
+}
+
+.wos-card:hover .wos-img img {
+    transform: scale(1.06);
+}
+
+.wos-body {
+    padding: 1rem 1.1rem 1.25rem;
+}
+
+.wos-body h3 {
+    font-size: 0.95rem;
+    font-weight: 800;
+    color: var(--lc-dark);
+    margin: 0 0 0.5rem;
+    line-height: 1.3;
+}
+
+.wos-body p {
+    font-size: 0.78rem;
+    color: #666;
+    line-height: 1.55;
     margin: 0;
 }
 

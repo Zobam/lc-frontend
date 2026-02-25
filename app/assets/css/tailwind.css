@@ -50,9 +50,9 @@
   --radius: 0.625rem;
 
   /* Light City brand tokens */
-  --lc-gold: #c8a84b;
-  --lc-gold-hover: #a8883b;
-  --lc-dark: #1a1a2e;
+  --lc-gold: #E05615;
+  --lc-gold-hover: #B84410;
+  --lc-dark: #1A0E08;
   --background: oklch(1 0 0);
   --foreground: oklch(0.145 0 0);
   --card: oklch(1 0 0);
