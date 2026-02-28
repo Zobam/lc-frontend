@@ -5,7 +5,7 @@
         <!-- Page Hero -->
         <section class="page-hero">
             <div class="ph-overlay"></div>
-            <img src="https://images.unsplash.com/photo-1501386761578-eaa54b9b3b28?w=1920&h=400&fit=crop" alt="Events"
+            <img src="https://images.unsplash.com/photo-1540575467063-178a50c2df87?w=1920&h=400&fit=crop" alt="Events"
                 class="ph-bg" />
             <div class="ph-content">
                 <p class="ph-label">Join Us</p>

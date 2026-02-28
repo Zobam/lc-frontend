@@ -81,7 +81,7 @@
         <!-- Choose Life Banner -->
         <section class="choose-life">
             <div class="cl-overlay"></div>
-            <img src="https://images.unsplash.com/photo-1548625149-720834d0af01?w=1920&h=500&fit=crop" alt="Choose Life"
+            <img src="https://images.unsplash.com/photo-1544636331-e26879cd4d9b?w=1920&h=500&fit=crop" alt="Choose Life"
                 class="cl-bg" />
             <div class="cl-content">
                 <h2>CHOOSE LIFE</h2>
@@ -259,7 +259,7 @@ const wordsOfTheSpirit = [
     {
         title: 'You Were Called to a Greater Life!',
         desc: 'God has not called you to mediocrity. Rise above every limitation and walk boldly in the fullness of your divine calling.',
-        img: 'https://images.unsplash.com/photo-1543857778-c4a1a9e0615f?w=400&h=260&fit=crop',
+        img: 'https://images.unsplash.com/photo-1507692049790-de58290a4334?w=400&h=260&fit=crop',
     },
     {
         title: 'The Power of Prayer Cannot Be Overstated',
