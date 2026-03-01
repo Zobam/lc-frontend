@@ -45,7 +45,7 @@ export default defineNuxtConfig({
         dataResponsePointer: "/data",
       },
       token: {
-        signInResponseTokenPointer: "data/token",
+        signInResponseTokenPointer: "/data/token",
         maxAgeInSeconds: 2592000,
       },
       pages: {

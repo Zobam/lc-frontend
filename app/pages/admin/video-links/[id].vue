@@ -3,7 +3,7 @@ import type { VideoLinkResponse } from "~/types/api";
 import { VideoCategory, VideoStatus } from "~/types/enums";
 import { validateVideoLink, hasErrors } from "~/utils/validation";
 
-definePageMeta({ layout: "admin", middleware: "auth" });
+definePageMeta({ layout: "admin", middleware: "sidebase-auth" });
 
 const api = useApi();
 const route = useRoute();
@@ -134,7 +134,7 @@ const categories = Object.values(VideoCategory);
                     <div class="meta-row" v-if="videoRes.data.formatted_duration"><span>Duration:</span> <strong>{{
                         videoRes.data.formatted_duration }}</strong></div>
                     <div class="meta-row"><span>Views (Local tracking):</span> <strong>{{ videoRes.data.view_count
-                            }}</strong></div>
+                    }}</strong></div>
                 </div>
             </div>
         </div>

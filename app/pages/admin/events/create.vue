@@ -2,7 +2,7 @@
 import type { EventResponse } from "~/types/api";
 import { validateEvent, hasErrors } from "~/utils/validation";
 
-definePageMeta({ layout: "admin", middleware: "auth" });
+definePageMeta({ layout: "admin", middleware: "sidebase-auth" });
 
 const api = useApi();
 const router = useRouter();

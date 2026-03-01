@@ -3,7 +3,7 @@ import type { AlbumResponse, EventsListResponse } from "~/types/api";
 import { AlbumCategory } from "~/types/enums";
 import { validateAlbum, hasErrors } from "~/utils/validation";
 
-definePageMeta({ layout: "admin", middleware: "auth" });
+definePageMeta({ layout: "admin", middleware: "sidebase-auth" });
 
 const api = useApi();
 const router = useRouter();

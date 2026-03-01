@@ -2,7 +2,7 @@
 import type { PostsListResponse } from "~/types/api";
 import { PostCategory } from "~/types/enums";
 
-definePageMeta({ layout: "admin", middleware: "auth" });
+definePageMeta({ layout: "admin", middleware: "sidebase-auth" });
 
 const api = useApi();
 const route = useRoute();

@@ -2,7 +2,7 @@
 import { VideoCategory } from "~/types/enums";
 import { validateVideoLink, hasErrors } from "~/utils/validation";
 
-definePageMeta({ layout: "admin", middleware: "auth" });
+definePageMeta({ layout: "admin", middleware: "sidebase-auth" });
 
 const api = useApi();
 const router = useRouter();

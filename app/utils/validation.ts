@@ -171,6 +171,18 @@ export const validateManualDonation = (data: {
     return errors;
 };
 
+export const validateLogin = (data: {
+    email: string;
+    password: string;
+}): ValidationErrors => {
+    const errors: ValidationErrors = {};
+    const em = collect(required(data.email, "Email"), email(data.email));
+    if (em) errors.email = em;
+    const pw = required(data.password, "Password");
+    if (pw) errors.password = pw;
+    return errors;
+};
+
 export const hasErrors = (errors: ValidationErrors): boolean => {
     return Object.keys(errors).length > 0;
 };

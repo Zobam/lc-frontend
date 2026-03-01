@@ -3,7 +3,7 @@ import type { DonationsListResponse, DonationStatsResponse } from "~/types/api";
 import { DonationType, DonationStatus } from "~/types/enums";
 import { validateManualDonation, hasErrors } from "~/utils/validation";
 
-definePageMeta({ layout: "admin", middleware: "auth" });
+definePageMeta({ layout: "admin", middleware: "sidebase-auth" });
 
 const api = useApi();
 const route = useRoute();

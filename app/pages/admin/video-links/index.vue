@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import type { VideoLinksListResponse } from "~/types/api";
 
-definePageMeta({ layout: "admin", middleware: "auth" });
+definePageMeta({ layout: "admin", middleware: "sidebase-auth" });
 
 const api = useApi();
 const route = useRoute();

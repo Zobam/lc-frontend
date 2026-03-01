@@ -3,7 +3,7 @@ import type { UserResponse, RolesListResponse } from "~/types/api";
 import { UserStatus } from "~/types/enums";
 import { validateCreateUser, hasErrors } from "~/utils/validation";
 
-definePageMeta({ layout: "admin", middleware: "auth" });
+definePageMeta({ layout: "admin", middleware: "sidebase-auth" });
 
 const api = useApi();
 const router = useRouter();
