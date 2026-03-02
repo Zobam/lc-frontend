@@ -16,12 +16,12 @@ const typeFilter = ref((route.query.type as string) || "");
 // Fetch stats and lists
 const { data: statsRes } = await useAsyncData(
     "admin-donations-stats",
-    () => api.get<DonationStatsResponse>("/donations/stats")
+    () => api.get<DonationStatsResponse>("/donations/statistics")
 );
 
 const { data: donationsData, pending, refresh } = await useAsyncData(
     "admin-donations-list",
-    () => api.get<DonationsListResponse>("/donations", { page: page.value, per_page: 15, search: search.value, type: typeFilter.value }),
+    () => api.get<DonationsListResponse>("/donations/manage/all", { page: page.value, per_page: 15, search: search.value, type: typeFilter.value }),
     { watch: [page, search, typeFilter], lazy: true }
 );
 
@@ -74,7 +74,7 @@ const formatMoney = (amount: number) => `₦${Number(amount).toLocaleString()}`;
                 <Icon name="mdi:cash-multiple" class="stat-icon" />
                 <div class="stat-content">
                     <p class="stat-label">Total Verified Volume</p>
-                    <p class="stat-val">{{ formatMoney(statsRes.data.total_amount) }}</p>
+                    <p class="stat-val">{{ formatMoney(statsRes.data.total_donations) }}</p>
                 </div>
             </div>
             <div class="stat-box box-count">
@@ -109,7 +109,7 @@ const formatMoney = (amount: number) => `₦${Number(amount).toLocaleString()}`;
                     <div class="sk-cell w-full"></div>
                 </div>
             </div>
-            <table v-else-if="donationsData?.data?.length" class="data-table">
+            <table v-else-if="donationsData?.data?.donations?.length" class="data-table">
                 <thead>
                     <tr>
                         <th>Reference</th>
@@ -121,7 +121,7 @@ const formatMoney = (amount: number) => `₦${Number(amount).toLocaleString()}`;
                     </tr>
                 </thead>
                 <tbody>
-                    <tr v-for="tx in donationsData.data" :key="tx.id">
+                    <tr v-for="tx in donationsData.data.donations" :key="tx.id">
                         <td class="font-mono text-sm muted">{{ tx.reference }}</td>
                         <td class="font-medium">{{ tx.email }}</td>
                         <td class="font-bold amount">{{ tx.formatted_amount || formatMoney(tx.amount) }}</td>

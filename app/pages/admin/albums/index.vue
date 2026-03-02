@@ -63,8 +63,8 @@ const deleteAlbum = async (id: string) => {
             </div>
         </div>
 
-        <div v-else-if="albumsData?.data?.length" class="albums-grid">
-            <div v-for="album in albumsData.data" :key="album.id" class="album-card">
+        <div v-else-if="albumsData?.data?.data?.length" class="albums-grid">
+            <div v-for="album in albumsData.data.data" :key="album.id" class="album-card">
                 <div class="album-img-wrap">
                     <img v-if="album.thumbnail_url" :src="album.thumbnail_url" class="album-img" />
                     <div v-else class="album-placeholder">
@@ -81,7 +81,7 @@ const deleteAlbum = async (id: string) => {
                     <p class="album-meta">{{ album.category }} &bull; {{ new Date(album.created_at).toLocaleDateString()
                         }}</p>
                     <div class="album-actions">
-                        <NuxtLink :to="`/admin/albums/${album.id}`" class="action-link">Edit Images/Details</NuxtLink>
+                        <NuxtLink :to="`/admin/albums/${album.slug}`" class="action-link">Edit Images/Details</NuxtLink>
                         <button @click="deleteAlbum(album.id)" :disabled="deletingId === album.id"
                             class="action-del">Delete</button>
                     </div>

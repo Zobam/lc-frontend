@@ -135,6 +135,7 @@ export interface Album extends Timestamps {
     user?: User;
     event?: Event;
     images?: AlbumImage[];
+    visible_images?: AlbumImage[];
     cover_image_url?: string | null;
     thumbnail_url?: string | null;
 }

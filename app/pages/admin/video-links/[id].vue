@@ -12,7 +12,7 @@ const videoId = route.params.id as string;
 
 const { data: videoRes, pending, refresh } = await useAsyncData(
     `video-${videoId}`,
-    () => api.get<VideoLinkResponse>(`/video-links/${videoId}`)
+    () => api.get<VideoLinkResponse>(`/videos/${videoId}`)
 );
 
 const form = ref({
@@ -44,7 +44,7 @@ const updateVideo = async () => {
     if (!validate()) return;
     loading.value = true;
     try {
-        await api.put(`/video-links/${videoId}`, form.value);
+        await api.put(`/videos/${videoId}`, form.value);
         alert("Video updated successfully");
         refresh();
     } catch (e: any) { alert(e.message); }
@@ -53,7 +53,7 @@ const updateVideo = async () => {
 
 const deleteVideo = async () => {
     if (!confirm("Delete this video permanently?")) return;
-    try { await api.delete(`/video-links/${videoId}`); router.push("/admin/video-links"); }
+    try { await api.delete(`/videos/${videoId}`); router.push("/admin/video-links"); }
     catch (e: any) { alert(e.message); }
 };
 

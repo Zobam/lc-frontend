@@ -112,7 +112,7 @@ export interface DashboardStatsResponse extends ApiResponse<DashboardStats> {}
 
 // Donation Stats
 export interface DonationStatsData {
-    total_amount: number;
+    total_donations: number;
     total_count: number;
     by_type: Record<string, { amount: number; count: number }>;
     by_status: Record<string, { amount: number; count: number }>;

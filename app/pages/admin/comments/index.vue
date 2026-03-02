@@ -13,7 +13,7 @@ const statusFilter = ref((route.query.status as string) || "all");
 
 const { data: commentsData, pending, refresh } = await useAsyncData(
     "admin-comments",
-    () => api.get<CommentsListResponse>("/comments", { page: page.value, per_page: 20, search: search.value, status: statusFilter.value }),
+    () => api.get<CommentsListResponse>("/comments/manage/pending", { page: page.value, per_page: 20, search: search.value, status: statusFilter.value }),
     { watch: [page, search, statusFilter], lazy: true }
 );
 

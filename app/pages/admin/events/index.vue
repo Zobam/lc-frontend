@@ -13,7 +13,7 @@ const upcomingOnly = ref(route.query.upcoming === "true");
 
 const { data: eventsData, pending, refresh } = await useAsyncData(
     "admin-events",
-    () => api.get<EventsListResponse>("/events", {
+    () => api.get<EventsListResponse>("/events/manage/all", {
         page: page.value, per_page: 15,
         search: search.value,
         upcoming: upcomingOnly.value || undefined,

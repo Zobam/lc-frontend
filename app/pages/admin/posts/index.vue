@@ -94,7 +94,7 @@ const categories = Object.values(PostCategory);
                     <div class="sk-cell narrow rounded-full"></div>
                 </div>
             </div>
-            <table v-else-if="postsData?.data?.length" class="data-table">
+            <table v-else-if="postsData?.data?.data?.length" class="data-table">
                 <thead>
                     <tr>
                         <th>Title</th>
@@ -106,7 +106,7 @@ const categories = Object.values(PostCategory);
                     </tr>
                 </thead>
                 <tbody>
-                    <tr v-for="post in postsData.data" :key="post.id">
+                    <tr v-for="post in postsData.data.data" :key="post.id">
                         <td class="font-medium">{{ post.title }}</td>
                         <td><span class="badge badge-blue">{{ post.category }}</span></td>
                         <td class="muted">{{ post.author ? `${post.author.first_name} ${post.author.last_name}` : "—" }}

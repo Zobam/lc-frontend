@@ -177,8 +177,8 @@ const categories = Object.values(AlbumCategory);
                     </div>
                 </div>
 
-                <div class="images-grid" v-if="albumRes.data.images?.length">
-                    <div v-for="img in albumRes.data.images" :key="img.id" class="img-card"
+                <div class="images-grid" v-if="albumRes.data.visible_images?.length">
+                    <div v-for="img in albumRes.data.visible_images" :key="img.id" class="img-card"
                         :class="{ 'is-hidden': img.status === 'hidden' }">
                         <div class="img-wrap">
                             <img :src="img.thumbnail_medium_url || img.image_url" class="img-thumb" loading="lazy" />
