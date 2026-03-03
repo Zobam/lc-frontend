@@ -94,7 +94,19 @@ export interface CommentsListResponse extends PaginatedResponse<Comment> {}
 
 // Donation Responses
 export interface DonationResponse extends ApiResponse<Donation> {}
-export interface DonationsListResponse extends PaginatedResponse<Donation> {}
+export interface DonationsListResponse {
+    status: "success" | "error";
+    message?: string;
+    data: {
+        donations: Donation[];
+        pagination: {
+            current_page: number;
+            total_pages: number;
+            total_items: number;
+            per_page: number;
+        };
+    };
+}
 
 // Dashboard Statistics
 export interface DashboardStats {

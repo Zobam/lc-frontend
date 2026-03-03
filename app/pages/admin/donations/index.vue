@@ -140,16 +140,28 @@ const formatMoney = (amount: number) => `₦${Number(amount).toLocaleString()}`;
                 <Icon name="mdi:cash-remove" />
                 <p>No donations match your search.</p>
             </div>
-            <div v-if="donationsData?.meta && donationsData.meta.last_page > 1" class="pagination">
-                <span class="page-info">{{ donationsData.meta.from }}–{{ donationsData.meta.to }} of {{
-                    donationsData.meta.total }}</span>
-                <div class="page-btns">
-                    <button @click="goToPage(page - 1)" :disabled="page <= 1" class="page-btn">‹</button>
-                    <button v-for="n in donationsData.meta.last_page" :key="n" @click="goToPage(n)" class="page-btn"
-                        :class="{ 'page-active': n === page }">{{ n }}</button>
-                    <button @click="goToPage(page + 1)" :disabled="page >= donationsData.meta.last_page"
-                        class="page-btn">›</button>
-                </div>
+            <div v-if="donationsData?.data?.pagination && donationsData.data.pagination.total_pages > 1"
+                class="p-6 border-t border-gray-100 flex items-center justify-center w-full">
+                <Pagination v-slot="{ page }" :total="donationsData.data.pagination.total_items" :sibling-count="1"
+                    show-edges :default-page="1" :items-per-page="donationsData.data.pagination.per_page"
+                    @update:page="goToPage" :page="donationsData.data.pagination.current_page">
+                    <PaginationContent v-slot="{ items }" class="flex items-center gap-1 justify-center w-full">
+                        <PaginationFirst />
+                        <PaginationPrevious />
+
+                        <template v-for="(item, index) in items">
+                            <PaginationItem v-if="item.type === 'page'" :key="index" :value="item.value" as-child>
+                                <Button class="w-10 h-10 p-0" :variant="item.value === page ? 'default' : 'outline'">
+                                    {{ item.value }}
+                                </Button>
+                            </PaginationItem>
+                            <PaginationEllipsis v-else :key="item.type" :index="index" />
+                        </template>
+
+                        <PaginationNext />
+                        <PaginationLast />
+                    </PaginationContent>
+                </Pagination>
             </div>
         </div>
 
