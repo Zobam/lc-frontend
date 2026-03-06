@@ -89,15 +89,30 @@
             <div class="container">
                 <h2 class="wos-label">Words of the Spirit</h2>
                 <div class="wos-grid">
-                    <div class="wos-card" v-for="w in wordsOfTheSpirit" :key="w.title">
-                        <div class="wos-img">
-                            <img :src="w.img" :alt="w.title" />
+                    <!-- Skeleton loaders while loading -->
+                    <template v-if="wosLoading">
+                        <div class="wos-card skeleton-card" v-for="n in 8" :key="n">
+                            <div class="wos-img">
+                                <div class="skeleton-img" style="height:100%"></div>
+                            </div>
+                            <div class="wos-body">
+                                <div class="skeleton-line long" style="margin-bottom:0.5rem"></div>
+                                <div class="skeleton-line medium"></div>
+                            </div>
                         </div>
-                        <div class="wos-body">
-                            <h3>{{ w.title }}</h3>
-                            <p>{{ w.desc }}</p>
+                    </template>
+                    <template v-else>
+                        <div class="wos-card" v-for="w in wordsOfTheSpirit" :key="w.id">
+                            <div class="wos-img">
+                                <img :src="w.featured_image?.image_url || 'https://images.unsplash.com/photo-1507692049790-de58290a4334?w=400&h=260&fit=crop'"
+                                    :alt="w.featured_image?.alt_text || w.title" />
+                            </div>
+                            <div class="wos-body">
+                                <h3>{{ w.title }}</h3>
+                                <p>{{ w.excerpt || w.subtitle || '' }}</p>
+                            </div>
                         </div>
-                    </div>
+                    </template>
                 </div>
             </div>
         </section>
@@ -127,25 +142,62 @@
                     <NuxtLink to="/media" class="view-all">Watch More →</NuxtLink>
                 </div>
                 <div class="media-layout">
+                    <!-- Main Video -->
                     <div class="video-main">
-                        <div class="video-thumb">
-                            <img src="https://images.unsplash.com/photo-1547471080-7cc2caa01a7e?w=700&h=400&fit=crop"
-                                alt="Latest Sermon" />
-                            <a href="#" class="play-btn" aria-label="Play video">
-                                <Icon name="mdi:play-circle" />
-                            </a>
-                        </div>
-                        <h3 class="video-title">The Power of Faith — Sunday Service</h3>
-                        <p class="video-meta">Pastor John Adeyemi &nbsp;·&nbsp; Feb 23, 2026</p>
-                    </div>
-                    <div class="video-sidebar">
-                        <div class="sidebar-item" v-for="s in sermons" :key="s.title">
-                            <img :src="s.img" :alt="s.title" />
-                            <div>
-                                <h4>{{ s.title }}</h4>
-                                <p>{{ s.speaker }} · {{ s.date }}</p>
+                        <template v-if="videosLoading">
+                            <div class="video-thumb">
+                                <div class="skeleton-img" style="height:100%"></div>
                             </div>
-                        </div>
+                            <div class="skeleton-line long" style="margin-top:1rem;margin-bottom:0.4rem"></div>
+                            <div class="skeleton-line medium"></div>
+                        </template>
+                        <template v-else-if="mainVideo">
+                            <div class="video-embed-wrap">
+                                <iframe v-if="mainVideoEmbedUrl" :src="mainVideoEmbedUrl" :title="mainVideo.title"
+                                    frameborder="0"
+                                    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                                    allowfullscreen class="video-iframe"></iframe>
+                                <div v-else class="video-thumb no-embed">
+                                    <img :src="mainVideo.thumbnail_url || 'https://images.unsplash.com/photo-1547471080-7cc2caa01a7e?w=700&h=400&fit=crop'"
+                                        :alt="mainVideo.title" />
+                                    <a :href="mainVideo.url" target="_blank" rel="noopener" class="play-btn"
+                                        aria-label="Play video">
+                                        <Icon name="mdi:play-circle" />
+                                    </a>
+                                </div>
+                            </div>
+                            <h3 class="video-title">{{ mainVideo.title }}</h3>
+                            <p class="video-meta">
+                                {{ mainVideo.user ? `${mainVideo.user.first_name} ${mainVideo.user.last_name}` : '' }}
+                                <template v-if="mainVideo.published_at">
+                                    &nbsp;·&nbsp; {{ formatVideoDate(mainVideo.published_at) }}
+                                </template>
+                            </p>
+                        </template>
+                    </div>
+                    <!-- Side Videos -->
+                    <div class="video-sidebar">
+                        <template v-if="videosLoading">
+                            <div class="sidebar-item skeleton-card" v-for="n in 4" :key="n">
+                                <div class="skeleton-img" style="width:120px;height:80px;flex-shrink:0"></div>
+                                <div style="flex:1">
+                                    <div class="skeleton-line long" style="margin-bottom:0.4rem"></div>
+                                    <div class="skeleton-line short"></div>
+                                </div>
+                            </div>
+                        </template>
+                        <template v-else>
+                            <div class="sidebar-item" :class="{ active: mainVideo?.id === v.id }"
+                                v-for="v in sideVideos" :key="v.id" @click="selectVideo(v)">
+                                <img :src="v.thumbnail_url || 'https://images.unsplash.com/photo-1547471080-7cc2caa01a7e?w=120&h=80&fit=crop'"
+                                    :alt="v.title" />
+                                <div>
+                                    <h4>{{ v.title }}</h4>
+                                    <p>{{ v.user ? `${v.user.first_name} ${v.user.last_name}` : '' }} · {{
+                                        formatVideoDate(v.published_at) }}</p>
+                                </div>
+                            </div>
+                        </template>
                     </div>
                 </div>
             </div>
@@ -243,16 +295,55 @@
 </template>
 
 <script setup lang="ts">
-import type { EventsListResponse } from '~/types/api';
-import type { Event } from '~/types/models';
+import type { EventsListResponse, PostCategoryListResponse, VideoListResponse } from '~/types/api';
+import type { Event, Post, VideoLink } from '~/types/models';
 
 const { get } = useApi();
 
+// ── Events ──────────────────────────────────────────────────────────
 const eventsLoading = ref(true);
 const featuredEvent = ref<Event | null>(null);
 const sideEvents = ref<Event[]>([]);
 
+// ── Words of the Spirit ─────────────────────────────────────────────
+const wosLoading = ref(true);
+const wordsOfTheSpirit = ref<Post[]>([]);
+
+// ── Videos ──────────────────────────────────────────────────────────
+const videosLoading = ref(true);
+const mainVideo = ref<VideoLink | null>(null);
+const sideVideos = ref<VideoLink[]>([]);
+const autoplay = ref(false); // true only when user clicks a side video
+
+const getYouTubeId = (video: VideoLink): string | null => {
+    // Prefer stored video_id if it looks valid (11 chars)
+    if (video.video_id && video.video_id.length === 11) return video.video_id;
+    // Parse from URL
+    const match = video.url?.match(/(?:v=|youtu\.be\/)([A-Za-z0-9_-]{11})/);
+    return match ? match[1]! : null;
+};
+
+const mainVideoEmbedUrl = computed(() => {
+    if (!mainVideo.value) return null;
+    const id = getYouTubeId(mainVideo.value);
+    if (!id) return null;
+    const params = new URLSearchParams({ rel: '0', modestbranding: '1' });
+    if (autoplay.value) params.set('autoplay', '1');
+    return `https://www.youtube.com/embed/${id}?${params.toString()}`;
+});
+
+const selectVideo = (video: VideoLink) => {
+    autoplay.value = true;
+    mainVideo.value = video;
+};
+
+const formatVideoDate = (dateStr?: string | null): string => {
+    if (!dateStr) return '';
+    return new Date(dateStr).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
+};
+
 onMounted(async () => {
+    // Fetch events
     try {
         const response = await get<EventsListResponse>('/events', { per_page: 5 });
         const events = response.data ?? [];
@@ -262,6 +353,28 @@ onMounted(async () => {
         console.error('Failed to load events:', e);
     } finally {
         eventsLoading.value = false;
+    }
+
+    // Fetch words of the spirit
+    try {
+        const response = await get<PostCategoryListResponse>('/posts/category/devotional', { per_page: 8 });
+        wordsOfTheSpirit.value = response.data?.data ?? [];
+    } catch (e) {
+        console.error('Failed to load devotionals:', e);
+    } finally {
+        wosLoading.value = false;
+    }
+
+    // Fetch videos
+    try {
+        const response = await get<VideoListResponse>('/videos', { per_page: 5 });
+        const videos = response.data?.data ?? [];
+        mainVideo.value = videos[0] ?? null;
+        sideVideos.value = videos.slice(1);
+    } catch (e) {
+        console.error('Failed to load videos:', e);
+    } finally {
+        videosLoading.value = false;
     }
 });
 
@@ -280,55 +393,6 @@ const ministries = [
     { title: 'Men\'s Fellowship', desc: 'Building men of integrity, faith, and family.', img: 'https://images.unsplash.com/photo-1529156069898-49953e39b3ac?w=400&h=280&fit=crop' },
 ];
 
-const wordsOfTheSpirit = [
-    {
-        title: 'You Were Called to a Greater Life!',
-        desc: 'God has not called you to mediocrity. Rise above every limitation and walk boldly in the fullness of your divine calling.',
-        img: 'https://images.unsplash.com/photo-1507692049790-de58290a4334?w=400&h=260&fit=crop',
-    },
-    {
-        title: 'The Power of Prayer Cannot Be Overstated',
-        desc: 'Prayer is the breath of the believer. Every breakthrough you seek begins in the secret place of prayer and communion with God.',
-        img: 'https://images.unsplash.com/photo-1504052434569-70ad5836ab65?w=400&h=260&fit=crop',
-    },
-    {
-        title: 'Walk Together, Grow Together',
-        desc: 'Iron sharpens iron. Community is not optional in the kingdom. Find your people, lock arms, and run this race together.',
-        img: 'https://images.unsplash.com/photo-1529156069898-49953e39b3ac?w=400&h=260&fit=crop',
-    },
-    {
-        title: 'Enter His Courts With Praise',
-        desc: 'Worship is not a program — it is a lifestyle. Every moment is an invitation to encounter the living God in His glory.',
-        img: 'https://images.unsplash.com/photo-1519451241324-20b4ea2c4220?w=400&h=260&fit=crop',
-    },
-    {
-        title: 'Let Your Light Shine Before Men',
-        desc: 'You are the light of the world. Do not hide your gift, your testimony, or your faith. The world is waiting for what God put in you.',
-        img: 'https://images.unsplash.com/photo-1429962714451-bb934ecdc4ec?w=400&h=260&fit=crop',
-    },
-    {
-        title: 'Seek First the Kingdom of God',
-        desc: 'When you put God first, everything else finds its rightful place. His kingdom is not coming — it is already here, within you.',
-        img: 'https://images.unsplash.com/photo-1516450360452-9312f5e86fc7?w=400&h=260&fit=crop',
-    },
-    {
-        title: 'Faith Without Works Is Dead',
-        desc: 'Your belief must move your feet. Step out in obedience, take the risk God is calling you to, and watch faith come alive.',
-        img: 'https://images.unsplash.com/photo-1491438590914-bc09fcaaf77a?w=400&h=260&fit=crop',
-    },
-    {
-        title: 'Prayer Changes Everything',
-        desc: 'There is nothing too hard for God, and there is no situation that the power of persistent, faith-filled prayer cannot transform.',
-        img: 'https://images.unsplash.com/photo-1545987796-200677ee1011?w=400&h=260&fit=crop',
-    },
-];
-
-const sermons = [
-    { title: 'Walking in God\'s Purpose', speaker: 'Bro James', date: 'Feb 16', img: 'https://images.unsplash.com/photo-1491438590914-bc09fcaaf77a?w=120&h=80&fit=crop' },
-    { title: 'Unshakeable Faith', speaker: 'Sis Grace', date: 'Feb 9', img: 'https://images.unsplash.com/photo-1527525443983-6e60c75fff46?w=120&h=80&fit=crop' },
-    { title: 'The Grace of God', speaker: 'Ptr John', date: 'Feb 2', img: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=120&h=80&fit=crop' },
-    { title: 'Strength in Weakness', speaker: 'Ptr Sarah', date: 'Jan 26', img: 'https://images.unsplash.com/photo-1438761681033-6461ffad8d80?w=120&h=80&fit=crop' },
-];
 
 const focusCards = [
     { title: 'Prayer Request', desc: 'Submit your prayer requests and our team will pray with you.', icon: 'mdi:hands-pray', link: '/contact', cta: 'Submit a Request' },
@@ -1003,6 +1067,44 @@ const activeGalleryImg = ref(galleryImages[0]!);
     font-size: 0.75rem;
     color: #999;
     margin: 0;
+}
+
+.sidebar-item.active {
+    border: 2px solid var(--lc-gold);
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.12);
+}
+
+.video-embed-wrap {
+    position: relative;
+    border-radius: 10px;
+    overflow: hidden;
+    aspect-ratio: 16/9;
+    background: #000;
+}
+
+.video-iframe {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    border: none;
+    display: block;
+}
+
+.video-thumb.no-embed {
+    position: relative;
+    border-radius: 10px;
+    overflow: hidden;
+    aspect-ratio: 16/9;
+    background: #000;
+}
+
+.video-thumb.no-embed img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    opacity: 0.85;
+    display: block;
 }
 
 /* ───── Partnership ───── */

@@ -93,6 +93,26 @@ export interface PostResponse extends ApiResponse<Post> {}
 export interface PostsListResponse extends PaginatedResponse<Post> {}
 export interface PostImageResponse extends ApiResponse<PostImage> {}
 
+// The /posts/category/{category} endpoint wraps the Laravel paginator inside `data`
+export interface PostCategoryListResponse {
+    status: "success" | "error";
+    data: {
+        current_page: number;
+        data: Post[];
+        first_page_url: string;
+        from: number;
+        last_page: number;
+        last_page_url: string;
+        next_page_url: string | null;
+        path: string;
+        per_page: number;
+        prev_page_url: string | null;
+        to: number;
+        total: number;
+    };
+}
+
+
 // Album Responses
 export interface AlbumResponse extends ApiResponse<Album> {}
 export interface AlbumsListResponse extends PaginatedResponse<Album> {}
@@ -101,6 +121,26 @@ export interface AlbumImageResponse extends ApiResponse<AlbumImage> {}
 // Video Link Responses
 export interface VideoLinkResponse extends ApiResponse<VideoLink> {}
 export interface VideoLinksListResponse extends PaginatedResponse<VideoLink> {}
+
+// The /videos endpoint wraps the Laravel paginator inside `data`
+export interface VideoListResponse {
+    status: "success" | "error";
+    data: {
+        current_page: number;
+        data: VideoLink[];
+        first_page_url: string;
+        from: number;
+        last_page: number;
+        last_page_url: string;
+        next_page_url: string | null;
+        path: string;
+        per_page: number;
+        prev_page_url: string | null;
+        to: number;
+        total: number;
+    };
+}
+
 
 // Comment Responses
 export interface CommentResponse extends ApiResponse<Comment> {}

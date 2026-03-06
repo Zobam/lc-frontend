@@ -12,7 +12,7 @@ const search = ref((route.query.search as string) || "");
 
 const { data: videosData, pending, refresh } = await useAsyncData(
     "admin-videos",
-    () => api.get<VideoLinksListResponse>("/videos", { page: page.value, per_page: 12, search: search.value }),
+    () => api.get<VideoLinksListResponse>("/videos", { page: page.value, per_page: 15, search: search.value }),
     { watch: [page, search], lazy: true }
 );
 
@@ -79,7 +79,7 @@ const deleteVideo = async (id: string) => {
                 <div class="video-body">
                     <h3 class="video-title">{{ video.title }}</h3>
                     <p class="video-meta">{{ video.category }} &bull; {{ new Date(video.created_at).toLocaleDateString()
-                        }}</p>
+                    }}</p>
                     <div class="video-actions">
                         <NuxtLink :to="`/admin/video-links/${video.id}`" class="action-link">Edit</NuxtLink>
                         <button @click="deleteVideo(video.id)" :disabled="deletingId === video.id"
@@ -96,7 +96,7 @@ const deleteVideo = async (id: string) => {
 
         <div v-if="videosData?.meta && videosData.meta.last_page > 1" class="pagination">
             <span class="page-info">{{ videosData.meta.from }}–{{ videosData.meta.to }} of {{ videosData.meta.total
-                }}</span>
+            }}</span>
             <div class="page-btns">
                 <button @click="goToPage(page - 1)" :disabled="page <= 1" class="page-btn">‹</button>
                 <button v-for="n in videosData.meta.last_page" :key="n" @click="goToPage(n)" class="page-btn"

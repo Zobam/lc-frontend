@@ -6,7 +6,7 @@
                 <div class="footer-brand">
                     <div class="footer-logo">
                         <div class="logo-circle">
-                            <Icon name="mdi:church" class="logo-icon" />
+                            <img src="/lc_logo.png" alt="Logo" class="logo-icon" />
                         </div>
                         <span class="logo-text">Light City</span>
                     </div>

@@ -82,7 +82,7 @@ export interface EventImage extends Timestamps {
 // Post Model
 export interface Post extends Timestamps {
     id: string;
-    user_id: string;
+    user_id: number | string;
     title: string;
     subtitle?: string | null;
     body: string;
@@ -93,13 +93,14 @@ export interface Post extends Timestamps {
     is_published: boolean;
     is_auto_approved: boolean;
     views: number;
-    published_by?: string | null;
+    published_by?: string | number | null;
     published_at?: string | null;
     meta_description?: string | null;
     featured_image_id?: string | null;
     author?: User;
     publisher?: User;
     images?: PostImage[];
+    featured_image?: PostImage | null;
     comments?: Comment[];
     reading_time?: string;
     comments_count?: number;

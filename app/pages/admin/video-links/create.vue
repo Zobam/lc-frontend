@@ -25,7 +25,7 @@ const submit = async () => {
     if (!validate()) return;
     loading.value = true;
     try {
-        await api.post("/video-links", form.value);
+        await api.post("/videos", form.value);
         router.push("/admin/video-links");
     } catch (e: any) { alert(e.message || "Failed to add video"); }
     finally { loading.value = false; }
