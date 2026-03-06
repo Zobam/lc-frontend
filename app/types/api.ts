@@ -71,8 +71,22 @@ export interface PermissionsListResponse extends ApiResponse<Permission[]> {}
 
 // Event Responses
 export interface EventResponse extends ApiResponse<Event> {}
-export interface EventsListResponse extends PaginatedResponse<Event> {}
 export interface EventImageResponse extends ApiResponse<EventImage> {}
+
+export interface EventPagination {
+    current_page: number;
+    total_pages: number;
+    total_items: number;
+    per_page: number;
+    from: number;
+    to: number;
+}
+
+export interface EventsListResponse {
+    status: "success" | "error";
+    data: Event[];
+    pagination: EventPagination;
+}
 
 // Post Responses
 export interface PostResponse extends ApiResponse<Post> {}

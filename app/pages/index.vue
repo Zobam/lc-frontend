@@ -35,26 +35,50 @@
                     <NuxtLink to="/events" class="view-all">View All →</NuxtLink>
                 </div>
                 <div class="broadcasts-grid">
-                    <div class="broadcast-card featured">
-                        <img src="https://images.unsplash.com/photo-1429962714451-bb934ecdc4ec?w=600&h=340&fit=crop"
-                            alt="Praise Carnival" />
-                        <div class="bc-label">FEB 15</div>
+                    <!-- Featured Event -->
+                    <div class="broadcast-card featured" v-if="featuredEvent">
+                        <img :src="featuredEvent.primary_image?.image_url || 'https://images.unsplash.com/photo-1429962714451-bb934ecdc4ec?w=600&h=340&fit=crop'"
+                            :alt="featuredEvent.title" />
+                        <div class="bc-label">{{ formatEventDate(featuredEvent.event_dates[0]) }}</div>
                         <div class="bc-info">
                             <span class="bc-tag">Live Event</span>
-                            <h3>Praise Carnival 2026</h3>
-                            <p>A night of praise, worship and thanksgiving to God.</p>
+                            <h3>{{ featuredEvent.title }}</h3>
+                            <p>{{ featuredEvent.subtitle || featuredEvent.description.slice(0, 100) }}...</p>
                             <NuxtLink to="/events" class="btn btn-gold-sm">Register</NuxtLink>
                         </div>
                     </div>
-                    <div class="broadcasts-side">
-                        <div class="broadcast-card mini" v-for="event in sideEvents" :key="event.title">
-                            <img :src="event.img" :alt="event.title" />
-                            <div class="bc-info-mini">
-                                <span class="bc-date">{{ event.date }}</span>
-                                <h4>{{ event.title }}</h4>
-                                <p>{{ event.desc }}</p>
-                            </div>
+                    <!-- Featured Event Skeleton -->
+                    <div class="broadcast-card featured skeleton-card" v-else-if="eventsLoading">
+                        <div class="skeleton-img"></div>
+                        <div class="bc-info">
+                            <div class="skeleton-line short"></div>
+                            <div class="skeleton-line long"></div>
+                            <div class="skeleton-line medium"></div>
                         </div>
+                    </div>
+
+                    <!-- Side Events -->
+                    <div class="broadcasts-side">
+                        <template v-if="eventsLoading">
+                            <div class="broadcast-card mini skeleton-card" v-for="n in 4" :key="n">
+                                <div class="skeleton-img mini-img"></div>
+                                <div class="bc-info-mini">
+                                    <div class="skeleton-line short"></div>
+                                    <div class="skeleton-line long"></div>
+                                </div>
+                            </div>
+                        </template>
+                        <template v-else>
+                            <div class="broadcast-card mini" v-for="event in sideEvents" :key="event.id">
+                                <img :src="event.primary_image?.image_url || 'https://images.unsplash.com/photo-1517457373958-b7bdd4587205?w=300&h=160&fit=crop'"
+                                    :alt="event.title" />
+                                <div class="bc-info-mini">
+                                    <span class="bc-date">{{ formatEventDate(event.event_dates[0]) }}</span>
+                                    <h4>{{ event.title }}</h4>
+                                    <p>{{ event.subtitle || event.description.slice(0, 80) }}...</p>
+                                </div>
+                            </div>
+                        </template>
                     </div>
                 </div>
             </div>
@@ -219,32 +243,33 @@
 </template>
 
 <script setup lang="ts">
-const sideEvents = [
-    {
-        title: 'Holy Ghost Night',
-        date: 'FEB 28',
-        img: 'https://images.unsplash.com/photo-1508997449629-303059a039c0?w=300&h=160&fit=crop',
-        desc: 'A powerful night of prayer and spiritual renewal.'
-    },
-    {
-        title: 'Annual Convention',
-        date: 'MAR 07',
-        img: 'https://images.unsplash.com/photo-1517457373958-b7bdd4587205?w=300&h=160&fit=crop',
-        desc: 'Our biggest annual gathering of believers.'
-    },
-    {
-        title: 'Youth Summit 2026',
-        date: 'MAR 15',
-        img: 'https://images.unsplash.com/photo-1529156069898-49953e39b3ac?w=300&h=160&fit=crop',
-        desc: 'Empowering the next generation for kingdom impact.'
-    },
-    {
-        title: 'Nsukka Mission Work',
-        date: 'MAY 22',
-        img: 'https://images.unsplash.com/photo-1517457373958-b7bdd4587205?w=300&h=160&fit=crop',
-        desc: 'Spreading the gospel to the nooks and crannies of Nsukka.'
-    },
-];
+import type { EventsListResponse } from '~/types/api';
+import type { Event } from '~/types/models';
+
+const { get } = useApi();
+
+const eventsLoading = ref(true);
+const featuredEvent = ref<Event | null>(null);
+const sideEvents = ref<Event[]>([]);
+
+onMounted(async () => {
+    try {
+        const response = await get<EventsListResponse>('/events', { per_page: 5 });
+        const events = response.data ?? [];
+        featuredEvent.value = events[0] ?? null;
+        sideEvents.value = events.slice(1);
+    } catch (e) {
+        console.error('Failed to load events:', e);
+    } finally {
+        eventsLoading.value = false;
+    }
+});
+
+const formatEventDate = (dateStr?: string): string => {
+    if (!dateStr) return '';
+    const date = new Date(dateStr);
+    return date.toLocaleDateString('en-US', { month: 'short', day: '2-digit' }).toUpperCase();
+};
 
 const ministries = [
     { title: 'Worship Ministry', desc: 'Leading hearts to God through music and praise.', img: 'https://images.unsplash.com/photo-1415201364774-f6f0bb35f28f?w=400&h=280&fit=crop' },
@@ -638,6 +663,56 @@ const activeGalleryImg = ref(galleryImages[0]!);
     color: #888;
     line-height: 1.4;
     margin: 0;
+}
+
+/* ───── Skeleton Loaders ───── */
+@keyframes shimmer {
+    0% {
+        background-position: -400px 0;
+    }
+
+    100% {
+        background-position: 400px 0;
+    }
+}
+
+.skeleton-card {
+    pointer-events: none;
+}
+
+.skeleton-img {
+    width: 100%;
+    height: 240px;
+    background: linear-gradient(90deg, #e8e8e8 25%, #f5f5f5 50%, #e8e8e8 75%);
+    background-size: 800px 100%;
+    animation: shimmer 1.4s infinite;
+}
+
+.skeleton-img.mini-img {
+    width: 130px;
+    height: 100px;
+    flex-shrink: 0;
+}
+
+.skeleton-line {
+    height: 14px;
+    border-radius: 4px;
+    background: linear-gradient(90deg, #e8e8e8 25%, #f5f5f5 50%, #e8e8e8 75%);
+    background-size: 800px 100%;
+    animation: shimmer 1.4s infinite;
+    margin-bottom: 0.6rem;
+}
+
+.skeleton-line.short {
+    width: 35%;
+}
+
+.skeleton-line.medium {
+    width: 60%;
+}
+
+.skeleton-line.long {
+    width: 85%;
 }
 
 /* ───── Words of the Spirit ───── */

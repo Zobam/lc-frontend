@@ -58,7 +58,7 @@ const isActive = (to: string) => {
         <aside class="sidebar" :class="{ 'sidebar-open': sidebarOpen }">
             <div class="sidebar-logo">
                 <div class="logo-icon">
-                    <Icon name="mdi:church" />
+                    <img src="/lc_logo.png" alt="Logo" class="logo-icon" />
                 </div>
                 <div class="logo-text">
                     <span class="logo-main">LightCity</span>

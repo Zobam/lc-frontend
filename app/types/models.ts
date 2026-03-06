@@ -53,18 +53,18 @@ export interface Permission extends Timestamps {
 // Event Model
 export interface Event extends Timestamps {
     id: string;
-    user_id: string;
+    user_id: number | string;
     title: string;
+    subtitle?: string | null;
     description: string;
     location: string;
-    event_dates: string[]; // JSON array of datetime strings
-    start_date: string;
-    end_date: string;
-    is_recurring: boolean;
-    recurrence_pattern?: string | null;
-    slug: string;
+    event_dates: string[]; // JSON array of date strings
+    start_date?: string | null;
+    end_date?: string | null;
+    status: string;
     creator?: User;
     images?: EventImage[];
+    primary_image?: EventImage | null;
     images_count?: number;
 }
 
@@ -75,8 +75,7 @@ export interface EventImage extends Timestamps {
     image_path: string;
     image_url: string;
     is_primary: boolean;
-    caption?: string | null;
-    order: number;
+    alt_text?: string | null;
     event?: Event;
 }
 
