@@ -19,26 +19,65 @@
             <div class="container">
                 <h2 class="section-title">Latest Videos</h2>
                 <div class="featured-grid">
+                    <!-- Main Video -->
                     <div class="featured-video">
-                        <div class="video-wrap">
-                            <img src="https://images.unsplash.com/photo-1547471080-7cc2caa01a7e?w=800&h=450&fit=crop"
-                                alt="Latest sermon" />
-                            <a href="#" class="play-btn" aria-label="Play">
-                                <Icon name="mdi:play-circle" />
-                            </a>
-                        </div>
-                        <h3>The Power of Faith — Sunday Service</h3>
-                        <p class="sermon-meta">Pastor John Adeyemi &nbsp;·&nbsp; Feb 23, 2026 &nbsp;·&nbsp; 58 min</p>
+                        <template v-if="videosLoading">
+                            <div class="video-wrap skeleton-card">
+                                <div class="skeleton-img" style="height:100%"></div>
+                            </div>
+                            <div class="skeleton-line long" style="margin-top:1rem;margin-bottom:0.4rem"></div>
+                            <div class="skeleton-line medium"></div>
+                        </template>
+                        <template v-else-if="mainVideo">
+                            <div class="video-embed-wrap">
+                                <iframe v-if="mainVideoEmbedUrl" :src="mainVideoEmbedUrl" :title="mainVideo.title"
+                                    frameborder="0"
+                                    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                                    allowfullscreen class="video-iframe"></iframe>
+                                <div v-else class="video-wrap no-embed">
+                                    <img :src="mainVideo.thumbnail_url || 'https://images.unsplash.com/photo-1547471080-7cc2caa01a7e?w=800&h=450&fit=crop'"
+                                        :alt="mainVideo.title" />
+                                    <a :href="mainVideo.url" target="_blank" rel="noopener" class="play-btn"
+                                        aria-label="Play video">
+                                        <Icon name="mdi:play-circle" />
+                                    </a>
+                                </div>
+                            </div>
+                            <h3>{{ mainVideo.title }}</h3>
+                            <p class="sermon-meta">
+                                {{ mainVideo.user ? `${mainVideo.user.first_name} ${mainVideo.user.last_name}` : '' }}
+                                <template v-if="mainVideo.published_at">
+                                    &nbsp;·&nbsp; {{ formatVideoDate(mainVideo.published_at) }}
+                                </template>
+                            </p>
+                        </template>
                     </div>
+
+                    <!-- Side Videos (Up Next) -->
                     <div class="featured-aside">
                         <h4>Up Next</h4>
-                        <div class="mini-sermon" v-for="s in upNext" :key="s.title">
-                            <img :src="s.img" :alt="s.title" />
-                            <div>
-                                <h5>{{ s.title }}</h5>
-                                <p>{{ s.speaker }} · {{ s.date }}</p>
+                        <template v-if="videosLoading">
+                            <div class="mini-sermon skeleton-card" v-for="n in 3" :key="n">
+                                <div class="skeleton-img"
+                                    style="width:100px;height:65px;flex-shrink:0;border-radius:6px"></div>
+                                <div style="flex:1">
+                                    <div class="skeleton-line long" style="margin-bottom:0.4rem"></div>
+                                    <div class="skeleton-line short"></div>
+                                </div>
                             </div>
-                        </div>
+                        </template>
+                        <template v-else>
+                            <div class="mini-sermon" :class="{ active: mainVideo?.id === s.id }" v-for="s in sideVideos"
+                                :key="s.id" @click="selectVideo(s)">
+                                <img :src="s.thumbnail_url || 'https://images.unsplash.com/photo-1547471080-7cc2caa01a7e?w=120&h=80&fit=crop'"
+                                    :alt="s.title" />
+                                <div>
+                                    <h5>{{ s.title }}</h5>
+                                    <p>{{ s.user ? `${s.user.first_name} ${s.user.last_name}` : '' }} · {{
+                                        formatVideoDate(s.published_at) }}</p>
+                                </div>
+                            </div>
+                        </template>
                     </div>
                 </div>
             </div>
@@ -99,13 +138,55 @@
 </template>
 
 <script setup lang="ts">
+import type { VideoListResponse } from '~/types/api';
+import type { VideoLink } from '~/types/models';
+
+const { get } = useApi();
+
 const selectedSeries = ref('');
 
-const upNext = [
-    { title: 'Walking in God\'s Purpose', speaker: 'Bro James', date: 'Feb 16', img: 'https://images.unsplash.com/photo-1491438590914-bc09fcaaf77a?w=120&h=80&fit=crop' },
-    { title: 'Unshakeable Faith', speaker: 'Sis Grace', date: 'Feb 9', img: 'https://images.unsplash.com/photo-1527525443983-6e60c75fff46?w=120&h=80&fit=crop' },
-    { title: 'The Grace of God', speaker: 'Ptr John', date: 'Feb 2', img: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=120&h=80&fit=crop' },
-];
+const videosLoading = ref(true);
+const mainVideo = ref<VideoLink | null>(null);
+const sideVideos = ref<VideoLink[]>([]);
+const autoplay = ref(false);
+
+const getYouTubeId = (video: VideoLink): string | null => {
+    if (video.video_id && video.video_id.length === 11) return video.video_id;
+    const match = video.url?.match(/(?:v=|youtu\.be\/)([A-Za-z0-9_-]{11})/);
+    return match ? match[1]! : null;
+};
+
+const mainVideoEmbedUrl = computed(() => {
+    if (!mainVideo.value) return null;
+    const id = getYouTubeId(mainVideo.value);
+    if (!id) return null;
+    const params = new URLSearchParams({ rel: '0', modestbranding: '1' });
+    if (autoplay.value) params.set('autoplay', '1');
+    return `https://www.youtube.com/embed/${id}?${params.toString()}`;
+});
+
+const selectVideo = (video: VideoLink) => {
+    autoplay.value = true;
+    mainVideo.value = video;
+};
+
+const formatVideoDate = (dateStr?: string | null): string => {
+    if (!dateStr) return '';
+    return new Date(dateStr).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
+};
+
+onMounted(async () => {
+    try {
+        const response = await get<VideoListResponse>('/videos', { per_page: 5 });
+        const videos = response.data?.data ?? [];
+        mainVideo.value = videos[0] ?? null;
+        sideVideos.value = videos.slice(1);
+    } catch (e) {
+        console.error('Failed to load videos:', e);
+    } finally {
+        videosLoading.value = false;
+    }
+});
 
 const sermons = [
     { title: 'Strength in Weakness', speaker: 'Ptr Sarah', date: 'Jan 26', series: 'Faith Foundations', img: 'https://images.unsplash.com/photo-1438761681033-6461ffad8d80?w=400&h=220&fit=crop' },
@@ -226,6 +307,31 @@ const worship = [
     opacity: 0.85;
 }
 
+.video-embed-wrap {
+    position: relative;
+    border-radius: 10px;
+    overflow: hidden;
+    aspect-ratio: 16/9;
+    background: #000;
+}
+
+.video-iframe {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    border: none;
+    display: block;
+}
+
+.video-wrap.no-embed img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    opacity: 0.85;
+    display: block;
+}
+
 .play-btn {
     position: absolute;
     inset: 0;
@@ -268,6 +374,17 @@ const worship = [
     padding-bottom: 1rem;
     border-bottom: 1px solid #f0f0f0;
     cursor: pointer;
+    transition: all 0.2s;
+}
+
+.mini-sermon.active {
+    border-left: 3px solid var(--lc-gold);
+    padding-left: 1rem;
+    background: #fdfdfd;
+}
+
+.mini-sermon:hover {
+    background: #fafafa;
 }
 
 .mini-sermon img {
@@ -468,5 +585,49 @@ const worship = [
     .archive-grid {
         grid-template-columns: 1fr;
     }
+}
+
+/* ───── Skeleton Loaders ───── */
+@keyframes shimmer {
+    0% {
+        background-position: -400px 0;
+    }
+
+    100% {
+        background-position: 400px 0;
+    }
+}
+
+.skeleton-card {
+    pointer-events: none;
+}
+
+.skeleton-img {
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg, #e8e8e8 25%, #f5f5f5 50%, #e8e8e8 75%);
+    background-size: 800px 100%;
+    animation: shimmer 1.4s infinite;
+}
+
+.skeleton-line {
+    height: 14px;
+    border-radius: 4px;
+    background: linear-gradient(90deg, #e8e8e8 25%, #f5f5f5 50%, #e8e8e8 75%);
+    background-size: 800px 100%;
+    animation: shimmer 1.4s infinite;
+    margin-bottom: 0.6rem;
+}
+
+.skeleton-line.short {
+    width: 35%;
+}
+
+.skeleton-line.medium {
+    width: 60%;
+}
+
+.skeleton-line.long {
+    width: 85%;
 }
 </style>
