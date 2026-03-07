@@ -2,7 +2,7 @@ export const useApi = () => {
     const config = useRuntimeConfig();
     const { token } = useAuth();
 
-    const baseURL = (config.public.devApiUrl as string) || "http://localhost:8000/api";
+    const baseURL = (config.public.devApiUrl as string);
 
     const getHeaders = (isFormData = false): Record<string, string> => {
         const headers: Record<string, string> = {

@@ -58,36 +58,68 @@
                     </div>
                     <div class="contact-form-card">
                         <h3>Get Connected</h3>
-                        <form @submit.prevent>
+
+                        <div v-if="successMessage" class="success-message">
+                            <Icon name="mdi:check-circle" class="success-icon" />
+                            <h4>Success!</h4>
+                            <p>{{ successMessage }}</p>
+                        </div>
+
+                        <form v-else @submit.prevent="submitForm">
                             <div class="form-group">
                                 <label>Your Name</label>
-                                <input type="text" placeholder="John Doe" required />
+                                <input type="text" v-model="form.name" placeholder="John Doe"
+                                    :class="{ 'input-error': touched.name && errors.name }"
+                                    @blur="touched.name = true" />
+                                <span class="error-msg" v-if="touched.name && errors.name">{{ errors.name }}</span>
                             </div>
                             <div class="form-row">
                                 <div class="form-group">
                                     <label>Email</label>
-                                    <input type="email" placeholder="john@example.com" required />
+                                    <input type="email" v-model="form.email" placeholder="john@example.com"
+                                        :class="{ 'input-error': touched.email && errors.email }"
+                                        @blur="touched.email = true" />
+                                    <span class="error-msg" v-if="touched.email && errors.email">{{ errors.email
+                                    }}</span>
                                 </div>
                                 <div class="form-group">
                                     <label>Phone (optional)</label>
-                                    <input type="tel" placeholder="+234 816 111 1111" />
+                                    <input type="tel" v-model="form.phone" placeholder="+234 816 111 1111"
+                                        :class="{ 'input-error': touched.phone && errors.phone }"
+                                        @blur="touched.phone = true" />
+                                    <span class="error-msg" v-if="touched.phone && errors.phone">{{ errors.phone
+                                    }}</span>
                                 </div>
                             </div>
                             <div class="form-group">
                                 <label>Subject</label>
-                                <select>
+                                <select v-model="form.subject"
+                                    :class="{ 'input-error': touched.subject && errors.subject }"
+                                    @blur="touched.subject = true">
                                     <option value="">Select a subject</option>
-                                    <option>Prayer Request</option>
-                                    <option>General Inquiry</option>
-                                    <option>New Member</option>
-                                    <option>Partnership</option>
+                                    <option value="prayer_request">Prayer Request</option>
+                                    <option value="general_inquiry">General Inquiry</option>
+                                    <option value="new_member">New Member</option>
+                                    <option value="partnership">Partnership</option>
                                 </select>
+                                <span class="error-msg" v-if="touched.subject && errors.subject">{{ errors.subject
+                                }}</span>
                             </div>
                             <div class="form-group">
                                 <label>Your Message</label>
-                                <textarea placeholder="How can we help you?" rows="5" required></textarea>
+                                <textarea v-model="form.message" placeholder="How can we help you?" rows="5"
+                                    :class="{ 'input-error': touched.message && errors.message }"
+                                    @blur="touched.message = true"></textarea>
+                                <span class="error-msg" v-if="touched.message && errors.message">{{ errors.message
+                                }}</span>
                             </div>
-                            <button type="submit" class="btn-submit">Send Message</button>
+
+                            <div class="error-msg api-error" v-if="apiError">{{ apiError }}</div>
+
+                            <button type="submit" class="btn-submit" :disabled="!isFormValid || isSubmitting">
+                                <Icon v-if="isSubmitting" name="mdi:loading" class="spinner-icon" />
+                                {{ isSubmitting ? 'Sending...' : 'Send Message' }}
+                            </button>
                         </form>
                     </div>
                 </div>
@@ -97,8 +129,68 @@
         <AppFooter />
     </div>
 </template>
-<script setup>
+<script setup lang="ts">
 const appResourceInfoStore = useAppResourceInfoStore();
+const { post } = useApi();
+
+const form = reactive({
+    name: '',
+    email: '',
+    phone: '',
+    subject: '',
+    message: ''
+});
+
+const touched = reactive({
+    name: false,
+    email: false,
+    phone: false,
+    subject: false,
+    message: false
+});
+
+const isSubmitting = ref(false);
+const successMessage = ref('');
+const apiError = ref('');
+
+const errors = computed(() => {
+    return {
+        name: !form.name.trim() ? 'Name is required' : form.name.length > 255 ? 'Name is too long' : '',
+        email: !form.email.trim() ? 'Email is required' : !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(form.email) ? 'Enter a valid email address' : form.email.length > 255 ? 'Email is too long' : '',
+        phone: form.phone && form.phone.length > 20 ? 'Phone number must be at most 20 characters' : '',
+        subject: !form.subject ? 'Subject is required' : '',
+        message: !form.message.trim() ? 'Message is required' : form.message.length < 10 ? 'Message must be at least 10 characters' : form.message.length > 2500 ? 'Message is too long' : ''
+    };
+});
+
+const isFormValid = computed(() => {
+    return !errors.value.name && !errors.value.email && !errors.value.phone && !errors.value.subject && !errors.value.message;
+});
+
+const submitForm = async () => {
+    // Touch all fields to show any hidden errors
+    Object.keys(touched).forEach(key => touched[key as keyof typeof touched] = true);
+
+    if (!isFormValid.value) return;
+
+    isSubmitting.value = true;
+    apiError.value = '';
+
+    try {
+        console.log("form", form);
+        const response = await post<any>('/contacts', form);
+        if (response.status === 'success') {
+            successMessage.value = response.message || 'Thank you for contacting us! We\'ll get back to you soon.';
+        } else {
+            apiError.value = response.message || 'Failed to send message. Please try again.';
+        }
+    } catch (e: any) {
+        apiError.value = e.data?.message || 'An error occurred while sending your message. Please check your connection and try again.';
+        console.error('Contact form error:', e);
+    } finally {
+        isSubmitting.value = false;
+    }
+};
 </script>
 
 <style scoped>
@@ -276,12 +368,81 @@ const appResourceInfoStore = useAppResourceInfoStore();
     font-size: 0.95rem;
     font-weight: 700;
     cursor: pointer;
-    transition: background 0.25s;
+    transition: background 0.25s, opacity 0.25s;
     font-family: inherit;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 0.5rem;
 }
 
-.btn-submit:hover {
+.btn-submit:hover:not(:disabled) {
     background: var(--lc-gold);
+}
+
+.btn-submit:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+}
+
+.input-error {
+    border-color: #ef4444 !important;
+}
+
+.error-msg {
+    display: block;
+    color: #ef4444;
+    font-size: 0.75rem;
+    margin-top: 0.4rem;
+    font-weight: 500;
+}
+
+.api-error {
+    margin-bottom: 1.25rem;
+    padding: 10px;
+    background: #fef2f2;
+    border: 1px solid #fee2e2;
+    border-radius: 6px;
+}
+
+.spinner-icon {
+    animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+    from {
+        transform: rotate(0deg);
+    }
+
+    to {
+        transform: rotate(360deg);
+    }
+}
+
+.success-message {
+    text-align: center;
+    padding: 3rem 1rem;
+    background: #f0fdf4;
+    border: 1px solid #dcfce3;
+    border-radius: 8px;
+}
+
+.success-icon {
+    font-size: 4rem;
+    color: #22c55e;
+    margin-bottom: 1rem;
+}
+
+.success-message h4 {
+    font-size: 1.5rem;
+    color: #166534;
+    margin: 0 0 0.5rem;
+}
+
+.success-message p {
+    color: #15803d;
+    margin: 0;
+    line-height: 1.5;
 }
 
 @media (max-width: 768px) {
