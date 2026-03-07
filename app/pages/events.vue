@@ -58,7 +58,8 @@
                                     </p>
                                     <p class="event-desc">{{ event.subtitle || event.description.slice(0, 100) + '...'
                                     }}</p>
-                                    <NuxtLink :to="`/events/${event.id}`" class="btn-register">Free for all</NuxtLink>
+                                    <button class="btn-register" :class="getEventStatus(event)">{{ getEventStatus(event)
+                                    }}</button>
                                 </div>
                             </div>
                         </div>
@@ -99,6 +100,27 @@ const getEventDay = (dateStr?: string): string => {
 const getEventMonth = (dateStr?: string): string => {
     if (!dateStr) return '';
     return new Date(dateStr).toLocaleDateString('en-US', { month: 'short' }).toUpperCase();
+};
+
+const getEventStatus = (event: Event): 'upcoming' | 'ongoing' | 'finished' => {
+    if (!event.event_dates || event.event_dates.length === 0) return 'upcoming';
+
+    const dates = event.event_dates.map(d => new Date(d));
+    const start = Math.min(...dates.map(d => d.getTime()));
+    const end = Math.max(...dates.map(d => d.getTime()));
+
+    const now = new Date();
+    const today = new Date(now.getFullYear(), now.getMonth(), now.getDate()).getTime();
+
+    const startObj = new Date(start);
+    const startDate = new Date(startObj.getFullYear(), startObj.getMonth(), startObj.getDate()).getTime();
+
+    const endObj = new Date(end);
+    const endDate = new Date(endObj.getFullYear(), endObj.getMonth(), endObj.getDate()).getTime();
+
+    if (endDate < today) return 'finished';
+    if (startDate > today) return 'upcoming';
+    return 'ongoing';
 };
 </script>
 
@@ -304,11 +326,20 @@ const getEventMonth = (dateStr?: string): string => {
     font-size: 0.78rem;
     font-weight: 700;
     text-decoration: none;
-    transition: background 0.2s;
+    transition: all 0.2s;
+    border: 1px solid transparent;
+    text-transform: capitalize;
+    cursor: default;
 }
 
-.btn-register:hover {
-    background: var(--lc-gold-hover);
+.btn-register.ongoing {
+    background: #fff;
+    color: var(--lc-gold);
+    border-color: #000;
+}
+
+.btn-register.finished {
+    opacity: 0.5;
 }
 
 /* ───── Skeleton Loaders ───── */

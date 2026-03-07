@@ -17,7 +17,7 @@
         <!-- Featured Sermon -->
         <section class="featured-sermon">
             <div class="container">
-                <h2 class="section-title">Latest Message</h2>
+                <h2 class="section-title">Latest Videos</h2>
                 <div class="featured-grid">
                     <div class="featured-video">
                         <div class="video-wrap">
