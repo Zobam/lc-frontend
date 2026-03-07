@@ -88,14 +88,14 @@
             <div class="container">
                 <div class="archive-header">
                     <h2 class="section-title">Sermon Archive</h2>
-                    <div class="archive-filters">
+                    <!-- <div class="archive-filters">
                         <select class="filter-select" v-model="selectedSeries">
                             <option value="">All Series</option>
                             <option>Faith Foundations</option>
                             <option>The Grace Life</option>
                             <option>Kingdom Purpose</option>
                         </select>
-                    </div>
+                    </div> -->
                 </div>
                 <div class="archive-grid">
                     <template v-if="videosLoading">
@@ -187,7 +187,12 @@ const selectVideo = (video: VideoLink) => {
 };
 
 const scrollToTop = () => {
-    window.scrollTo({ top: 0, behavior: 'smooth' });
+    const featuredSection = document.querySelector('.featured-sermon');
+    if (featuredSection) {
+        featuredSection.scrollIntoView({ behavior: 'smooth' });
+    } else {
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
 };
 
 const formatVideoDate = (dateStr?: string | null): string => {
