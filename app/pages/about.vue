@@ -81,7 +81,7 @@
             </div>
         </section>
 
-        <!-- Leadership -->
+        <!-- Leadership
         <section class="leadership-section">
             <div class="container">
                 <h2 class="section-title">Our Leadership</h2>
@@ -95,7 +95,7 @@
                     </div>
                 </div>
             </div>
-        </section>
+        </section> -->
 
         <AppFooter />
     </div>

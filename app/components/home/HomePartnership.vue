@@ -7,17 +7,17 @@
             <div class="partnership-text">
                 <h2>Partnership Impact</h2>
                 <p>
-                    The InnerCity Mission for Children envisions a world in which orphaned, deprived, and
-                    vulnerable children in the inner cities live free of poverty and fulfill their God-given
-                    potential, becoming responsible and self-reliant adults.
+                    The Light City Mission outreach envisions a world in which orphaned, deprived, and
+                    vulnerable people live free of satanic bondage, poverty and fulfill their God-given
+                    potential, becoming responsible and self-reliant members of the society.
                 </p>
                 <div class="impact-stats">
                     <div class="stat">
-                        <h3>500+</h3>
-                        <p>Children Supported</p>
+                        <h3>5000+</h3>
+                        <p>Souls saved</p>
                     </div>
                     <div class="stat">
-                        <h3>25</h3>
+                        <h3>35</h3>
                         <p>Communities Reached</p>
                     </div>
                     <div class="stat">

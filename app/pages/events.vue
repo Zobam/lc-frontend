@@ -17,35 +17,52 @@
         <!-- Events Filter -->
         <section class="events-section">
             <div class="container">
-                <div class="filter-bar">
+                <!-- <div class="filter-bar">
                     <button v-for="cat in categories" :key="cat" class="filter-btn"
                         :class="{ active: activeFilter === cat }" @click="activeFilter = cat">{{ cat }}</button>
-                </div>
+                </div> -->
 
                 <div class="events-grid">
-                    <div class="event-card" v-for="event in filteredEvents" :key="event.title">
-                        <div class="event-img">
-                            <img :src="event.img" :alt="event.title" />
-                            <span class="event-category">{{ event.category }}</span>
-                        </div>
-                        <div class="event-body">
-                            <div class="event-date-badge">
-                                <strong>{{ event.day }}</strong>
-                                <span>{{ event.month }}</span>
-                            </div>
-                            <div class="event-info">
-                                <h3>{{ event.title }}</h3>
-                                <p class="event-meta">
-                                    <Icon name="mdi:clock-outline" /> {{ event.time }}
-                                </p>
-                                <p class="event-meta">
-                                    <Icon name="mdi:map-marker" /> {{ event.location }}
-                                </p>
-                                <p class="event-desc">{{ event.desc }}</p>
-                                <a href="#" class="btn-register">Register Free</a>
+                    <template v-if="eventsLoading">
+                        <div class="event-card skeleton-card" v-for="n in 6" :key="n">
+                            <div class="skeleton-img" style="height: 180px;"></div>
+                            <div class="event-body">
+                                <div style="width: 54px; height: 65px; border-radius: 8px; flex-shrink: 0;"
+                                    class="skeleton-img"></div>
+                                <div class="event-info" style="width: 100%;">
+                                    <div class="skeleton-line long" style="margin-bottom: 0.5rem;"></div>
+                                    <div class="skeleton-line medium" style="margin-bottom: 0.5rem;"></div>
+                                    <div class="skeleton-line short" style="margin-bottom: 1rem;"></div>
+                                    <div class="skeleton-line" style="width: 100px; height: 30px;"></div>
+                                </div>
                             </div>
                         </div>
-                    </div>
+                    </template>
+                    <template v-else>
+                        <div class="event-card" v-for="event in events" :key="event.id">
+                            <div class="event-img">
+                                <img :src="event.primary_image?.image_url || 'https://images.unsplash.com/photo-1429962714451-bb934ecdc4ec?w=500&h=280&fit=crop'"
+                                    :alt="event.title" />
+                                <!-- <span class="event-category">Live Event</span> -->
+                            </div>
+                            <div class="event-body">
+                                <div class="event-date-badge">
+                                    <strong>{{ getEventDay(event.event_dates?.[0]) }}</strong>
+                                    <span>{{ getEventMonth(event.event_dates?.[0]) }}</span>
+                                </div>
+                                <div class="event-info">
+                                    <h3>{{ event.title }}</h3>
+                                    <!-- Only show start date formatting if need be, else skip the icon -->
+                                    <p class="event-meta" v-if="event.location">
+                                        <Icon name="mdi:map-marker" /> {{ event.location }}
+                                    </p>
+                                    <p class="event-desc">{{ event.subtitle || event.description.slice(0, 100) + '...'
+                                    }}</p>
+                                    <NuxtLink :to="`/events/${event.id}`" class="btn-register">Free for all</NuxtLink>
+                                </div>
+                            </div>
+                        </div>
+                    </template>
                 </div>
             </div>
         </section>
@@ -55,21 +72,34 @@
 </template>
 
 <script setup lang="ts">
-const categories = ['All', 'Worship', 'Youth', 'Outreach', 'Conference'];
-const activeFilter = ref('All');
+import type { EventsListResponse } from '~/types/api';
+import type { Event } from '~/types/models';
 
-const events = [
-    { title: 'Praise Carnival 2026', day: '15', month: 'FEB', time: 'Saturday, 6:00 PM', location: 'Main Auditorium', category: 'Worship', desc: 'A grand night of music, worship, and thanksgiving to God.', img: 'https://images.unsplash.com/photo-1429962714451-bb934ecdc4ec?w=500&h=280&fit=crop' },
-    { title: 'Holy Ghost Night', day: '28', month: 'FEB', time: 'Friday, 9:00 PM – Dawn', location: 'Main Auditorium', category: 'Worship', desc: 'An all-night prayer and worship experience.', img: 'https://images.unsplash.com/photo-1508997449629-303059a039c0?w=500&h=280&fit=crop' },
-    { title: 'Youth Summit 2026', day: '15', month: 'MAR', time: 'Sat. & Sun., 10:00 AM', location: 'Youth Hall', category: 'Youth', desc: 'Empowering the next generation for kingdom assignment.', img: 'https://images.unsplash.com/photo-1529156069898-49953e39b3ac?w=500&h=280&fit=crop' },
-    { title: 'Community Outreach', day: '07', month: 'MAR', time: 'Saturday, 9:00 AM', location: 'City Centre', category: 'Outreach', desc: 'Join us as we serve our local community with food and prayer.', img: 'https://images.unsplash.com/photo-1488521787991-ed7bbaae773c?w=500&h=280&fit=crop' },
-    { title: 'Annual Convention', day: '20', month: 'MAR', time: 'Fri–Sun, All Day', location: 'Convention Centre', category: 'Conference', desc: 'Three days of intensive teaching, worship, and networking.', img: 'https://images.unsplash.com/photo-1517457373958-b7bdd4587205?w=500&h=280&fit=crop' },
-    { title: 'Marriage Enrichment', day: '29', month: 'MAR', time: 'Saturday, 2:00 PM', location: 'Family Hall', category: 'Conference', desc: 'Strengthen your marriage with biblical principles and practical tools.', img: 'https://images.unsplash.com/photo-1606788075761-a6a9f8f51bd2?w=500&h=280&fit=crop' },
-];
+const { get } = useApi();
 
-const filteredEvents = computed(() =>
-    activeFilter.value === 'All' ? events : events.filter(e => e.category === activeFilter.value)
-);
+const eventsLoading = ref(true);
+const events = ref<Event[]>([]);
+
+onMounted(async () => {
+    try {
+        const response = await get<EventsListResponse>('/events', { per_page: 6 });
+        events.value = response.data ?? [];
+    } catch (e) {
+        console.error('Failed to load events:', e);
+    } finally {
+        eventsLoading.value = false;
+    }
+});
+
+const getEventDay = (dateStr?: string): string => {
+    if (!dateStr) return '';
+    return new Date(dateStr).toLocaleDateString('en-US', { day: '2-digit' });
+};
+
+const getEventMonth = (dateStr?: string): string => {
+    if (!dateStr) return '';
+    return new Date(dateStr).toLocaleDateString('en-US', { month: 'short' }).toUpperCase();
+};
 </script>
 
 <style scoped>
@@ -279,6 +309,48 @@ const filteredEvents = computed(() =>
 
 .btn-register:hover {
     background: var(--lc-gold-hover);
+}
+
+/* ───── Skeleton Loaders ───── */
+@keyframes shimmer {
+    0% {
+        background-position: -400px 0;
+    }
+
+    100% {
+        background-position: 400px 0;
+    }
+}
+
+.skeleton-card {
+    pointer-events: none;
+}
+
+.skeleton-img {
+    width: 100%;
+    background: linear-gradient(90deg, #e8e8e8 25%, #f5f5f5 50%, #e8e8e8 75%);
+    background-size: 800px 100%;
+    animation: shimmer 1.4s infinite;
+}
+
+.skeleton-line {
+    height: 14px;
+    border-radius: 4px;
+    background: linear-gradient(90deg, #e8e8e8 25%, #f5f5f5 50%, #e8e8e8 75%);
+    background-size: 800px 100%;
+    animation: shimmer 1.4s infinite;
+}
+
+.skeleton-line.short {
+    width: 35%;
+}
+
+.skeleton-line.medium {
+    width: 60%;
+}
+
+.skeleton-line.long {
+    width: 85%;
 }
 
 @media (max-width: 900px) {

@@ -11,7 +11,7 @@
                 perish but have eternal life. We invite you to make that choice today — a choice that will change
                 your life forever and give it new meaning, purpose and direction.
             </p>
-            <NuxtLink to="/about" class="btn btn-gold">Make A Decision Today</NuxtLink>
+            <NuxtLink to="/contact" class="btn btn-gold">Make A Decision Today</NuxtLink>
         </div>
     </section>
 </template>

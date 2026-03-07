@@ -13,10 +13,12 @@
                     <p class="footer-tagline">Giving Your Life a Meaning.<br>A community of believers growing together
                         in faith, love, and purpose.</p>
                     <div class="footer-socials">
-                        <a href="#" aria-label="Facebook">
+                        <a href="https://web.facebook.com/Light-City-Evangelical-Center-Intl-103591924583397"
+                            aria-label="Facebook">
                             <Icon name="mdi:facebook" />
                         </a>
-                        <a href="#" aria-label="YouTube">
+                        <a href="https://www.youtube.com/channel/UC7TdzCrIuw73dbInqU8Gb6w/featured"
+                            aria-label="YouTube">
                             <Icon name="mdi:youtube" />
                         </a>
                         <a href="#" aria-label="Instagram">
@@ -68,13 +70,13 @@
                     <h4>Contact Us</h4>
                     <ul>
                         <li>
-                            <Icon name="mdi:map-marker" /> 123 Faith Street, Light City
+                            <Icon name="mdi:map-marker" /> {{ appResourceInfoStore.address }}
                         </li>
                         <li>
-                            <Icon name="mdi:phone" /> (555) 123-4567
+                            <Icon name="mdi:phone" /> {{ appResourceInfoStore.phone }}
                         </li>
                         <li>
-                            <Icon name="mdi:email" /> info@lightcity.org
+                            <Icon name="mdi:email" /> {{ appResourceInfoStore.email }}
                         </li>
                     </ul>
                 </div>
@@ -83,13 +85,15 @@
 
         <div class="footer-bottom">
             <div class="footer-bottom-inner">
-                <p>&copy; {{ new Date().getFullYear() }} Light City Evangelical Collective. All rights reserved.</p>
+                <p>&copy; {{ new Date().getFullYear() }} Light City Evangelical Center Int'l. All rights reserved.</p>
                 <p>Built with love &amp; faith.</p>
             </div>
         </div>
     </footer>
 </template>
-
+<script setup>
+const appResourceInfoStore = useAppResourceInfoStore();
+</script>
 <style scoped>
 .site-footer {
     background: var(--lc-dark);

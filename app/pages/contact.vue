@@ -25,7 +25,7 @@
                             </span>
                             <div>
                                 <h4>Address</h4>
-                                <p>123 Faith Street<br>Light City, LC 12345</p>
+                                <p>{{ appResourceInfoStore.address }}</p>
                             </div>
                         </div>
                         <div class="contact-item">
@@ -34,7 +34,7 @@
                             </span>
                             <div>
                                 <h4>Phone</h4>
-                                <p>(555) 123-4567</p>
+                                <p>{{ appResourceInfoStore.phone }}</p>
                             </div>
                         </div>
                         <div class="contact-item">
@@ -43,7 +43,7 @@
                             </span>
                             <div>
                                 <h4>Email</h4>
-                                <p>info@lightcity.org</p>
+                                <p>{{ appResourceInfoStore.email }}</p>
                             </div>
                         </div>
                         <div class="contact-item">
@@ -70,7 +70,7 @@
                                 </div>
                                 <div class="form-group">
                                     <label>Phone (optional)</label>
-                                    <input type="tel" placeholder="+1 (555) 000-0000" />
+                                    <input type="tel" placeholder="+234 816 111 1111" />
                                 </div>
                             </div>
                             <div class="form-group">
@@ -97,6 +97,9 @@
         <AppFooter />
     </div>
 </template>
+<script setup>
+const appResourceInfoStore = useAppResourceInfoStore();
+</script>
 
 <style scoped>
 .page-wrapper {
