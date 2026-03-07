@@ -98,24 +98,39 @@
                     </div>
                 </div>
                 <div class="archive-grid">
-                    <div class="sermon-card" v-for="s in sermons" :key="s.title">
-                        <div class="sc-thumb">
-                            <img :src="s.img" :alt="s.title" />
-                            <div class="sc-play">
-                                <Icon name="mdi:play" />
+                    <template v-if="videosLoading">
+                        <div class="sermon-card skeleton-card" v-for="n in 6" :key="n">
+                            <div class="skeleton-img" style="height: 160px;"></div>
+                            <div class="sc-info">
+                                <div class="skeleton-line short" style="margin-bottom:0.5rem"></div>
+                                <div class="skeleton-line long" style="margin-bottom:0.4rem"></div>
+                                <div class="skeleton-line medium"></div>
                             </div>
                         </div>
-                        <div class="sc-info">
-                            <span class="sc-series">{{ s.series }}</span>
-                            <h4>{{ s.title }}</h4>
-                            <p>{{ s.speaker }} · {{ s.date }}</p>
+                    </template>
+                    <template v-else>
+                        <div class="sermon-card" v-for="s in archiveVideos" :key="s.id"
+                            @click="selectVideo(s); scrollToTop()">
+                            <div class="sc-thumb">
+                                <img :src="s.thumbnail_url || 'https://images.unsplash.com/photo-1438761681033-6461ffad8d80?w=400&h=220&fit=crop'"
+                                    :alt="s.title" />
+                                <div class="sc-play">
+                                    <Icon name="mdi:play" />
+                                </div>
+                            </div>
+                            <div class="sc-info">
+                                <span class="sc-series">Message</span>
+                                <h4>{{ s.title }}</h4>
+                                <p>{{ s.user ? `${s.user.first_name} ${s.user.last_name}` : '' }} · {{
+                                    formatVideoDate(s.published_at) }}</p>
+                            </div>
                         </div>
-                    </div>
+                    </template>
                 </div>
             </div>
         </section>
 
-        <!-- Worship Playlist -->
+        <!-- Worship Playlist
         <section class="worship-section">
             <div class="container">
                 <h2 class="section-title wlight">Worship Playlist</h2>
@@ -131,7 +146,7 @@
                     </div>
                 </div>
             </div>
-        </section>
+        </section> -->
 
         <AppFooter />
     </div>
@@ -148,6 +163,7 @@ const selectedSeries = ref('');
 const videosLoading = ref(true);
 const mainVideo = ref<VideoLink | null>(null);
 const sideVideos = ref<VideoLink[]>([]);
+const archiveVideos = ref<VideoLink[]>([]);
 const autoplay = ref(false);
 
 const getYouTubeId = (video: VideoLink): string | null => {
@@ -170,6 +186,10 @@ const selectVideo = (video: VideoLink) => {
     mainVideo.value = video;
 };
 
+const scrollToTop = () => {
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+};
+
 const formatVideoDate = (dateStr?: string | null): string => {
     if (!dateStr) return '';
     return new Date(dateStr).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
@@ -177,25 +197,17 @@ const formatVideoDate = (dateStr?: string | null): string => {
 
 onMounted(async () => {
     try {
-        const response = await get<VideoListResponse>('/videos', { per_page: 5 });
+        const response = await get<VideoListResponse>('/videos', { per_page: 11 });
         const videos = response.data?.data ?? [];
         mainVideo.value = videos[0] ?? null;
-        sideVideos.value = videos.slice(1);
+        sideVideos.value = videos.slice(1, 5);
+        archiveVideos.value = videos.slice(5);
     } catch (e) {
         console.error('Failed to load videos:', e);
     } finally {
         videosLoading.value = false;
     }
 });
-
-const sermons = [
-    { title: 'Strength in Weakness', speaker: 'Ptr Sarah', date: 'Jan 26', series: 'Faith Foundations', img: 'https://images.unsplash.com/photo-1438761681033-6461ffad8d80?w=400&h=220&fit=crop' },
-    { title: 'Living by Grace', speaker: 'Ptr John', date: 'Jan 19', series: 'The Grace Life', img: 'https://images.unsplash.com/photo-1545987796-200677ee1011?w=400&h=220&fit=crop' },
-    { title: 'Finding Your Purpose', speaker: 'Bro James', date: 'Jan 12', series: 'Kingdom Purpose', img: 'https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=400&h=220&fit=crop' },
-    { title: 'The Power of Prayer', speaker: 'Sis Grace', date: 'Jan 5', series: 'Faith Foundations', img: 'https://images.unsplash.com/photo-1494522855154-9297ac14b55f?w=400&h=220&fit=crop' },
-    { title: 'Unity in the Spirit', speaker: 'Ptr John', date: 'Dec 29', series: 'Kingdom Purpose', img: 'https://images.unsplash.com/photo-1516450360452-9312f5e86fc7?w=400&h=220&fit=crop' },
-    { title: 'God\'s Unfailing Love', speaker: 'Ptr Sarah', date: 'Dec 22', series: 'The Grace Life', img: 'https://images.unsplash.com/photo-1508997449629-303059a039c0?w=400&h=220&fit=crop' },
-];
 
 const worship = [
     { title: 'Praise Medley — Feb 2026', img: 'https://images.unsplash.com/photo-1415201364774-f6f0bb35f28f?w=300&h=200&fit=crop' },
