@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import type { EventResponse } from "~/types/api";
-import { toast } from "vue-sonner";
+// import { toast } from "vue-sonner";
 
 definePageMeta({ layout: "admin", middleware: "sidebase-auth" });
 

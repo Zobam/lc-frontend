@@ -70,7 +70,7 @@
                                 <strong>10+</strong><span>Years</span>
                             </div>
                             <div class="ss">
-                                <strong>5,000+</strong><span>Members</span>
+                                <strong>500+</strong><span>Members</span>
                             </div>
                             <div class="ss">
                                 <strong>3</strong><span>Locations</span>

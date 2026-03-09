@@ -31,7 +31,7 @@
                         </p>
                         <div class="giving-stats">
                             <div class="gs"><strong>₦50M+</strong><span>Given This Year</span></div>
-                            <div class="gs"><strong>500+</strong><span>Lives Impacted</span></div>
+                            <div class="gs"><strong>5,000+</strong><span>Lives Impacted</span></div>
                             <div class="gs"><strong>25+</strong><span>Projects Funded</span></div>
                         </div>
                     </div>
@@ -112,9 +112,9 @@ const givingOptions = [
         icon: 'mdi:bank',
         desc: 'Give directly to our church bank account. Use your name as reference.',
         details: [
-            { label: 'Bank', value: 'First City Bank' },
-            { label: 'Account Name', value: 'Light City Evangelical Collective' },
-            { label: 'Account Number', value: '0123456789' },
+            { label: 'Bank', value: 'First Bank' },
+            { label: 'Account Name', value: 'Light City Evangelical Center Int\'l' },
+            { label: 'Account Number', value: '**********' },
         ],
     },
     {

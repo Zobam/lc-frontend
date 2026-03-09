@@ -7,11 +7,19 @@ definePageMeta({ layout: "admin", middleware: "sidebase-auth" });
 const api = useApi();
 const route = useRoute();
 const router = useRouter();
-const postId = route.params.id as string;
+const id = route.params?.id as string;
+const postSlug = ref("");
+const postId = ref("");
+if (id) {
+    postSlug.value = id.split('_')[1] as string;
+    postId.value = id.split('_')[0] as string;
+} else {
+    navigateTo("/admin/posts");
+}
 
 const { data: postRes, pending, refresh } = await useAsyncData(
-    `post-${postId}`,
-    () => api.get<PostResponse>(`/posts/${postId}`)
+    `post-${postId.value}`,
+    () => api.get<PostResponse>(`/posts/${postSlug.value}`)
 );
 
 const form = ref({
@@ -40,7 +48,7 @@ const removeTag = (i: number) => form.value.tags.splice(i, 1);
 const updatePost = async () => {
     loading.value = true;
     try {
-        await api.put<PostResponse>(`/posts/${postId}`, form.value);
+        await api.put<PostResponse>(`/posts/${postId.value}`, form.value);
         alert("Post updated successfully");
         refresh();
     } catch (e: any) { alert(e.message); }
@@ -49,7 +57,7 @@ const updatePost = async () => {
 
 const deletePost = async () => {
     if (!confirm("Delete this post permanently?")) return;
-    try { await api.delete(`/posts/${postId}`); router.push("/admin/posts"); }
+    try { await api.delete(`/posts/${postId.value}`); router.push("/admin/posts"); }
     catch (e: any) { alert(e.message); }
 };
 
@@ -61,7 +69,7 @@ const uploadImages = async () => {
     const fd = new FormData();
     imageFiles.value.forEach(f => fd.append("images[]", f));
     try {
-        await api.post(`/posts/${postId}/images`, fd);
+        await api.post(`/posts/${postId.value}/images`, fd);
         alert("Images uploaded");
         refresh();
         imageFiles.value = [];
@@ -70,12 +78,12 @@ const uploadImages = async () => {
 };
 
 const setFeatured = async (imageId: string) => {
-    try { await api.put(`/posts/${postId}/images/${imageId}/set-featured`); refresh(); }
+    try { await api.put(`/posts/${postId.value}/images/${imageId}/set-featured`); refresh(); }
     catch (e: any) { alert(e.message); }
 };
 const deleteImage = async (imageId: string) => {
     if (!confirm("Delete this image?")) return;
-    try { await api.delete(`/posts/${postId}/images/${imageId}`); refresh(); }
+    try { await api.delete(`/posts/${postId.value}/images/${imageId}`); refresh(); }
     catch (e: any) { alert(e.message); }
 };
 

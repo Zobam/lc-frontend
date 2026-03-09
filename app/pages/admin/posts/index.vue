@@ -119,7 +119,7 @@ const categories = Object.values(PostCategory);
                         </td>
                         <td class="muted">{{ post.views ?? 0 }}</td>
                         <td class="text-right">
-                            <NuxtLink :to="`/admin/posts/${post.id}`" class="action-link">Edit</NuxtLink>
+                            <NuxtLink :to="`/admin/posts/${post.id}_${post.slug}`" class="action-link">Edit</NuxtLink>
                             <button @click="deletePost(post.id)" :disabled="deletingId === post.id"
                                 class="action-del">{{ deletingId === post.id ? "…" : "Delete" }}</button>
                         </td>
