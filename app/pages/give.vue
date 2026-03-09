@@ -60,16 +60,17 @@
                                 <span class="bd-value">{{ d.value }}</span>
                             </div>
                         </div>
-                        <a v-if="option.cta" href="#" class="btn-give">{{ option.cta }}</a>
+                        <button v-if="option.cta" @click.prevent="handleCtaClick(option.cta)" class="btn-give">{{
+                            option.cta }}</button>
                     </div>
                 </div>
             </div>
         </section>
 
-        <!-- Online Giving Form -->
-        <section class="give-form-section">
-            <div class="container">
-                <div class="give-form-card">
+        <!-- Online Giving Dialog -->
+        <Dialog v-model:open="isGiveDialogOpen">
+            <DialogContent class="sm:max-w-[600px] p-0 border-none bg-transparent shadow-none">
+                <div class="give-form-card w-full m-0" style="background: var(--lc-dark); max-width: 100%;">
                     <h2>Give Online</h2>
                     <p class="give-form-sub">Securely give to the church using your debit card or bank transfer.</p>
                     <div class="give-amounts">
@@ -92,14 +93,29 @@
                         <Icon name="mdi:shield-check" /> Secured by 256-bit encryption. Your giving is safe.
                     </p>
                 </div>
-            </div>
-        </section>
+            </DialogContent>
+        </Dialog>
 
         <AppFooter />
     </div>
 </template>
 
 <script setup lang="ts">
+import {
+    Dialog,
+    DialogContent,
+    DialogTrigger,
+} from '@/components/ui/dialog'
+const isGiveDialogOpen = ref(false);
+
+const handleCtaClick = (ctaText: string) => {
+    if (ctaText === 'Give Online Now') {
+        isGiveDialogOpen.value = true;
+    } else {
+        // Handle other CTAs
+    }
+};
+
 const amounts = [1000, 5000, 10000, 20000, 50000];
 const selectedAmount = ref(5000);
 const customAmount = ref('');
