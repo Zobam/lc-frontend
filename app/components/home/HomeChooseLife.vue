@@ -1,8 +1,7 @@
 <template>
     <section class="choose-life">
         <div class="cl-overlay"></div>
-        <img src="https://images.unsplash.com/photo-1544636331-e26879cd4d9b?w=1920&h=500&fit=crop" alt="Choose Life"
-            class="cl-bg" />
+        <img src="/choose-life.png" alt="Choose Life" class="cl-bg" />
         <div class="cl-content">
             <h2>CHOOSE LIFE</h2>
             <div class="cl-cross">✝</div>
@@ -67,7 +66,7 @@
 
 .cl-content p {
     color: rgba(255, 255, 255, 0.8);
-    font-size: 1rem;
+    font-size: 1.2rem;
     line-height: 1.8;
     margin-bottom: 2rem;
 }
