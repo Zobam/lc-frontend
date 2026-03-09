@@ -92,7 +92,9 @@ const formatDate = (d: string) => new Date(d).toLocaleDateString("en-NG", { year
                 </thead>
                 <tbody>
                     <tr v-for="event in eventsData.data" :key="event.id">
-                        <td class="font-medium">{{ event.title }}</td>
+                        <td class="font-medium">
+                            <NuxtLink :to="`/admin/events/${event.id}`">{{ event.title }}</NuxtLink>
+                        </td>
                         <td class="muted">{{ event.location }}</td>
                         <td class="muted">{{ formatDate(event.start_date) }}</td>
                         <td>
@@ -100,7 +102,7 @@ const formatDate = (d: string) => new Date(d).toLocaleDateString("en-NG", { year
                                 {{ event.is_recurring ? "Yes" : "No" }}
                             </span>
                         </td>
-                        <td class="muted">{{ event.images_count ?? 0 }}</td>
+                        <td class="muted">{{ event.images?.length ?? 0 }}</td>
                         <td class="text-right">
                             <NuxtLink :to="`/admin/events/${event.id}`" class="action-link">Edit</NuxtLink>
                             <button @click="deleteEvent(event.id)" :disabled="deletingId === event.id"
@@ -117,7 +119,7 @@ const formatDate = (d: string) => new Date(d).toLocaleDateString("en-NG", { year
             </div>
             <div v-if="eventsData?.meta && eventsData.meta.last_page > 1" class="pagination">
                 <span class="page-info">{{ eventsData.meta.from }}–{{ eventsData.meta.to }} of {{ eventsData.meta.total
-                    }}</span>
+                }}</span>
                 <div class="page-btns">
                     <button @click="goToPage(page - 1)" :disabled="page <= 1" class="page-btn">‹ Prev</button>
                     <button v-for="n in eventsData.meta.last_page" :key="n" @click="goToPage(n)" class="page-btn"
@@ -340,7 +342,7 @@ const formatDate = (d: string) => new Date(d).toLocaleDateString("en-NG", { year
 .action-link {
     font-size: 0.8rem;
     font-weight: 600;
-    color: #E05615;
+    color: #1b1a19;
     text-decoration: none;
     margin-right: 0.75rem;
 }

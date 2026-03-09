@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import type { EventResponse } from "~/types/api";
+import { toast } from "vue-sonner";
 
 definePageMeta({ layout: "admin", middleware: "sidebase-auth" });
 
@@ -10,7 +11,7 @@ const eventId = route.params.id as string;
 
 const { data: eventRes, pending, refresh } = await useAsyncData(
     `event-${eventId}`,
-    () => api.get<EventResponse>(`/events/${eventId}`)
+    () => api.get<EventResponse>(`/events/${eventId}/admin`)
 );
 
 const form = ref({
@@ -36,6 +37,25 @@ watch(eventRes, (r) => {
 
 const addDate = () => form.value.event_dates.push("");
 const removeDate = (i: number) => { if (form.value.event_dates.length > 1) form.value.event_dates.splice(i, 1); };
+
+const updatingStatus = ref<string | null>(null);
+const updateStatus = async (status: 'draft' | 'published' | 'cancelled') => {
+    updatingStatus.value = status;
+    try {
+        let endpoint = `/events/${eventId}/`;
+        if (status === 'draft') endpoint += 'unpublish';
+        else if (status === 'published') endpoint += 'publish';
+        else if (status === 'cancelled') endpoint += 'cancel';
+
+        await api.put(endpoint);
+        toast.success(`Event status updated to ${status}`);
+        refresh();
+    } catch (e: any) {
+        toast.error(e.message || "Failed to update event status");
+    } finally {
+        updatingStatus.value = null;
+    }
+};
 
 const updateEvent = async () => {
     loading.value = true;
@@ -113,6 +133,24 @@ const deleteImage = async (imageId: string) => {
 
             <!-- Details -->
             <form v-if="!activeImageTab" @submit.prevent="updateEvent" class="form-card">
+                <div class="status-actions">
+                    <button type="button" class="status-btn" :class="{ active: eventRes.data.status === 'draft' }"
+                        :disabled="eventRes.data.status === 'draft' || updatingStatus === 'draft'"
+                        @click="updateStatus('draft')">
+                        <Icon v-if="updatingStatus === 'draft'" name="mdi:loading" class="spin" /> Draft
+                    </button>
+                    <button type="button" class="status-btn" :class="{ active: eventRes.data.status === 'published' }"
+                        :disabled="eventRes.data.status === 'published' || updatingStatus === 'published'"
+                        @click="updateStatus('published')">
+                        <Icon v-if="updatingStatus === 'published'" name="mdi:loading" class="spin" /> Published
+                    </button>
+                    <button type="button" class="status-btn" :class="{ active: eventRes.data.status === 'cancelled' }"
+                        :disabled="eventRes.data.status === 'cancelled' || updatingStatus === 'cancelled'"
+                        @click="updateStatus('cancelled')">
+                        <Icon v-if="updatingStatus === 'cancelled'" name="mdi:loading" class="spin" /> Cancelled
+                    </button>
+                </div>
+
                 <div class="field">
                     <label>Title</label>
                     <input v-model="form.title" type="text" class="input" />
@@ -252,6 +290,52 @@ const deleteImage = async (imageId: string) => {
 .tab-active {
     color: #E05615;
     border-bottom-color: #E05615;
+}
+
+.status-actions {
+    display: flex;
+    justify-content: flex-end;
+    gap: 0.5rem;
+}
+
+.status-btn {
+    display: flex;
+    align-items: center;
+    gap: 0.3rem;
+    padding: 0.4rem 0.8rem;
+    font-size: 0.8rem;
+    font-weight: 600;
+    border-radius: 6px;
+    border: 1px solid #e4e4e7;
+    background: #fff;
+    color: #52525b;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+.status-btn:not(:disabled):hover {
+    background: #f4f4f5;
+}
+
+.status-btn.active {
+    background: #E05615;
+    color: #fff;
+    border-color: #E05615;
+}
+
+.status-btn:disabled {
+    opacity: 0.8;
+    cursor: not-allowed;
+}
+
+.spin {
+    animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+    100% {
+        transform: rotate(360deg);
+    }
 }
 
 .form-card {
