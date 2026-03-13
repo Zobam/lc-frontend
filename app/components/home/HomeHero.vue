@@ -21,11 +21,43 @@
         <!-- Latest Broadcast / Featured Events Ticker -->
         <div class="broadcast-bar">
             <span class="bar-label">Latest:</span>
-            <span class="bar-text">Praise Carnival 2026 &nbsp;|&nbsp; Holy Ghost Night &nbsp;|&nbsp; Annual Convention
-                &nbsp;|&nbsp; Youth Summit 2026</span>
+            <span class="bar-text">{{ latestTickerText }}</span>
         </div>
     </div>
 </template>
+
+<script setup lang="ts">
+import { useAppResourceInfoStore } from '~/stores/appResourceInfo';
+
+const store = useAppResourceInfoStore();
+
+const latestTickerText = computed(() => {
+    if (store.eventsLoading || store.videosLoading) {
+        return 'Loading...';
+    }
+
+    const sortedItems = [...store.events, ...store.videos].sort((a, b) => {
+        const dateA = new Date(a.created_at || a.event_dates?.[0] || a.published_at || 0).getTime();
+        const dateB = new Date(b.created_at || b.event_dates?.[0] || b.published_at || 0).getTime();
+        return dateB - dateA;
+    });
+
+    const titles = sortedItems.map(item => item.title);
+
+    let result = '';
+    for (let i = 0; i < titles.length; i++) {
+        const separator = result.length > 0 ? ' \u00A0|\u00A0 ' : '';
+        const addition = separator + titles[i];
+
+        if ((result + addition).length > 80) {
+            break;
+        }
+        result += addition;
+    }
+
+    return result || '';
+});
+</script>
 
 <style scoped>
 /* ───── Hero ───── */

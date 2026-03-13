@@ -69,10 +69,12 @@
 </template>
 
 <script setup lang="ts">
+import { useAppResourceInfoStore } from '~/stores/appResourceInfo';
 import type { VideoListResponse } from '~/types/api';
 import type { VideoLink } from '~/types/models';
 
 const { get } = useApi();
+const store = useAppResourceInfoStore();
 
 const videosLoading = ref(true);
 const mainVideo = ref<VideoLink | null>(null);
@@ -110,10 +112,12 @@ onMounted(async () => {
         const videos = response.data?.data ?? [];
         mainVideo.value = videos[0] ?? null;
         sideVideos.value = videos.slice(1);
+        store.videos = videos;
     } catch (e) {
         console.error('Failed to load videos:', e);
     } finally {
         videosLoading.value = false;
+        store.videosLoading = false;
     }
 });
 </script>

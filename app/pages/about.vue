@@ -23,24 +23,27 @@
                             <Icon name="mdi:target" />
                         </div>
                         <h3>Our Mission</h3>
-                        <p>To create an environment where people can have a life-changing experience with God — where
-                            every person is valued, loved, and equipped to fulfill their God-given purpose.</p>
+                        <p>To reach the unreached in rural and forgotten areas through evangelical and missionary
+                            outreaches, while raising and discipling leaders through our School of Mission to carry the
+                            vision of the Gospel to the ends of the earth.</p>
                     </div>
                     <div class="mv-card vision">
                         <div class="mv-icon">
                             <Icon name="mdi:eye-outline" />
                         </div>
                         <h3>Our Vision</h3>
-                        <p>A world transformed by the love of God — where communities are healed, families are restored,
-                            and individuals walk in the fullness of God's plan for their lives.</p>
+                        <p>To foster oneness and godliness within the Body of Christ globally, established through
+                            prophetic intercession and strategic partnerships that build worship centers and advance
+                            Kingdom works across all denominations.</p>
                     </div>
                     <div class="mv-card values">
                         <div class="mv-icon">
                             <Icon name="mdi:heart-outline" />
                         </div>
                         <h3>Our Values</h3>
-                        <p>We are guided by Faith, Love, Integrity, Community, and Excellence in everything we do — from
-                            worship to outreach, from leadership to service.</p>
+                        <p>We are committed to compassion and empowerment, manifesting the love of Christ through
+                            charity, scholarship schemes, medical outreaches, and dedicated support for widows and the
+                            underserved in our communities.</p>
                     </div>
                 </div>
             </div>

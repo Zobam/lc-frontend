@@ -57,10 +57,12 @@
 </template>
 
 <script setup lang="ts">
+import { useAppResourceInfoStore } from '~/stores/appResourceInfo';
 import type { EventsListResponse } from '~/types/api';
 import type { Event } from '~/types/models';
 
 const { get } = useApi();
+const store = useAppResourceInfoStore();
 
 const eventsLoading = ref(true);
 const featuredEvent = ref<Event | null>(null);
@@ -72,10 +74,12 @@ onMounted(async () => {
         const events = response.data ?? [];
         featuredEvent.value = events[0] ?? null;
         sideEvents.value = events.slice(1);
+        store.events = events;
     } catch (e) {
         console.error('Failed to load events:', e);
     } finally {
         eventsLoading.value = false;
+        store.eventsLoading = false;
     }
 });
 

@@ -1,4 +1,5 @@
 import { defineStore } from "pinia";
+import type { Event, VideoLink } from '~/types/models';
 
 export const useAppResourceInfoStore = defineStore("appResourceInfoStore", {
   state: () => ({
@@ -7,6 +8,10 @@ export const useAppResourceInfoStore = defineStore("appResourceInfoStore", {
     email: 'lightcityteam@gmail.com',
     toastMessage: null as string | null,
     loading: reactive<Record<string, boolean>>({}),
+    events: [] as Event[],
+    videos: [] as VideoLink[],
+    eventsLoading: true,
+    videosLoading: true,
   }),
   getters: {},
   actions: {},
