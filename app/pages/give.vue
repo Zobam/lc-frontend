@@ -71,27 +71,32 @@
         <Dialog v-model:open="isGiveDialogOpen">
             <DialogContent class="sm:max-w-[600px] p-0 border-none bg-transparent shadow-none">
                 <div class="give-form-card w-full m-0" style="background: var(--lc-dark); max-width: 100%;">
-                    <h2>Give Online</h2>
-                    <p class="give-form-sub">Securely give to the church using your debit card or bank transfer.</p>
-                    <div class="give-amounts">
-                        <button v-for="amt in amounts" :key="amt" class="amt-btn"
-                            :class="{ active: selectedAmount === amt }"
-                            @click="selectedAmount = amt; customAmount = ''">₦{{ amt.toLocaleString() }}</button>
-                        <button class="amt-btn" :class="{ active: selectedAmount === 0 }"
-                            @click="selectedAmount = 0">Custom</button>
+                    <button class="give-dialog-close" @click="isGiveDialogOpen = false" aria-label="Close dialog">
+                        <Icon name="mdi:close" />
+                    </button>
+                    <div class="give-form-scroll">
+                        <h2>Give Online</h2>
+                        <p class="give-form-sub">Securely give to the church using your debit card or bank transfer.</p>
+                        <div class="give-amounts">
+                            <button v-for="amt in amounts" :key="amt" class="amt-btn"
+                                :class="{ active: selectedAmount === amt }"
+                                @click="selectedAmount = amt; customAmount = ''">₦{{ amt.toLocaleString() }}</button>
+                            <button class="amt-btn" :class="{ active: selectedAmount === 0 }"
+                                @click="selectedAmount = 0">Custom</button>
+                        </div>
+                        <input v-if="selectedAmount === 0" v-model="customAmount" type="number"
+                            placeholder="Enter amount in ₦" class="custom-input" />
+                        <div class="give-type">
+                            <label v-for="t in giveTypes" :key="t">
+                                <input type="radio" :value="t" v-model="selectedType" />
+                                {{ t }}
+                            </label>
+                        </div>
+                        <button class="btn-give-main">Proceed to Payment &nbsp;→</button>
+                        <p class="give-secure">
+                            <Icon name="mdi:shield-check" /> Secured by 256-bit encryption. Your giving is safe.
+                        </p>
                     </div>
-                    <input v-if="selectedAmount === 0" v-model="customAmount" type="number"
-                        placeholder="Enter amount in ₦" class="custom-input" />
-                    <div class="give-type">
-                        <label v-for="t in giveTypes" :key="t">
-                            <input type="radio" :value="t" v-model="selectedType" />
-                            {{ t }}
-                        </label>
-                    </div>
-                    <button class="btn-give-main">Proceed to Payment &nbsp;→</button>
-                    <p class="give-secure">
-                        <Icon name="mdi:shield-check" /> Secured by 256-bit encryption. Your giving is safe.
-                    </p>
                 </div>
             </DialogContent>
         </Dialog>
@@ -401,6 +406,36 @@ const givingOptions = [
     border-radius: 16px;
     padding: 3rem;
     text-align: center;
+    position: relative;
+}
+
+.give-dialog-close {
+    position: absolute;
+    top: 1rem;
+    right: 1rem;
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    border: 1px solid rgba(200, 168, 75, 0.35);
+    background: rgba(255, 255, 255, 0.08);
+    color: #ccc;
+    font-size: 1.1rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: background 0.2s, color 0.2s;
+    z-index: 1;
+    flex-shrink: 0;
+}
+
+.give-dialog-close:hover {
+    background: rgba(255, 255, 255, 0.18);
+    color: #fff;
+}
+
+.give-form-scroll {
+    width: 100%;
 }
 
 .give-form-card h2 {
@@ -408,6 +443,21 @@ const givingOptions = [
     font-size: 1.75rem;
     font-weight: 800;
     margin-bottom: 0.5rem;
+}
+
+@media (max-width: 640px) {
+    .give-form-card {
+        padding: 2.5rem 1.25rem 1.5rem;
+        max-height: 80vh;
+        display: flex;
+        flex-direction: column;
+    }
+
+    .give-form-scroll {
+        overflow-y: auto;
+        flex: 1;
+        padding-right: 0.25rem;
+    }
 }
 
 .give-form-sub {
