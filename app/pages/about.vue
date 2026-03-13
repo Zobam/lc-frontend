@@ -105,6 +105,16 @@
 </template>
 
 <script setup lang="ts">
+useHead({
+    title: 'About Us | Light City Evangelical Center',
+    meta: [
+        {
+            name: 'description',
+            content: 'Learn about Light City Evangelical Center Int\'l — our mission to reach the unreached, our vision for the Body of Christ, and our story since 2014.',
+        },
+    ],
+});
+
 const leaders = [
     { name: 'Pastor John Adeyemi', role: 'Senior Pastor', img: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=300&h=300&fit=crop&facepad=2&faces=1' },
     { name: 'Pastor Sarah Adeyemi', role: 'Co-Pastor & Women\'s Lead', img: 'https://images.unsplash.com/photo-1438761681033-6461ffad8d80?w=300&h=300&fit=crop' },

@@ -76,6 +76,16 @@
 import type { EventsListResponse } from '~/types/api';
 import type { Event } from '~/types/models';
 
+useHead({
+    title: 'Events & Programs | Light City Evangelical Center',
+    meta: [
+        {
+            name: 'description',
+            content: 'Stay connected with upcoming events, programs, and special services at Light City Evangelical Center. Find an event and join us in worship and fellowship.',
+        },
+    ],
+});
+
 const { get } = useApi();
 
 const eventsLoading = ref(true);

@@ -130,6 +130,16 @@
     </div>
 </template>
 <script setup lang="ts">
+useHead({
+    title: 'Contact Us | Light City Evangelical Center',
+    meta: [
+        {
+            name: 'description',
+            content: 'Get in touch with Light City Evangelical Center Int\'l. Send us a message, visit us in Enugu, or call our office. We\'d love to hear from you.',
+        },
+    ],
+});
+
 const appResourceInfoStore = useAppResourceInfoStore();
 const { post } = useApi();
 

@@ -156,6 +156,16 @@
 import type { VideoListResponse } from '~/types/api';
 import type { VideoLink } from '~/types/models';
 
+useHead({
+    title: 'Media Library | Light City Evangelical Center',
+    meta: [
+        {
+            name: 'description',
+            content: 'Watch sermons, worship sets, and the latest broadcasts from Light City Evangelical Center. Access our full media library and be inspired anytime, anywhere.',
+        },
+    ],
+});
+
 const { get } = useApi();
 
 const selectedSeries = ref('');

@@ -9,6 +9,13 @@ definePageMeta({
     }
 });
 
+useHead({
+    title: 'Admin Login | Light City Evangelical Center',
+    meta: [
+        { name: 'robots', content: 'noindex, nofollow' },
+    ],
+});
+
 const { signIn } = useAuth();
 const router = useRouter();
 

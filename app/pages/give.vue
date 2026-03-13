@@ -106,6 +106,17 @@ import {
     DialogContent,
     DialogTrigger,
 } from '@/components/ui/dialog'
+
+useHead({
+    title: 'Give | Light City Evangelical Center',
+    meta: [
+        {
+            name: 'description',
+            content: 'Support the work of Light City Evangelical Center through your generous giving. Give online, by bank transfer, or become a monthly partner to help change lives.',
+        },
+    ],
+});
+
 const isGiveDialogOpen = ref(false);
 
 const handleCtaClick = (ctaText: string) => {

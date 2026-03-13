@@ -19,6 +19,16 @@
 <script setup lang="ts">
 // All data fetching and static arrays have been moved to their respective
 // section components in app/components/home/
+
+useHead({
+    title: "Welcome to Light City - a.k.a Onawork",
+    meta: [
+        {
+            name: 'description',
+            content: 'Light City Evangelical Center Int\'l — a vibrant community of believers in Enugu, Nigeria, committed to worship, discipleship, and spreading the Gospel to the ends of the earth.',
+        },
+    ],
+});
 </script>
 
 <style>
