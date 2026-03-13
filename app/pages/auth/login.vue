@@ -12,7 +12,7 @@ definePageMeta({
 const { signIn } = useAuth();
 const router = useRouter();
 
-const form = ref({ email: "superadmin@lightcity.com", password: "12345678" });
+const form = ref({ email: "", password: "" });
 const errors = ref<Record<string, string>>({});
 const loading = ref(false);
 const globalError = ref("");
