@@ -3,6 +3,7 @@ import type { PostsListResponse } from "~/types/api";
 import { PostCategory } from "~/types/enums";
 
 definePageMeta({ layout: "admin", middleware: "sidebase-auth" });
+useHead({ title: 'Manage Posts | LC Admin' });
 
 const api = useApi();
 const route = useRoute();

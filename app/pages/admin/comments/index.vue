@@ -2,6 +2,7 @@
 import type { CommentsListResponse } from "~/types/api";
 
 definePageMeta({ layout: "admin", middleware: "sidebase-auth" });
+useHead({ title: 'Moderate Comments | LC Admin' });
 
 const api = useApi();
 const route = useRoute();

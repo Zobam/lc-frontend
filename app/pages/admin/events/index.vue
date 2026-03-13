@@ -2,6 +2,7 @@
 import type { EventsListResponse } from "~/types/api";
 
 definePageMeta({ layout: "admin", middleware: "sidebase-auth" });
+useHead({ title: 'Manage Events | LC Admin' });
 
 const api = useApi();
 const route = useRoute();

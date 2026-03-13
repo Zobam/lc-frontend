@@ -4,6 +4,7 @@ import { PostCategory } from "~/types/enums";
 import { validatePost, hasErrors } from "~/utils/validation";
 
 definePageMeta({ layout: "admin", middleware: "sidebase-auth" });
+useHead({ title: 'Create Post | LC Admin' });
 
 const api = useApi();
 const router = useRouter();

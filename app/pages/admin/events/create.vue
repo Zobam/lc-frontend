@@ -3,6 +3,7 @@ import type { EventResponse } from "~/types/api";
 import { validateEvent, hasErrors } from "~/utils/validation";
 
 definePageMeta({ layout: "admin", middleware: "sidebase-auth" });
+useHead({ title: 'Create Event | LC Admin' });
 
 const api = useApi();
 const router = useRouter();

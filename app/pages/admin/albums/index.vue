@@ -3,6 +3,7 @@ import type { AlbumsListResponse } from "~/types/api";
 import { AlbumCategory, AlbumStatus } from "~/types/enums";
 
 definePageMeta({ layout: "admin", middleware: "sidebase-auth" });
+useHead({ title: 'Manage Albums | LC Admin' });
 
 const api = useApi();
 const route = useRoute();

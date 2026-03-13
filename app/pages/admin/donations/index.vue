@@ -4,6 +4,7 @@ import { DonationType, DonationStatus } from "~/types/enums";
 import { validateManualDonation, hasErrors } from "~/utils/validation";
 
 definePageMeta({ layout: "admin", middleware: "sidebase-auth" });
+useHead({ title: 'Donations | LC Admin' });
 
 const api = useApi();
 const route = useRoute();

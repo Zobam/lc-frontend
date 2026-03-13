@@ -3,6 +3,8 @@ import type { DashboardStatsResponse } from "~/types/api";
 
 definePageMeta({ layout: "admin", middleware: "sidebase-auth" });
 
+useHead({ title: 'Dashboard | LC Admin' });
+
 const api = useApi();
 import { toast } from 'vue-sonner';
 

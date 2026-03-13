@@ -4,6 +4,7 @@ import { AlbumCategory } from "~/types/enums";
 import { validateAlbum, hasErrors } from "~/utils/validation";
 
 definePageMeta({ layout: "admin", middleware: "sidebase-auth" });
+useHead({ title: 'Create Album | LC Admin' });
 
 const api = useApi();
 const router = useRouter();

@@ -4,6 +4,7 @@ import { UserStatus } from "~/types/enums";
 import { validateCreateUser, hasErrors } from "~/utils/validation";
 
 definePageMeta({ layout: "admin", middleware: "sidebase-auth" });
+useHead({ title: 'Create User | LC Admin' });
 
 const api = useApi();
 const router = useRouter();

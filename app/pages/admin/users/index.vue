@@ -3,6 +3,7 @@ import type { UsersListResponse } from "~/types/api";
 import { UserStatus } from "~/types/enums";
 
 definePageMeta({ layout: "admin", middleware: "sidebase-auth" });
+useHead({ title: 'Manage Users | LC Admin' });
 
 const api = useApi();
 const route = useRoute();

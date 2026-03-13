@@ -3,6 +3,7 @@ import { VideoCategory } from "~/types/enums";
 import { validateVideoLink, hasErrors } from "~/utils/validation";
 
 definePageMeta({ layout: "admin", middleware: "sidebase-auth" });
+useHead({ title: 'Add Video | LC Admin' });
 
 const api = useApi();
 const router = useRouter();

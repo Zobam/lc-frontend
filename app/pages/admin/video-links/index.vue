@@ -2,6 +2,7 @@
 import type { VideoLinksListResponse } from "~/types/api";
 
 definePageMeta({ layout: "admin", middleware: "sidebase-auth" });
+useHead({ title: 'Manage Videos | LC Admin' });
 
 const api = useApi();
 const route = useRoute();

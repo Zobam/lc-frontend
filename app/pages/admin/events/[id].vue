@@ -3,6 +3,7 @@ import type { EventResponse } from "~/types/api";
 // import { toast } from "vue-sonner";
 
 definePageMeta({ layout: "admin", middleware: "sidebase-auth" });
+useHead({ title: 'Edit Event | LC Admin' });
 
 const api = useApi();
 const route = useRoute();

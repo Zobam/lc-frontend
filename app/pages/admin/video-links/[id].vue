@@ -4,6 +4,7 @@ import { VideoCategory, VideoStatus } from "~/types/enums";
 import { validateVideoLink, hasErrors } from "~/utils/validation";
 
 definePageMeta({ layout: "admin", middleware: "sidebase-auth" });
+useHead({ title: 'Edit Video | LC Admin' });
 
 const api = useApi();
 const route = useRoute();
