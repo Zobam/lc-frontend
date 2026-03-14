@@ -22,10 +22,10 @@
 const ministries = [
     { title: 'Worship Ministry', desc: 'Leading hearts to God through music and praise.', img: 'https://images.unsplash.com/photo-1415201364774-f6f0bb35f28f?w=400&h=280&fit=crop' },
     { title: 'Children\'s Church', desc: 'Nurturing young hearts in the ways of God.', img: 'https://images.unsplash.com/photo-1503454537195-1dcabb73ffb9?w=400&h=280&fit=crop' },
-    { title: 'Youth Ministry', desc: 'Equipping young people for greatness.', img: 'https://images.unsplash.com/photo-1529156069898-49953e39b3ac?w=400&h=280&fit=crop' },
+    { title: 'Media Team', desc: 'Capturing and broadcasting the move of God to the world.', img: 'https://images.unsplash.com/photo-1516035069371-29a1b244cc32?w=400&h=280&fit=crop' },
     { title: 'Prayer Ministry', desc: 'Interceding for individuals, families and nations.', img: 'https://images.unsplash.com/photo-1545987796-200677ee1011?w=400&h=280&fit=crop' },
-    { title: 'Women\'s Ministry', desc: 'Empowering women to walk in their God-given purpose.', img: 'https://images.unsplash.com/photo-1573497019940-1c28c88b4f3e?w=400&h=280&fit=crop' },
-    { title: 'Men\'s Fellowship', desc: 'Building men of integrity, faith, and family.', img: 'https://images.unsplash.com/photo-1529156069898-49953e39b3ac?w=400&h=280&fit=crop' },
+    { title: 'Medical Team', desc: 'Bringing healing and free medical care to communities in need.', img: 'https://images.unsplash.com/photo-1584820927498-cfe5211fd8bf?w=400&h=280&fit=crop' },
+    { title: 'Ushering Ministry', desc: 'Creating a warm and welcoming atmosphere for every worshipper.', img: 'https://images.unsplash.com/photo-1511578314322-379afb476865?w=400&h=280&fit=crop' },
 ];
 </script>
 
