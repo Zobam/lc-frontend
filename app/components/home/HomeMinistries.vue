@@ -3,7 +3,7 @@
         <div class="container">
             <div class="section-header">
                 <h2 class="section-title">Our Ministries</h2>
-                <NuxtLink to="/about" class="view-all">Explore All →</NuxtLink>
+                <NuxtLink to="/ministries" class="view-all">Explore All →</NuxtLink>
             </div>
             <div class="ministries-grid">
                 <div class="ministry-card" v-for="m in ministries" :key="m.title">
