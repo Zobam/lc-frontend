@@ -18,7 +18,7 @@
         <section class="lceci-section">
             <div class="container">
                 <div class="lceci-header">
-                    <span class="section-label">Media Introduction</span>
+                    <span class="section-label">Introduction</span>
                     <h2>Light City Evangelical Center International</h2>
                     <p class="lceci-intro">Light City Evangelical Center (LCECI) is a non-denominational Christian
                         Ministry — a part of the body of Christ striving to contribute its best to properly and

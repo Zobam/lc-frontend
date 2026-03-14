@@ -13,18 +13,16 @@
                     <p class="footer-tagline">Giving Your Life a Meaning.<br>A community of believers growing together
                         in faith, love, and purpose.</p>
                     <div class="footer-socials">
-                        <a href="https://web.facebook.com/Light-City-Evangelical-Center-Intl-103591924583397"
-                            aria-label="Facebook">
+                        <a :href="appResourceInfoStore.facebookLink" aria-label="Facebook">
                             <Icon name="mdi:facebook" />
                         </a>
-                        <a href="https://www.youtube.com/channel/UC7TdzCrIuw73dbInqU8Gb6w/featured"
-                            aria-label="YouTube">
+                        <a :href="appResourceInfoStore.youtubeLink" aria-label="YouTube">
                             <Icon name="mdi:youtube" />
                         </a>
-                        <a href="#" aria-label="Instagram">
+                        <a :href="appResourceInfoStore.instagramLink" aria-label="Instagram">
                             <Icon name="mdi:instagram" />
                         </a>
-                        <a href="#" aria-label="Twitter">
+                        <a :href="appResourceInfoStore.twitterLink" aria-label="Twitter">
                             <Icon name="mdi:twitter" />
                         </a>
                     </div>

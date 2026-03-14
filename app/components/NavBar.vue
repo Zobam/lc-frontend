@@ -5,16 +5,16 @@
             <div class="topbar-inner">
                 <div class="topbar-left">
                     <span>Follow us:</span>
-                    <a href="#" aria-label="Facebook">
+                    <a :href="appResourceInfoStore.facebookLink" aria-label="Facebook">
                         <Icon name="mdi:facebook" />
                     </a>
-                    <a href="#" aria-label="YouTube">
+                    <a :href="appResourceInfoStore.youtubeLink" aria-label="YouTube">
                         <Icon name="mdi:youtube" />
                     </a>
-                    <a href="#" aria-label="Instagram">
+                    <a :href="appResourceInfoStore.instagramLink" aria-label="Instagram">
                         <Icon name="mdi:instagram" />
                     </a>
-                    <a href="#" aria-label="Twitter">
+                    <a :href="appResourceInfoStore.twitterLink" aria-label="Twitter">
                         <Icon name="mdi:twitter" />
                     </a>
                 </div>
@@ -72,6 +72,8 @@
 
 <script setup lang="ts">
 const menuOpen = ref(false);
+
+const appResourceInfoStore = useAppResourceInfoStore();
 </script>
 
 <style scoped>
