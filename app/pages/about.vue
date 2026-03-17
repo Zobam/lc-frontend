@@ -259,16 +259,49 @@
                             alt="Our Story" />
                     </div>
                     <div class="story-text">
-                        <span class="section-label">Our Story</span>
+                        <span class="section-label">LIGHT CITY AND ME</span>
                         <h2>How It All Began</h2>
-                        <p>Light City Evangelical Collective was founded in 2014 with a small group of 12 believers who
-                            gathered weekly in a living room, passionate about experiencing God's presence and sharing
-                            His love with their community.</p>
-                        <p>Over the years, God's grace has grown this fellowship into a vibrant, multi-generational
-                            church family reaching thousands each week through our services, outreaches, and digital
-                            platforms.</p>
-                        <p>Today, we believe our best days are still ahead as we continue to build people, build
-                            community, and build God's kingdom — one life at a time.</p>
+                        <p>What is known today as light city evangelical centre international ministry (LCECI) was
+                            spread headed by its founder / vision bearer Evang. Emmanuel Onyekachi Nkpume, after an
+                            encounter with the Lord at a very young age.
+                        </p>
+                        <p>The story of the encounter that started it all goes as follows</p>
+                        <p>On the 27th day of December 1998, at about 1:00am in Idu, Abuja in the Northern part of
+                            Nigeria, an angel appeared to young Onyekachi, saying that it was time to start preaching
+                            the gospel. He immediately went out in the the middle of the night and began to preach at
+                            the top of his voice. After preaching for a while, he joined a Pentecostal church having its
+                            fellowship at that time and they prayed for him.
+                        </p>
+                        <p>As a young Catholic boy, he joined the catholic charismatic renewal of Nigeria ( CCRN) and
+                            served in the discipleship arm of its evangelical ministry.
+                        </p>
+                        <p>In 2006, he moved to the eastern part of Nigeria for his tertiary education and in 2008,
+                            still barely a student, a passion for the salvation of the lost souls, he began preaching
+                            and teaching the gospel of salvation, also conducted deliverance sessions for those
+                            oppressed by the devil. As a result, God began to draw like minded passionate students to
+                            him for discipleship, training and evangelism outreaches. The word of God was working
+                            mightily in their midst leading to a slogan " ONAWORK" that is "THE WORD WORKS".
+                        </p>
+                        <p>In 2010, during his NYSC programme at Ekiti State, while fasting and waiting on the Lord, he
+                            received the strategy and purpose for his ministry, which are
+                        </p>
+                        <ul class="pb-4 list-disc ml-4">
+                            <li>Rural area evangelism/mission outreach</li>
+                            <li>Indoor prayer meetings for discipleship and training missionaries</li>
+                            <li>The sponsorship/partnership plan</li>
+                            <li>The works of charity to be done in the mission field.</li>
+                        </ul>
+                        <p> This strategy and purpose were reconfirmed in 2011 at an indoor prayer meeting at Amokwe udi
+                            Enugu State
+                        </p>
+                        <p>In 2012, after the indoor at Ekeani Nkwo, the first mission outreach was held at Juoke
+                            Ishienu LGA of Ebonyi state, with 7 missionaries ( 6 male and 1 female) in attendance. The
+                            Lord was glorified despite the heavy downpour and bad road. It was characterised with
+                            impartation of the spirit and the release of power.
+                        </p>
+                        <p>The rest is history as the Lord has been doing mighty and awesome things through the
+                            instrument of light city evangelical centre international in Various states and communities
+                            in the nation and beyond. We bless the name of the Lord in Jesus name. Amen</p>
                         <div class="story-stats">
                             <div class="ss">
                                 <strong>10+</strong><span>Years</span>
