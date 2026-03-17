@@ -27,7 +27,7 @@ const navItems = [
     { label: "Users", icon: "mdi:account-group", to: "/admin/users" },
     { label: "Events", icon: "mdi:calendar-star", to: "/admin/events" },
     { label: "Posts", icon: "mdi:newspaper-variant-outline", to: "/admin/posts" },
-    { label: "Albums", icon: "mdi:image-album", to: "/admin/albums" },
+    // { label: "Albums", icon: "mdi:image-album", to: "/admin/albums" },
     { label: "Videos", icon: "mdi:youtube", to: "/admin/video-links" },
     { label: "Comments", icon: "mdi:comment-text-multiple", to: "/admin/comments" },
     { label: "Donations", icon: "mdi:hand-heart", to: "/admin/donations" },

@@ -6,7 +6,6 @@ definePageMeta({ layout: "admin", middleware: "sidebase-auth" });
 useHead({ title: 'Dashboard | LC Admin' });
 
 const api = useApi();
-import { toast } from 'vue-sonner';
 
 const { data: statsRes, pending, error, refresh } = await useAsyncData(
     "dashboard-stats",
@@ -20,7 +19,7 @@ const statCards = computed(() => [
     { label: "Total Users", value: stats.value?.users_count ?? 0, icon: "mdi:account-group", color: "blue", link: "/admin/users" },
     { label: "Total Events", value: stats.value?.events_count ?? 0, icon: "mdi:calendar-star", color: "green", link: "/admin/events" },
     { label: "Total Posts", value: stats.value?.posts_count ?? 0, icon: "mdi:newspaper-variant-outline", color: "purple", link: "/admin/posts" },
-    { label: "Total Albums", value: stats.value?.albums_count ?? 0, icon: "mdi:image-album", color: "pink", link: "/admin/albums" },
+    // { label: "Total Albums", value: stats.value?.albums_count ?? 0, icon: "mdi:image-album", color: "pink", link: "/admin/albums" },
     { label: "Total Videos", value: stats.value?.videos_count ?? 0, icon: "mdi:youtube", color: "red", link: "/admin/video-links" },
     { label: "Pending Comments", value: stats.value?.comments_pending ?? 0, icon: "mdi:comment-alert", color: "yellow", link: "/admin/comments" },
     { label: "Donations (This Month)", value: stats.value?.donations_this_month ?? 0, icon: "mdi:hand-heart", color: "emerald", link: "/admin/donations", currency: true },
@@ -81,9 +80,9 @@ const formatValue = (card: any) =>
                 <NuxtLink to="/admin/posts/create" class="quick-btn">
                     <Icon name="mdi:pencil-plus" /> New Post
                 </NuxtLink>
-                <NuxtLink to="/admin/albums/create" class="quick-btn">
+                <!-- <NuxtLink to="/admin/albums/create" class="quick-btn">
                     <Icon name="mdi:image-plus" /> New Album
-                </NuxtLink>
+                </NuxtLink> -->
                 <NuxtLink to="/admin/video-links/create" class="quick-btn">
                     <Icon name="mdi:video-plus" /> Add Video
                 </NuxtLink>
