@@ -74,7 +74,6 @@ const statusClass = (s: string) =>
             </NuxtLink>
         </div>
 
-        <!-- Filters -->
         <div class="filter-card">
             <div class="filter-row">
                 <div class="filter-item">
@@ -94,7 +93,6 @@ const statusClass = (s: string) =>
             </div>
         </div>
 
-        <!-- Table -->
         <div class="table-card">
             <div v-if="pending" class="table-loading">
                 <div v-for="i in 6" :key="i" class="sk-row">
@@ -145,18 +143,9 @@ const statusClass = (s: string) =>
                 <p>No users found</p>
             </div>
 
-            <!-- Pagination -->
-            <div v-if="usersData?.meta && usersData.meta.last_page > 1" class="pagination">
-                <span class="page-info">{{ usersData.meta.from }}–{{ usersData.meta.to }} of {{ usersData.meta.total
-                }}</span>
-                <div class="page-btns">
-                    <button @click="goToPage(page - 1)" :disabled="page <= 1" class="page-btn">‹ Prev</button>
-                    <button v-for="n in usersData.meta.last_page" :key="n" @click="goToPage(n)" class="page-btn"
-                        :class="{ 'page-active': n === page }">{{ n }}</button>
-                    <button @click="goToPage(page + 1)" :disabled="page >= usersData.meta.last_page"
-                        class="page-btn">Next ›</button>
-                </div>
-            </div>
+            <AdminPagination v-if="usersData?.pagination" :current-page="usersData.pagination.current_page"
+                :total-pages="usersData.pagination.total_pages" :total="usersData.pagination.total_items"
+                :from="usersData.pagination.from" :to="usersData.pagination.to" @change="goToPage" />
         </div>
     </div>
 </template>
@@ -374,16 +363,6 @@ const statusClass = (s: string) =>
     color: #dc2626;
 }
 
-.badge-blue {
-    background: #dbeafe;
-    color: #2563eb;
-}
-
-.badge-yellow {
-    background: #fef9c3;
-    color: #ca8a04;
-}
-
 .action-link {
     font-size: 0.8rem;
     font-weight: 600;
@@ -418,60 +397,5 @@ const statusClass = (s: string) =>
     padding: 4rem;
     text-align: center;
     color: #a1a1aa;
-}
-
-.empty-state icon {
-    font-size: 2.5rem;
-    margin-bottom: 0.75rem;
-    display: block;
-}
-
-.pagination {
-    padding: 1rem 1.25rem;
-    border-top: 1px solid #f4f4f5;
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    flex-wrap: wrap;
-    gap: 0.5rem;
-}
-
-.page-info {
-    font-size: 0.8rem;
-    color: #71717a;
-}
-
-.page-btns {
-    display: flex;
-    gap: 0.25rem;
-    flex-wrap: wrap;
-}
-
-.page-btn {
-    padding: 0.35rem 0.65rem;
-    border: 1px solid #e4e4e7;
-    border-radius: 6px;
-    font-size: 0.8rem;
-    font-weight: 500;
-    background: #fff;
-    color: #27272a;
-    cursor: pointer;
-    transition: all 0.12s;
-}
-
-.page-btn:hover:not(:disabled) {
-    border-color: #E05615;
-    color: #E05615;
-}
-
-.page-btn:disabled {
-    opacity: 0.4;
-    cursor: not-allowed;
-}
-
-.page-active {
-    background: #E05615 !important;
-    border-color: #E05615 !important;
-    color: #fff !important;
 }
 </style>
