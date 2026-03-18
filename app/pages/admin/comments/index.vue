@@ -122,17 +122,9 @@ const deleteComment = async (id: string) => {
                 <p>No comments found.</p>
             </div>
 
-            <div v-if="commentsData?.meta && commentsData.meta.last_page > 1" class="pagination">
-                <span class="page-info">{{ commentsData.meta.from }}–{{ commentsData.meta.to }} of {{
-                    commentsData.meta.total }}</span>
-                <div class="page-btns">
-                    <button @click="goToPage(page - 1)" :disabled="page <= 1" class="page-btn">‹</button>
-                    <button v-for="n in commentsData.meta.last_page" :key="n" @click="goToPage(n)" class="page-btn"
-                        :class="{ 'page-active': n === page }">{{ n }}</button>
-                    <button @click="goToPage(page + 1)" :disabled="page >= commentsData.meta.last_page"
-                        class="page-btn">›</button>
-                </div>
-            </div>
+            <AdminPagination v-if="commentsData?.pagination" :current-page="commentsData.pagination.current_page"
+                :total-pages="commentsData.pagination.total_pages" :total="commentsData.pagination.total_items"
+                :from="commentsData.pagination.from" :to="commentsData.pagination.to" @change="goToPage" />
         </div>
     </div>
 </template>
@@ -427,52 +419,5 @@ const deleteComment = async (id: string) => {
     font-size: 2.5rem;
     margin-bottom: 0.75rem;
     display: block;
-}
-
-.pagination {
-    padding: 1rem 1.25rem;
-    border-top: 1px solid #f4f4f5;
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    flex-wrap: wrap;
-    gap: 0.5rem;
-}
-
-.page-info {
-    font-size: 0.8rem;
-    color: #71717a;
-}
-
-.page-btns {
-    display: flex;
-    gap: 0.25rem;
-}
-
-.page-btn {
-    padding: 0.35rem 0.65rem;
-    border: 1px solid #e4e4e7;
-    border-radius: 6px;
-    font-size: 0.8rem;
-    font-weight: 500;
-    background: #fff;
-    color: #27272a;
-    cursor: pointer;
-}
-
-.page-btn:hover:not(:disabled) {
-    border-color: #E05615;
-    color: #E05615;
-}
-
-.page-btn:disabled {
-    opacity: 0.4;
-    cursor: not-allowed;
-}
-
-.page-active {
-    background: #E05615 !important;
-    border-color: #E05615 !important;
-    color: #fff !important;
 }
 </style>
