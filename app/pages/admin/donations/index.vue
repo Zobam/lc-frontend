@@ -142,27 +142,22 @@ const formatMoney = (amount: number) => `₦${Number(amount).toLocaleString()}`;
                 <p>No donations match your search.</p>
             </div>
             <div v-if="donationsData?.data?.pagination && donationsData.data.pagination.total_pages > 1"
-                class="p-6 border-t border-gray-100 flex items-center justify-center w-full">
-                <Pagination v-slot="{ page }" :total="donationsData.data.pagination.total_items" :sibling-count="1"
-                    show-edges :default-page="1" :items-per-page="donationsData.data.pagination.per_page"
-                    @update:page="goToPage" :page="donationsData.data.pagination.current_page">
-                    <PaginationContent v-slot="{ items }" class="flex items-center gap-1 justify-center w-full">
-                        <PaginationFirst />
-                        <PaginationPrevious />
-
-                        <template v-for="(item, index) in items">
-                            <PaginationItem v-if="item.type === 'page'" :key="index" :value="item.value" as-child>
-                                <Button class="w-10 h-10 p-0" :variant="item.value === page ? 'default' : 'outline'">
-                                    {{ item.value }}
-                                </Button>
-                            </PaginationItem>
-                            <PaginationEllipsis v-else :key="item.type" :index="index" />
-                        </template>
-
-                        <PaginationNext />
-                        <PaginationLast />
-                    </PaginationContent>
-                </Pagination>
+                class="p-6 border-t border-gray-100 flex items-center justify-center gap-1 flex-wrap">
+                <button class="page-btn" :disabled="donationsData.data.pagination.current_page === 1"
+                    @click="goToPage(1)">«</button>
+                <button class="page-btn" :disabled="donationsData.data.pagination.current_page === 1"
+                    @click="goToPage(donationsData.data.pagination.current_page - 1)">‹</button>
+                <template v-for="n in donationsData.data.pagination.total_pages" :key="n">
+                    <button class="page-btn"
+                        :class="{ 'page-active': n === donationsData.data.pagination.current_page }"
+                        @click="goToPage(n)">{{ n }}</button>
+                </template>
+                <button class="page-btn"
+                    :disabled="donationsData.data.pagination.current_page === donationsData.data.pagination.total_pages"
+                    @click="goToPage(donationsData.data.pagination.current_page + 1)">›</button>
+                <button class="page-btn"
+                    :disabled="donationsData.data.pagination.current_page === donationsData.data.pagination.total_pages"
+                    @click="goToPage(donationsData.data.pagination.total_pages)">»</button>
             </div>
         </div>
 
