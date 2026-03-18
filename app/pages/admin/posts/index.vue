@@ -131,17 +131,9 @@ const categories = Object.values(PostCategory);
                 <Icon name="mdi:newspaper-remove" />
                 <p>No posts found</p>
             </div>
-            <div v-if="postsData?.meta && postsData.meta.last_page > 1" class="pagination">
-                <span class="page-info">{{ postsData.meta.from }}–{{ postsData.meta.to }} of {{ postsData.meta.total
-                    }}</span>
-                <div class="page-btns">
-                    <button @click="goToPage(page - 1)" :disabled="page <= 1" class="page-btn">‹</button>
-                    <button v-for="n in postsData.meta.last_page" :key="n" @click="goToPage(n)" class="page-btn"
-                        :class="{ 'page-active': n === page }">{{ n }}</button>
-                    <button @click="goToPage(page + 1)" :disabled="page >= postsData.meta.last_page"
-                        class="page-btn">›</button>
-                </div>
-            </div>
+            <AdminPagination v-if="postsData?.data?.last_page" :current-page="postsData.data.current_page"
+                :total-pages="postsData.data.last_page" :total="postsData.data.total" :from="postsData.data.from"
+                :to="postsData.data.to" @change="goToPage" />
         </div>
     </div>
 </template>
@@ -393,52 +385,5 @@ const categories = Object.values(PostCategory);
     padding: 4rem;
     text-align: center;
     color: #a1a1aa;
-}
-
-.pagination {
-    padding: 1rem 1.25rem;
-    border-top: 1px solid #f4f4f5;
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    flex-wrap: wrap;
-    gap: 0.5rem;
-}
-
-.page-info {
-    font-size: 0.8rem;
-    color: #71717a;
-}
-
-.page-btns {
-    display: flex;
-    gap: 0.25rem;
-}
-
-.page-btn {
-    padding: 0.35rem 0.65rem;
-    border: 1px solid #e4e4e7;
-    border-radius: 6px;
-    font-size: 0.8rem;
-    font-weight: 500;
-    background: #fff;
-    color: #27272a;
-    cursor: pointer;
-}
-
-.page-btn:hover:not(:disabled) {
-    border-color: #E05615;
-    color: #E05615;
-}
-
-.page-btn:disabled {
-    opacity: 0.4;
-    cursor: not-allowed;
-}
-
-.page-active {
-    background: #E05615 !important;
-    border-color: #E05615 !important;
-    color: #fff !important;
 }
 </style>
