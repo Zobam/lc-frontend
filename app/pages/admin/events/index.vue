@@ -118,17 +118,9 @@ const formatDate = (d: string) => new Date(d).toLocaleDateString("en-NG", { year
                 <Icon name="mdi:calendar-blank" />
                 <p>No events found</p>
             </div>
-            <div v-if="eventsData?.meta && eventsData.meta.last_page > 1" class="pagination">
-                <span class="page-info">{{ eventsData.meta.from }}–{{ eventsData.meta.to }} of {{ eventsData.meta.total
-                }}</span>
-                <div class="page-btns">
-                    <button @click="goToPage(page - 1)" :disabled="page <= 1" class="page-btn">‹ Prev</button>
-                    <button v-for="n in eventsData.meta.last_page" :key="n" @click="goToPage(n)" class="page-btn"
-                        :class="{ 'page-active': n === page }">{{ n }}</button>
-                    <button @click="goToPage(page + 1)" :disabled="page >= eventsData.meta.last_page"
-                        class="page-btn">Next ›</button>
-                </div>
-            </div>
+            <AdminPagination v-if="eventsData?.pagination" :current-page="eventsData.pagination.current_page"
+                :total-pages="eventsData.pagination.total_pages" :total="eventsData.pagination.total_items"
+                :from="eventsData.pagination.from" :to="eventsData.pagination.to" @change="goToPage" />
         </div>
     </div>
 </template>
@@ -369,52 +361,5 @@ const formatDate = (d: string) => new Date(d).toLocaleDateString("en-NG", { year
     padding: 4rem;
     text-align: center;
     color: #a1a1aa;
-}
-
-.pagination {
-    padding: 1rem 1.25rem;
-    border-top: 1px solid #f4f4f5;
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    flex-wrap: wrap;
-    gap: 0.5rem;
-}
-
-.page-info {
-    font-size: 0.8rem;
-    color: #71717a;
-}
-
-.page-btns {
-    display: flex;
-    gap: 0.25rem;
-}
-
-.page-btn {
-    padding: 0.35rem 0.65rem;
-    border: 1px solid #e4e4e7;
-    border-radius: 6px;
-    font-size: 0.8rem;
-    font-weight: 500;
-    background: #fff;
-    color: #27272a;
-    cursor: pointer;
-}
-
-.page-btn:hover:not(:disabled) {
-    border-color: #E05615;
-    color: #E05615;
-}
-
-.page-btn:disabled {
-    opacity: 0.4;
-    cursor: not-allowed;
-}
-
-.page-active {
-    background: #E05615 !important;
-    border-color: #E05615 !important;
-    color: #fff !important;
 }
 </style>

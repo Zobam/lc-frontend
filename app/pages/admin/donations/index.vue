@@ -141,24 +141,11 @@ const formatMoney = (amount: number) => `₦${Number(amount).toLocaleString()}`;
                 <Icon name="mdi:cash-remove" />
                 <p>No donations match your search.</p>
             </div>
-            <div v-if="donationsData?.data?.pagination && donationsData.data.pagination.total_pages > 1"
-                class="p-6 border-t border-gray-100 flex items-center justify-center gap-1 flex-wrap">
-                <button class="page-btn" :disabled="donationsData.data.pagination.current_page === 1"
-                    @click="goToPage(1)">«</button>
-                <button class="page-btn" :disabled="donationsData.data.pagination.current_page === 1"
-                    @click="goToPage(donationsData.data.pagination.current_page - 1)">‹</button>
-                <template v-for="n in donationsData.data.pagination.total_pages" :key="n">
-                    <button class="page-btn"
-                        :class="{ 'page-active': n === donationsData.data.pagination.current_page }"
-                        @click="goToPage(n)">{{ n }}</button>
-                </template>
-                <button class="page-btn"
-                    :disabled="donationsData.data.pagination.current_page === donationsData.data.pagination.total_pages"
-                    @click="goToPage(donationsData.data.pagination.current_page + 1)">›</button>
-                <button class="page-btn"
-                    :disabled="donationsData.data.pagination.current_page === donationsData.data.pagination.total_pages"
-                    @click="goToPage(donationsData.data.pagination.total_pages)">»</button>
-            </div>
+            <AdminPagination v-if="donationsData?.data?.pagination"
+                :current-page="donationsData.data.pagination.current_page"
+                :total-pages="donationsData.data.pagination.total_pages"
+                :total="donationsData.data.pagination.total_items" :from="donationsData.data.pagination.from"
+                :to="donationsData.data.pagination.to" @change="goToPage" />
         </div>
 
         <!-- Manual Modal -->
@@ -453,53 +440,6 @@ const formatMoney = (amount: number) => `₦${Number(amount).toLocaleString()}`;
     font-size: 2.5rem;
     margin-bottom: 0.75rem;
     display: block;
-}
-
-.pagination {
-    padding: 1rem 1.25rem;
-    border-top: 1px solid #f4f4f5;
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    flex-wrap: wrap;
-    gap: 0.5rem;
-}
-
-.page-info {
-    font-size: 0.8rem;
-    color: #71717a;
-}
-
-.page-btns {
-    display: flex;
-    gap: 0.25rem;
-}
-
-.page-btn {
-    padding: 0.35rem 0.65rem;
-    border: 1px solid #e4e4e7;
-    border-radius: 6px;
-    font-size: 0.8rem;
-    font-weight: 500;
-    background: #fff;
-    color: #27272a;
-    cursor: pointer;
-}
-
-.page-btn:hover:not(:disabled) {
-    border-color: #E05615;
-    color: #E05615;
-}
-
-.page-btn:disabled {
-    opacity: 0.4;
-    cursor: not-allowed;
-}
-
-.page-active {
-    background: #E05615 !important;
-    border-color: #E05615 !important;
-    color: #fff !important;
 }
 
 .modal-overlay {
