@@ -7,7 +7,6 @@ useHead({ title: 'Manage Albums | LC Admin' });
 
 const api = useApi();
 const route = useRoute();
-const router = useRouter();
 
 const page = ref(Number(route.query.page) || 1);
 const search = ref((route.query.search as string) || "");
@@ -80,7 +79,7 @@ const deleteAlbum = async (id: string) => {
                 <div class="album-body">
                     <h3 class="album-title">{{ album.title }}</h3>
                     <p class="album-meta">{{ album.category }} &bull; {{ new Date(album.created_at).toLocaleDateString()
-                        }}</p>
+                    }}</p>
                     <div class="album-actions">
                         <NuxtLink :to="`/admin/albums/${album.slug}`" class="action-link">Edit Images/Details</NuxtLink>
                         <button @click="deleteAlbum(album.id)" :disabled="deletingId === album.id"
@@ -95,17 +94,9 @@ const deleteAlbum = async (id: string) => {
             <p>No albums found.</p>
         </div>
 
-        <div v-if="albumsData?.meta && albumsData.meta.last_page > 1" class="pagination">
-            <span class="page-info">{{ albumsData.meta.from }}–{{ albumsData.meta.to }} of {{ albumsData.meta.total
-                }}</span>
-            <div class="page-btns">
-                <button @click="goToPage(page - 1)" :disabled="page <= 1" class="page-btn">‹</button>
-                <button v-for="n in albumsData.meta.last_page" :key="n" @click="goToPage(n)" class="page-btn"
-                    :class="{ 'page-active': n === page }">{{ n }}</button>
-                <button @click="goToPage(page + 1)" :disabled="page >= albumsData.meta.last_page"
-                    class="page-btn">›</button>
-            </div>
-        </div>
+        <AdminPagination v-if="albumsData?.data" :current-page="albumsData.data.current_page"
+            :total-pages="albumsData.data.last_page" :total="albumsData.data.total" :from="albumsData.data.from"
+            :to="albumsData.data.to" @change="goToPage" />
     </div>
 </template>
 
@@ -385,54 +376,5 @@ const deleteAlbum = async (id: string) => {
     font-size: 2.5rem;
     margin-bottom: 0.75rem;
     display: block;
-}
-
-.pagination {
-    padding: 1rem 1.25rem;
-    background: #fff;
-    border-radius: 12px;
-    border: 1px solid #f4f4f5;
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    flex-wrap: wrap;
-    gap: 0.5rem;
-}
-
-.page-info {
-    font-size: 0.8rem;
-    color: #71717a;
-}
-
-.page-btns {
-    display: flex;
-    gap: 0.25rem;
-}
-
-.page-btn {
-    padding: 0.35rem 0.65rem;
-    border: 1px solid #e4e4e7;
-    border-radius: 6px;
-    font-size: 0.8rem;
-    font-weight: 500;
-    background: #fff;
-    color: #27272a;
-    cursor: pointer;
-}
-
-.page-btn:hover:not(:disabled) {
-    border-color: #E05615;
-    color: #E05615;
-}
-
-.page-btn:disabled {
-    opacity: 0.4;
-    cursor: not-allowed;
-}
-
-.page-active {
-    background: #E05615 !important;
-    border-color: #E05615 !important;
-    color: #fff !important;
 }
 </style>
