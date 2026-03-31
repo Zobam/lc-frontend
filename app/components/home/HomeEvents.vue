@@ -15,7 +15,7 @@
                         <span class="bc-tag">Live Event</span>
                         <h3>{{ featuredEvent.title }}</h3>
                         <p>{{ featuredEvent.subtitle || featuredEvent.description.slice(0, 100) }}...</p>
-                        <span class="btn btn-gold-sm">See more</span>
+                        <NuxtLink to="/events" class="btn btn-gold-sm" @click.stop>See more</NuxtLink>
                     </div>
                 </NuxtLink>
                 <!-- Featured Event Skeleton -->
