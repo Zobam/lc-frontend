@@ -7,7 +7,7 @@
             </div>
             <div class="broadcasts-grid">
                 <!-- Featured Event -->
-                <div class="broadcast-card featured" v-if="featuredEvent">
+                <NuxtLink :to="`/events/${featuredEvent.id}`" class="broadcast-card featured" v-if="featuredEvent">
                     <img :src="featuredEvent.primary_image?.image_url || 'https://images.unsplash.com/photo-1429962714451-bb934ecdc4ec?w=600&h=340&fit=crop'"
                         :alt="featuredEvent.title" />
                     <div class="bc-label">{{ formatEventDate(featuredEvent.event_dates[0]) }}</div>
@@ -15,9 +15,9 @@
                         <span class="bc-tag">Live Event</span>
                         <h3>{{ featuredEvent.title }}</h3>
                         <p>{{ featuredEvent.subtitle || featuredEvent.description.slice(0, 100) }}...</p>
-                        <NuxtLink to="/events" class="btn btn-gold-sm">See more</NuxtLink>
+                        <span class="btn btn-gold-sm">See more</span>
                     </div>
-                </div>
+                </NuxtLink>
                 <!-- Featured Event Skeleton -->
                 <div class="broadcast-card featured skeleton-card" v-else-if="eventsLoading">
                     <div class="skeleton-img"></div>
@@ -40,7 +40,8 @@
                         </div>
                     </template>
                     <template v-else>
-                        <div class="broadcast-card mini" v-for="event in sideEvents" :key="event.id">
+                        <NuxtLink :to="`/events/${event.id}`" class="broadcast-card mini" v-for="event in sideEvents"
+                            :key="event.id">
                             <img :src="event.primary_image?.image_url || 'https://images.unsplash.com/photo-1517457373958-b7bdd4587205?w=300&h=160&fit=crop'"
                                 :alt="event.title" />
                             <div class="bc-info-mini">
@@ -48,7 +49,7 @@
                                 <h4>{{ event.title }}</h4>
                                 <p>{{ event.subtitle || event.description.slice(0, 80) }}...</p>
                             </div>
-                        </div>
+                        </NuxtLink>
                     </template>
                 </div>
             </div>
@@ -109,6 +110,9 @@ const formatEventDate = (dateStr?: string): string => {
     overflow: hidden;
     box-shadow: 0 2px 12px rgba(0, 0, 0, 0.07);
     transition: transform 0.25s, box-shadow 0.25s;
+    text-decoration: none;
+    display: block;
+    color: inherit;
 }
 
 .broadcast-card:hover {

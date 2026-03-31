@@ -16,7 +16,7 @@
                     </div>
                 </template>
                 <template v-else>
-                    <div class="wos-card" v-for="w in wordsOfTheSpirit" :key="w.id">
+                    <NuxtLink :to="`/posts/${w.slug}`" class="wos-card" v-for="w in wordsOfTheSpirit" :key="w.id">
                         <div class="wos-img">
                             <img :src="w.featured_image?.image_url || 'https://images.unsplash.com/photo-1507692049790-de58290a4334?w=400&h=260&fit=crop'"
                                 :alt="w.featured_image?.alt_text || w.title" />
@@ -25,7 +25,7 @@
                             <h3>{{ w.title }}</h3>
                             <p>{{ w.excerpt || w.subtitle || '' }}</p>
                         </div>
-                    </div>
+                    </NuxtLink>
                 </template>
             </div>
         </div>
@@ -86,6 +86,9 @@ onMounted(async () => {
     cursor: pointer;
     transition: transform 0.25s, box-shadow 0.25s;
     box-shadow: 0 2px 12px rgba(0, 0, 0, 0.05);
+    text-decoration: none;
+    display: block;
+    color: inherit;
 }
 
 .wos-card:hover {

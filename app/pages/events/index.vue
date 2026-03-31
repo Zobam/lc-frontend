@@ -39,7 +39,8 @@
                         </div>
                     </template>
                     <template v-else>
-                        <div class="event-card" v-for="event in events" :key="event.id">
+                        <NuxtLink :to="`/events/${event.id}`" class="event-card" v-for="event in events"
+                            :key="event.id">
                             <div class="event-img">
                                 <img :src="event.primary_image?.image_url || 'https://images.unsplash.com/photo-1429962714451-bb934ecdc4ec?w=500&h=280&fit=crop'"
                                     :alt="event.title" />
@@ -58,11 +59,11 @@
                                     </p>
                                     <p class="event-desc">{{ event.subtitle || event.description.slice(0, 100) + '...'
                                     }}</p>
-                                    <button class="btn-register" :class="getEventStatus(event)">{{ getEventStatus(event)
-                                    }}</button>
+                                    <span class="btn-register" :class="getEventStatus(event)">{{ getEventStatus(event)
+                                    }}</span>
                                 </div>
                             </div>
-                        </div>
+                        </NuxtLink>
                     </template>
                 </div>
             </div>
@@ -242,6 +243,9 @@ const getEventStatus = (event: Event): 'upcoming' | 'ongoing' | 'finished' => {
     overflow: hidden;
     box-shadow: 0 2px 12px rgba(0, 0, 0, 0.07);
     transition: transform 0.25s, box-shadow 0.25s;
+    text-decoration: none;
+    display: block;
+    color: inherit;
 }
 
 .event-card:hover {
