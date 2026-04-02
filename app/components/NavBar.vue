@@ -45,7 +45,8 @@
                         <NuxtLink to="/about" class="nav-link" @click="menuOpen = false">About</NuxtLink>
                     </li>
                     <li>
-                        <NuxtLink to="/events" class="nav-link" @click="menuOpen = false">Events</NuxtLink>
+                        <NuxtLink to="/events" class="nav-link" :class="{ 'router-link-active': isEventsActive }"
+                            @click="menuOpen = false">Events</NuxtLink>
                     </li>
                     <li>
                         <NuxtLink to="/media" class="nav-link" @click="menuOpen = false">Media</NuxtLink>
@@ -72,8 +73,11 @@
 
 <script setup lang="ts">
 const menuOpen = ref(false);
+const route = useRoute();
 
 const appResourceInfoStore = useAppResourceInfoStore();
+
+const isEventsActive = computed(() => route.path.startsWith('/events'));
 </script>
 
 <style scoped>
