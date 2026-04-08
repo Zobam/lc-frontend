@@ -22,7 +22,17 @@
                         :class="{ active: activeFilter === cat }" @click="activeFilter = cat">{{ cat }}</button>
                 </div> -->
 
-                <div class="events-grid">
+                <!-- Empty State -->
+                <EmptyState
+                    v-if="!eventsLoading && events.length === 0"
+                    icon="mdi:calendar-remove-outline"
+                    title="No Events Found"
+                    message="There are no upcoming events at this time. Check back later."
+                    link-to="/"
+                    link-label="Go Home →"
+                />
+
+                <div class="events-grid" v-else>
                     <template v-if="eventsLoading">
                         <div class="event-card skeleton-card" v-for="n in 6" :key="n">
                             <div class="skeleton-img" style="height: 180px;"></div>

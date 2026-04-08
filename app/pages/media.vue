@@ -18,7 +18,16 @@
         <section class="featured-sermon">
             <div class="container">
                 <h2 class="section-title">Latest Videos</h2>
-                <div class="featured-grid">
+
+                <!-- Full empty state when no videos at all -->
+                <EmptyState
+                    v-if="!videosLoading && !mainVideo"
+                    icon="mdi:video-off-outline"
+                    title="No Videos Available"
+                    message="Sermon videos will appear here once uploaded."
+                />
+
+                <div class="featured-grid" v-else :class="{ 'single-col': !videosLoading && sideVideos.length === 0 }">
                     <!-- Main Video -->
                     <div class="featured-video">
                         <template v-if="videosLoading">
@@ -66,7 +75,7 @@
                                 </div>
                             </div>
                         </template>
-                        <template v-else>
+                        <template v-else-if="sideVideos.length > 0">
                             <div class="mini-sermon" :class="{ active: mainVideo?.id === s.id }" v-for="s in sideVideos"
                                 :key="s.id" @click="selectVideo(s)">
                                 <img :src="s.thumbnail_url || 'https://images.unsplash.com/photo-1547471080-7cc2caa01a7e?w=120&h=80&fit=crop'"
@@ -78,6 +87,12 @@
                                 </div>
                             </div>
                         </template>
+                        <EmptyState
+                            v-else
+                            icon="mdi:playlist-remove"
+                            title="No other videos"
+                            message="More videos coming soon."
+                        />
                     </div>
                 </div>
             </div>
@@ -97,7 +112,7 @@
                         </select>
                     </div> -->
                 </div>
-                <div class="archive-grid">
+                <div class="archive-grid" v-if="videosLoading || archiveVideos.length > 0">
                     <template v-if="videosLoading">
                         <div class="sermon-card skeleton-card" v-for="n in 6" :key="n">
                             <div class="skeleton-img" style="height: 160px;"></div>
@@ -127,6 +142,12 @@
                         </div>
                     </template>
                 </div>
+                <EmptyState
+                    v-else
+                    icon="mdi:archive-off-outline"
+                    title="Archive is Empty"
+                    message="No past sermons to display at this time."
+                />
             </div>
         </section>
 
@@ -316,6 +337,12 @@ const worship = [
     display: grid;
     grid-template-columns: 1.6fr 1fr;
     gap: 2rem;
+}
+
+.featured-grid.single-col {
+    grid-template-columns: 1fr;
+    max-width: 760px;
+    margin: 0 auto;
 }
 
 .video-wrap {

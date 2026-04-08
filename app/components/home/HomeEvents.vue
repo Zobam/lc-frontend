@@ -5,9 +5,19 @@
                 <h2 class="section-title">Upcoming Events</h2>
                 <NuxtLink to="/events" class="view-all">View All →</NuxtLink>
             </div>
-            <div class="broadcasts-grid">
+            <!-- Full empty state when no events at all -->
+            <EmptyState
+                v-if="!eventsLoading && !featuredEvent"
+                icon="mdi:calendar-blank-outline"
+                title="No Upcoming Events"
+                message="Check back soon for exciting programs and services."
+                link-to="/events"
+                link-label="View Events →"
+            />
+
+            <div class="broadcasts-grid" v-else :class="{ 'single-col': sideEvents.length === 0 }">
                 <!-- Featured Event -->
-                <NuxtLink :to="`/events/${featuredEvent.id}`" class="broadcast-card featured" v-if="featuredEvent">
+                <NuxtLink :to="`/events/${featuredEvent!.id}`" class="broadcast-card featured" v-if="featuredEvent">
                     <img :src="featuredEvent.primary_image?.image_url || 'https://images.unsplash.com/photo-1429962714451-bb934ecdc4ec?w=600&h=340&fit=crop'"
                         :alt="featuredEvent.title" />
                     <div class="bc-label">{{ formatEventDate(featuredEvent.event_dates[0]) }}</div>
@@ -29,7 +39,7 @@
                 </div>
 
                 <!-- Side Events -->
-                <div class="broadcasts-side">
+                <div class="broadcasts-side" v-if="sideEvents.length > 0 || eventsLoading">
                     <template v-if="eventsLoading">
                         <div class="broadcast-card mini skeleton-card" v-for="n in 4" :key="n">
                             <div class="skeleton-img mini-img"></div>
@@ -102,6 +112,12 @@ const formatEventDate = (dateStr?: string): string => {
     display: grid;
     grid-template-columns: 1fr 1fr;
     gap: 1.5rem;
+}
+
+.broadcasts-grid.single-col {
+    grid-template-columns: 1fr;
+    max-width: 640px;
+    margin: 0 auto;
 }
 
 .broadcast-card {

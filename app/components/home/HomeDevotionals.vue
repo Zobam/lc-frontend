@@ -15,7 +15,7 @@
                         </div>
                     </div>
                 </template>
-                <template v-else>
+                <template v-else-if="wordsOfTheSpirit.length > 0">
                     <NuxtLink :to="`/posts/${w.slug}`" class="wos-card" v-for="w in wordsOfTheSpirit" :key="w.id">
                         <div class="wos-img">
                             <img :src="w.featured_image?.image_url || 'https://images.unsplash.com/photo-1507692049790-de58290a4334?w=400&h=260&fit=crop'"
@@ -27,6 +27,13 @@
                         </div>
                     </NuxtLink>
                 </template>
+                <EmptyState
+                    v-else
+                    icon="mdi:book-open-outline"
+                    title="No Devotionals Yet"
+                    message="Devotional posts will appear here when published."
+                    style="grid-column: 1 / -1;"
+                />
             </div>
         </div>
     </section>

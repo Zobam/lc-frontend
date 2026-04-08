@@ -5,7 +5,18 @@
                 <h2 class="section-title">Latest Sermons</h2>
                 <NuxtLink to="/media" class="view-all">Watch More →</NuxtLink>
             </div>
-            <div class="media-layout">
+
+            <!-- Full empty state when no videos at all -->
+            <EmptyState
+                v-if="!videosLoading && !mainVideo"
+                icon="mdi:video-off-outline"
+                title="No Sermons Available"
+                message="New messages will be posted soon. Stay tuned!"
+                link-to="/media"
+                link-label="Visit Media →"
+            />
+
+            <div class="media-layout" v-else :class="{ 'single-col': !videosLoading && sideVideos.length === 0 }">
                 <!-- Main Video -->
                 <div class="video-main">
                     <template v-if="videosLoading">
@@ -50,7 +61,7 @@
                             </div>
                         </div>
                     </template>
-                    <template v-else>
+                    <template v-else-if="sideVideos.length > 0">
                         <div class="sidebar-item" :class="{ active: mainVideo?.id === v.id }" v-for="v in sideVideos"
                             :key="v.id" @click="selectVideo(v)">
                             <img :src="v.thumbnail_url || 'https://images.unsplash.com/photo-1547471080-7cc2caa01a7e?w=120&h=80&fit=crop'"
@@ -62,6 +73,12 @@
                             </div>
                         </div>
                     </template>
+                    <EmptyState
+                        v-else
+                        icon="mdi:playlist-check"
+                        title="You're all caught up"
+                        message="No other videos right now."
+                    />
                 </div>
             </div>
         </div>
@@ -134,6 +151,12 @@ onMounted(async () => {
     grid-template-columns: 1.6fr 1fr;
     gap: 2rem;
     align-items: start;
+}
+
+.media-layout.single-col {
+    grid-template-columns: 1fr;
+    max-width: 760px;
+    margin: 0 auto;
 }
 
 .video-thumb {
