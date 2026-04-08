@@ -91,7 +91,7 @@ const submit = async () => {
             <div class="field mt-4">
                 <label>Assign Roles</label>
                 <div v-if="rolesRes?.data" class="checkbox-group">
-                    <label v-for="role in rolesRes.data" :key="role.id" class="checkbox-item">
+                    <label v-for="role in rolesRes.data.data" :key="role.id" class="checkbox-item">
                         <input v-model="form.role_ids" type="checkbox" :value="role.id" />
                         <span>{{ role.name }}</span>
                     </label>

@@ -23,6 +23,9 @@ importers:
       '@nuxt/scripts':
         specifier: 0.13.2
         version: 0.13.2(@unhead/vue@2.1.4(vue@3.5.28(typescript@5.9.3)))(db0@0.3.4)(ioredis@5.9.3)(magicast@0.5.2)(typescript@5.9.3)(vue@3.5.28(typescript@5.9.3))
+      '@nuxtjs/recaptcha':
+        specifier: ^1.1.2
+        version: 1.1.2
       '@pinia/nuxt':
         specifier: 0.11.3
         version: 0.11.3(magicast@0.5.2)(pinia@3.0.4(typescript@5.9.3)(vue@3.5.28(typescript@5.9.3)))
@@ -857,6 +860,9 @@ packages:
     peerDependenciesMeta:
       rolldown:
         optional: true
+
+  '@nuxtjs/recaptcha@1.1.2':
+    resolution: {integrity: sha512-qr7fyRvywyIvFyl1SgCz/JKOTmFf/O47G560s/t72uhfHsn41s7MR5ObtJFD0AGB2thqFtJwiwrndim2LCJl0g==}
 
   '@oxc-minify/binding-android-arm-eabi@0.112.0':
     resolution: {integrity: sha512-m7TGBR2hjsBJIN9UJ909KBoKsuogo6CuLsHKvUIBXdjI0JVHP8g4ZHeB+BJpGn5LJdeSGDfz9MWiuXrZDRzunw==}
@@ -5965,6 +5971,8 @@ snapshots:
       - vti
       - vue-tsc
       - yaml
+
+  '@nuxtjs/recaptcha@1.1.2': {}
 
   '@oxc-minify/binding-android-arm-eabi@0.112.0':
     optional: true

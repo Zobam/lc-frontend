@@ -19,7 +19,7 @@ useHead({
 const { signIn } = useAuth();
 const router = useRouter();
 
-const form = ref({ email: "", password: "" }); //superadmin@lightcity.com 12345678
+const form = ref({ email: "", password: "" }); //lightcityteam@gmail.com 12345678
 const errors = ref<Record<string, string>>({});
 const loading = ref(false);
 const globalError = ref("");
