@@ -15,6 +15,7 @@ export default defineNuxtConfig({
   runtimeConfig: {
     public: {
       devApiUrl: process.env.DEV_API_URL,
+      recaptchaSiteKey: process.env.RECAPTCHA_SITE_KEY,
     },
   },
   modules: [

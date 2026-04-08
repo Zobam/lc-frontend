@@ -23,9 +23,6 @@ importers:
       '@nuxt/scripts':
         specifier: 0.13.2
         version: 0.13.2(@unhead/vue@2.1.4(vue@3.5.28(typescript@5.9.3)))(db0@0.3.4)(ioredis@5.9.3)(magicast@0.5.2)(typescript@5.9.3)(vue@3.5.28(typescript@5.9.3))
-      '@nuxtjs/recaptcha':
-        specifier: ^1.1.2
-        version: 1.1.2
       '@pinia/nuxt':
         specifier: 0.11.3
         version: 0.11.3(magicast@0.5.2)(pinia@3.0.4(typescript@5.9.3)(vue@3.5.28(typescript@5.9.3)))
@@ -62,6 +59,9 @@ importers:
       tailwind-merge:
         specifier: ^3.4.1
         version: 3.4.1
+      vue-recaptcha-v3:
+        specifier: ^2.0.1
+        version: 2.0.1(vue@3.5.28(typescript@5.9.3))
       vue-sonner:
         specifier: ^2.0.9
         version: 2.0.9(@nuxt/kit@4.3.1(magicast@0.5.2))(@nuxt/schema@4.3.1)(nuxt@4.3.1(@parcel/watcher@2.5.6)(@types/node@25.3.5)(@vue/compiler-sfc@3.5.28)(cac@6.7.14)(db0@0.3.4)(eslint@9.39.2(jiti@2.6.1))(ioredis@5.9.3)(lightningcss@1.31.1)(magicast@0.5.2)(optionator@0.9.4)(rollup@4.57.1)(terser@5.46.0)(typescript@5.9.3)(vite@7.3.1(@types/node@25.3.5)(jiti@2.6.1)(lightningcss@1.31.1)(terser@5.46.0)(yaml@2.8.2))(yaml@2.8.2))
@@ -860,9 +860,6 @@ packages:
     peerDependenciesMeta:
       rolldown:
         optional: true
-
-  '@nuxtjs/recaptcha@1.1.2':
-    resolution: {integrity: sha512-qr7fyRvywyIvFyl1SgCz/JKOTmFf/O47G560s/t72uhfHsn41s7MR5ObtJFD0AGB2thqFtJwiwrndim2LCJl0g==}
 
   '@oxc-minify/binding-android-arm-eabi@0.112.0':
     resolution: {integrity: sha512-m7TGBR2hjsBJIN9UJ909KBoKsuogo6CuLsHKvUIBXdjI0JVHP8g4ZHeB+BJpGn5LJdeSGDfz9MWiuXrZDRzunw==}
@@ -4021,6 +4018,9 @@ packages:
     resolution: {integrity: sha512-9u/XQ1pvrQtYyMpZe7DXKv2p5CNvyVwzUB6uhLAnQwHMSgKMBR62lc7AHljaeteeHXn11XTAaLLUVZYVZyuRBQ==}
     engines: {node: '>= 20.19.0'}
 
+  recaptcha-v3@1.11.3:
+    resolution: {integrity: sha512-sEE6J0RzUkS+sKEBpgCD/AqCU0ffrAVOADGjvAx9vcttN+VLK42SWMkj/J/I6vHu3Kew+xcfbBqDVb65N0QGDw==}
+
   redis-errors@1.2.0:
     resolution: {integrity: sha512-1qny3OExCf0UvUV/5wpYKf2YwPcOqXzkwKKSmKHiE6ZMQs5heeE/c8eXK+PNllPvmjgAbfnsbpkGZWy8cBpn9w==}
     engines: {node: '>=4'}
@@ -4707,6 +4707,11 @@ packages:
     engines: {node: ^18.18.0 || ^20.9.0 || >=21.1.0}
     peerDependencies:
       eslint: ^8.57.0 || ^9.0.0 || ^10.0.0
+
+  vue-recaptcha-v3@2.0.1:
+    resolution: {integrity: sha512-isEDtOfHU4wWRrZZuxciAELtQmPOeEEdicPNa0f1AOyLPy3sCcBEcpFt+FOcO3RQv5unJ3Yn5NlsWtXv9rXqjg==}
+    peerDependencies:
+      vue: ^3.0.11
 
   vue-router@4.6.4:
     resolution: {integrity: sha512-Hz9q5sa33Yhduglwz6g9skT8OBPii+4bFn88w6J+J4MfEo4KRRpmiNG/hHHkdbRFlLBOqxN8y8gf2Fb0MTUgVg==}
@@ -5971,8 +5976,6 @@ snapshots:
       - vti
       - vue-tsc
       - yaml
-
-  '@nuxtjs/recaptcha@1.1.2': {}
 
   '@oxc-minify/binding-android-arm-eabi@0.112.0':
     optional: true
@@ -9173,6 +9176,8 @@ snapshots:
 
   readdirp@5.0.0: {}
 
+  recaptcha-v3@1.11.3: {}
+
   redis-errors@1.2.0: {}
 
   redis-parser@3.0.0:
@@ -9890,6 +9895,11 @@ snapshots:
       semver: 7.7.4
     transitivePeerDependencies:
       - supports-color
+
+  vue-recaptcha-v3@2.0.1(vue@3.5.28(typescript@5.9.3)):
+    dependencies:
+      recaptcha-v3: 1.11.3
+      vue: 3.5.28(typescript@5.9.3)
 
   vue-router@4.6.4(vue@3.5.28(typescript@5.9.3)):
     dependencies:

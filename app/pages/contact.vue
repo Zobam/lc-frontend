@@ -80,7 +80,7 @@
                                         :class="{ 'input-error': touched.email && errors.email }"
                                         @blur="touched.email = true" />
                                     <span class="error-msg" v-if="touched.email && errors.email">{{ errors.email
-                                    }}</span>
+                                        }}</span>
                                 </div>
                                 <div class="form-group">
                                     <label>Phone (optional)</label>
@@ -88,7 +88,7 @@
                                         :class="{ 'input-error': touched.phone && errors.phone }"
                                         @blur="touched.phone = true" />
                                     <span class="error-msg" v-if="touched.phone && errors.phone">{{ errors.phone
-                                    }}</span>
+                                        }}</span>
                                 </div>
                             </div>
                             <div class="form-group">
@@ -103,7 +103,7 @@
                                     <option value="partnership">Partnership</option>
                                 </select>
                                 <span class="error-msg" v-if="touched.subject && errors.subject">{{ errors.subject
-                                }}</span>
+                                    }}</span>
                             </div>
                             <div class="form-group">
                                 <label>Your Message</label>
@@ -111,14 +111,15 @@
                                     :class="{ 'input-error': touched.message && errors.message }"
                                     @blur="touched.message = true"></textarea>
                                 <span class="error-msg" v-if="touched.message && errors.message">{{ errors.message
-                                }}</span>
+                                    }}</span>
                             </div>
 
                             <div class="error-msg api-error" v-if="apiError">{{ apiError }}</div>
 
-                            <button type="submit" class="btn-submit" :disabled="!isFormValid || isSubmitting">
+                            <button type="submit" class="btn-submit"
+                                :disabled="!isFormValid || isSubmitting || !recaptchaReady">
                                 <Icon v-if="isSubmitting" name="mdi:loading" class="spinner-icon" />
-                                {{ isSubmitting ? 'Sending...' : 'Send Message' }}
+                                {{ isSubmitting ? 'Sending...' : (!recaptchaReady ? 'Loading...' : 'Send Message') }}
                             </button>
                         </form>
                     </div>
@@ -130,6 +131,8 @@
     </div>
 </template>
 <script setup lang="ts">
+import { useReCaptcha } from 'vue-recaptcha-v3';
+
 useHead({
     title: 'Contact Us | Light City Evangelical Center',
     meta: [
@@ -142,6 +145,14 @@ useHead({
 
 const appResourceInfoStore = useAppResourceInfoStore();
 const { post } = useApi();
+
+const recaptchaInstance = useReCaptcha();
+const recaptchaReady = ref(false);
+
+onMounted(async () => {
+    await recaptchaInstance?.recaptchaLoaded();
+    recaptchaReady.value = true;
+});
 
 const form = reactive({
     name: '',
@@ -182,13 +193,22 @@ const submitForm = async () => {
     Object.keys(touched).forEach(key => touched[key as keyof typeof touched] = true);
 
     if (!isFormValid.value) return;
+    if (!recaptchaReady.value) return;
 
     isSubmitting.value = true;
     apiError.value = '';
 
     try {
-        console.log("form", form);
-        const response = await post<any>('/contacts', form);
+        // Execute reCAPTCHA and get token
+        await recaptchaInstance?.recaptchaLoaded();
+        const token = await recaptchaInstance?.executeRecaptcha('contact_form');
+
+        if (!token) {
+            apiError.value = 'reCAPTCHA verification failed. Please try again.';
+            return;
+        }
+
+        const response = await post<any>('/contacts', { ...form, recaptcha_token: token });
         if (response.status === 'success') {
             successMessage.value = response.message || 'Thank you for contacting us! We\'ll get back to you soon.';
         } else {
