@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import { useQuery } from '@pinia/colada';
 import type { VideoLinksListResponse } from "~/types/api";
 
 definePageMeta({ layout: "admin", middleware: "sidebase-auth" });
@@ -11,11 +12,11 @@ const router = useRouter();
 const page = ref(Number(route.query.page) || 1);
 const search = ref((route.query.search as string) || "");
 
-const { data: videosData, pending, refresh } = await useAsyncData(
-    "admin-videos",
-    () => api.get<VideoLinksListResponse>("/videos", { page: page.value, per_page: 15, search: search.value }),
-    { watch: [page, search], lazy: true }
-);
+const { data: videosData, status, refetch: refresh } = useQuery({
+    key: () => ["admin-videos", page.value, search.value],
+    query: () => api.get<any>("/videos", { page: page.value, per_page: 15, search: search.value }),
+});
+const pending = computed(() => status.value === 'pending');
 
 let searchTimer: ReturnType<typeof setTimeout>;
 const handleSearch = () => { clearTimeout(searchTimer); searchTimer = setTimeout(() => { page.value = 1; }, 450); };

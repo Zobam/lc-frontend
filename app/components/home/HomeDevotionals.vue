@@ -27,13 +27,8 @@
                         </div>
                     </NuxtLink>
                 </template>
-                <EmptyState
-                    v-else
-                    icon="mdi:book-open-outline"
-                    title="No Devotionals Yet"
-                    message="Devotional posts will appear here when published."
-                    style="grid-column: 1 / -1;"
-                />
+                <EmptyState v-else icon="mdi:book-open-outline" title="No Devotionals Yet"
+                    message="Devotional posts will appear here when published." style="grid-column: 1 / -1;" />
             </div>
         </div>
     </section>
@@ -45,19 +40,13 @@ import type { Post } from '~/types/models';
 
 const { get } = useApi();
 
-const wosLoading = ref(true);
-const wordsOfTheSpirit = ref<Post[]>([]);
-
-onMounted(async () => {
-    try {
-        const response = await get<PostCategoryListResponse>('/posts/category/devotional', { per_page: 8 });
-        wordsOfTheSpirit.value = response.data?.data ?? [];
-    } catch (e) {
-        console.error('Failed to load devotionals:', e);
-    } finally {
-        wosLoading.value = false;
-    }
+const { data: wosRes, status } = useQuery({
+    key: ['home-devotionals'],
+    query: () => get<PostCategoryListResponse>('/posts/category/devotional', { per_page: 8 }),
 });
+
+const wosLoading = computed(() => status.value === 'pending');
+const wordsOfTheSpirit = computed(() => wosRes.value?.data.data ?? []);
 </script>
 
 <style scoped>

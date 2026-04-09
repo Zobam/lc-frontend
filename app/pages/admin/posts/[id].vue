@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import { useQuery } from '@pinia/colada';
 import type { PostResponse } from "~/types/api";
 import { PostCategory } from "~/types/enums";
 
@@ -18,10 +19,11 @@ if (id) {
     navigateTo("/admin/posts");
 }
 
-const { data: postRes, pending, refresh } = await useAsyncData(
-    `post-${postId.value}`,
-    () => api.get<PostResponse>(`/posts/${postSlug.value}`)
-);
+const { data: postRes, status, refetch: refresh } = useQuery({
+    key: () => ['post', postId.value],
+    query: () => api.get<PostResponse>(`/posts/${postSlug.value}`)
+});
+const pending = computed(() => status.value === 'pending');
 
 const form = ref({
     title: "", subtitle: "", body: "", excerpt: "",

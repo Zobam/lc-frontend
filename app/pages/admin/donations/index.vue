@@ -14,17 +14,16 @@ const page = ref(Number(route.query.page) || 1);
 const search = ref((route.query.search as string) || "");
 const typeFilter = ref((route.query.type as string) || "");
 
-// Fetch stats and lists
-const { data: statsRes } = await useAsyncData(
-    "admin-donations-stats",
-    () => api.get<DonationStatsResponse>("/donations/statistics")
-);
+const { data: statsRes } = useQuery({
+    key: ['admin-donations-stats'],
+    query: () => api.get<DonationStatsResponse>("/donations/statistics")
+});
 
-const { data: donationsData, pending, refresh } = await useAsyncData(
-    "admin-donations-list",
-    () => api.get<DonationsListResponse>("/donations/manage/all", { page: page.value, per_page: 15, search: search.value, type: typeFilter.value }),
-    { watch: [page, search, typeFilter], lazy: true }
-);
+const { data: donationsData, status, refetch: refresh } = useQuery({
+    key: () => ["admin-donations-list", page.value, search.value, typeFilter.value],
+    query: () => api.get<DonationsListResponse>("/donations/manage/all", { page: page.value, per_page: 15, search: search.value, type: typeFilter.value }),
+});
+const pending = computed(() => status.value === 'pending');
 
 let searchTimer: ReturnType<typeof setTimeout>;
 const handleSearch = () => { clearTimeout(searchTimer); searchTimer = setTimeout(() => { page.value = 1; }, 450); };

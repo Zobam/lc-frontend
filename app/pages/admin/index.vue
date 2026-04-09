@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import { useQuery } from '@pinia/colada';
 import type { DashboardStatsResponse } from "~/types/api";
 
 definePageMeta({ layout: "admin", middleware: "sidebase-auth" });
@@ -7,11 +8,11 @@ useHead({ title: 'Dashboard | LC Admin' });
 
 const api = useApi();
 
-const { data: statsRes, pending, error, refresh } = await useAsyncData(
-    "dashboard-stats",
-    () => api.get<DashboardStatsResponse>("/admin/stats"),
-    { lazy: true }
-);
+const { data: statsRes, status, error, refetch: refresh } = useQuery({
+    key: ['dashboard-stats'],
+    query: () => api.get<DashboardStatsResponse>("/admin/stats")
+});
+const pending = computed(() => status.value === 'pending');
 
 const stats = computed(() => statsRes.value?.data);
 

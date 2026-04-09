@@ -113,18 +113,20 @@
 
 <script setup lang="ts">
 import type { Event } from '~/types/models';
+import { useQuery } from '@pinia/colada';
 
 const route = useRoute();
 const { get } = useApi();
 
 const id = route.params.id as string;
 
-const { data: eventData, pending, error } = await useAsyncData(
-    `event-${id}`,
-    () => get<{ status: string; data: Event }>(`/events/${id}`)
-);
+const { data: eventRes, status, error } = useQuery({
+    key: ['event', id],
+    query: () => get<{ status: string; data: Event }>(`/events/${id}`)
+});
 
-const event = computed(() => eventData.value?.data);
+const pending = computed(() => status.value === 'pending');
+const event = computed(() => eventRes.value?.data);
 
 useHead({
     title: event.value ? `${event.value.title} | Light City Events` : 'Event | Light City',

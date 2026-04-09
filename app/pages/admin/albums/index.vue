@@ -11,11 +11,11 @@ const route = useRoute();
 const page = ref(Number(route.query.page) || 1);
 const search = ref((route.query.search as string) || "");
 
-const { data: albumsData, pending, refresh } = await useAsyncData(
-    "admin-albums",
-    () => api.get<AlbumsListResponse>("/albums", { page: page.value, per_page: 12, search: search.value }),
-    { watch: [page, search], lazy: true }
-);
+const { data: albumsData, status, refetch: refresh } = useQuery({
+    key: () => ["admin-albums", page.value, search.value],
+    query: () => api.get<AlbumsListResponse>("/albums", { page: page.value, per_page: 12, search: search.value }),
+});
+const pending = computed(() => status.value === 'pending');
 
 let searchTimer: ReturnType<typeof setTimeout>;
 const handleSearch = () => { clearTimeout(searchTimer); searchTimer = setTimeout(() => { page.value = 1; }, 450); };

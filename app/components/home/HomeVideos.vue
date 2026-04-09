@@ -86,17 +86,32 @@
 </template>
 
 <script setup lang="ts">
-import { useAppResourceInfoStore } from '~/stores/appResourceInfo';
 import type { VideoListResponse } from '~/types/api';
 import type { VideoLink } from '~/types/models';
 
 const { get } = useApi();
-const store = useAppResourceInfoStore();
 
-const videosLoading = ref(true);
-const mainVideo = ref<VideoLink | null>(null);
-const sideVideos = ref<VideoLink[]>([]);
-const autoplay = ref(false);
+const { data: videosRes, status } = useQuery({
+    key: ['home-videos'],
+    query: () => get<VideoListResponse>('/videos', { per_page: 5 }),
+});
+
+const videosLoading = computed(() => status.value === 'pending');
+const activeVideoId = ref<string | null>(null);
+
+const mainVideo = computed(() => {
+    const vids = videosRes.value?.data?.data ?? [];
+    if (vids.length === 0) return null;
+    if (activeVideoId.value) {
+        return vids.find((v: VideoLink) => v.id === activeVideoId.value) || vids[0] || null;
+    }
+    return vids[0] ?? null;
+});
+
+const sideVideos = computed(() => {
+    const vids = videosRes.value?.data?.data ?? [];
+    return vids.slice(1);
+});
 
 const getYouTubeId = (video: VideoLink): string | null => {
     if (video.video_id && video.video_id.length === 11) return video.video_id;
@@ -108,35 +123,20 @@ const mainVideoEmbedUrl = computed(() => {
     if (!mainVideo.value) return null;
     const id = getYouTubeId(mainVideo.value);
     if (!id) return null;
+    
     const params = new URLSearchParams({ rel: '0', modestbranding: '1' });
-    if (autoplay.value) params.set('autoplay', '1');
+    if (activeVideoId.value) params.set('autoplay', '1');
     return `https://www.youtube.com/embed/${id}?${params.toString()}`;
 });
 
 const selectVideo = (video: VideoLink) => {
-    autoplay.value = true;
-    mainVideo.value = video;
+    activeVideoId.value = video.id;
 };
 
 const formatVideoDate = (dateStr?: string | null): string => {
     if (!dateStr) return '';
     return new Date(dateStr).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
 };
-
-onMounted(async () => {
-    try {
-        const response = await get<VideoListResponse>('/videos', { per_page: 5 });
-        const videos = response.data?.data ?? [];
-        mainVideo.value = videos[0] ?? null;
-        sideVideos.value = videos.slice(1);
-        store.videos = videos;
-    } catch (e) {
-        console.error('Failed to load videos:', e);
-    } finally {
-        videosLoading.value = false;
-        store.videosLoading = false;
-    }
-});
 </script>
 
 <style scoped>

@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import { useQuery } from '@pinia/colada';
 import type { AlbumResponse, EventsListResponse } from "~/types/api";
 import { AlbumCategory, AlbumStatus } from "~/types/enums";
 
@@ -10,16 +11,16 @@ const route = useRoute();
 const router = useRouter();
 const albumId = route.params.id as string;
 
-const { data: albumRes, pending, refresh } = await useAsyncData(
-    `album-${albumId}`,
-    () => api.get<AlbumResponse>(`/albums/${albumId}`)
-);
+const { data: albumRes, status, refetch: refresh } = useQuery({
+    key: ['album', albumId],
+    query: () => api.get<AlbumResponse>(`/albums/${albumId}`)
+});
+const pending = computed(() => status.value === 'pending');
 
-const { data: eventsData } = await useAsyncData(
-    "events-list-edit",
-    () => api.get<EventsListResponse>("/events", { per_page: 50 }),
-    { lazy: true }
-);
+const { data: eventsData } = useQuery({
+    key: ['events-list'],
+    query: () => api.get<EventsListResponse>("/events", { per_page: 50 })
+});
 
 const form = ref({
     title: "", description: "",

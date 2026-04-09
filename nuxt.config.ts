@@ -27,6 +27,7 @@ export default defineNuxtConfig({
     "shadcn-nuxt",
     "@sidebase/nuxt-auth",
     "@pinia/nuxt",
+    "@pinia/colada-nuxt",
   ],
   auth: {
     baseURL: process.env.DEV_API_URL,

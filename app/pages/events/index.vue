@@ -86,6 +86,7 @@
 <script setup lang="ts">
 import type { EventsListResponse } from '~/types/api';
 import type { Event } from '~/types/models';
+import { useQuery } from '@pinia/colada';
 
 useHead({
     title: 'Events & Programs | Light City Evangelical Center',
@@ -99,19 +100,13 @@ useHead({
 
 const { get } = useApi();
 
-const eventsLoading = ref(true);
-const events = ref<Event[]>([]);
-
-onMounted(async () => {
-    try {
-        const response = await get<EventsListResponse>('/events', { per_page: 6 });
-        events.value = response.data ?? [];
-    } catch (e) {
-        console.error('Failed to load events:', e);
-    } finally {
-        eventsLoading.value = false;
-    }
+const { data: eventsRes, status } = useQuery({
+    key: ['page-events'],
+    query: () => get<EventsListResponse>('/events', { per_page: 6 }),
 });
+
+const eventsLoading = computed(() => status.value === 'pending');
+const events = computed(() => eventsRes.value?.data ?? []);
 
 const getEventDay = (dateStr?: string): string => {
     if (!dateStr) return '';

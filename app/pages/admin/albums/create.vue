@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import { useQuery } from '@pinia/colada';
 import type { AlbumResponse, EventsListResponse } from "~/types/api";
 import { AlbumCategory } from "~/types/enums";
 import { validateAlbum, hasErrors } from "~/utils/validation";
@@ -18,7 +19,10 @@ const form = ref({
 const errors = ref<Record<string, string>>({});
 const loading = ref(false);
 
-const { data: eventsData } = await useAsyncData("events-list", () => api.get<EventsListResponse>("/events", { per_page: 50 }), { lazy: true });
+const { data: eventsData } = useQuery({
+    key: ['events-list'],
+    query: () => api.get<EventsListResponse>("/events", { per_page: 50 })
+});
 
 const validate = () => {
     errors.value = validateAlbum({ title: form.value.title, category: form.value.category });

@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import { useQuery } from '@pinia/colada';
 import type { CommentsListResponse } from "~/types/api";
 
 definePageMeta({ layout: "admin", middleware: "sidebase-auth" });
@@ -12,11 +13,11 @@ const page = ref(Number(route.query.page) || 1);
 const search = ref((route.query.search as string) || "");
 const statusFilter = ref((route.query.status as string) || "all");
 
-const { data: commentsData, pending, refresh } = await useAsyncData(
-    "admin-comments",
-    () => api.get<CommentsListResponse>("/comments/manage/pending", { page: page.value, per_page: 20, search: search.value, status: statusFilter.value }),
-    { watch: [page, search, statusFilter], lazy: true }
-);
+const { data: commentsData, status, refetch: refresh } = useQuery({
+    key: () => ["admin-comments", page.value, search.value, statusFilter.value],
+    query: () => api.get<CommentsListResponse>("/comments/manage/pending", { page: page.value, per_page: 20, search: search.value, status: statusFilter.value }),
+});
+const pending = computed(() => status.value === 'pending');
 
 let searchTimer: ReturnType<typeof setTimeout>;
 const handleSearch = () => { clearTimeout(searchTimer); searchTimer = setTimeout(() => { page.value = 1; }, 450); };

@@ -176,6 +176,7 @@
 <script setup lang="ts">
 import type { VideoListResponse } from '~/types/api';
 import type { VideoLink } from '~/types/models';
+import { useQuery } from '@pinia/colada';
 
 useHead({
     title: 'Media Library | Light City Evangelical Center',
@@ -191,11 +192,33 @@ const { get } = useApi();
 
 const selectedSeries = ref('');
 
-const videosLoading = ref(true);
-const mainVideo = ref<VideoLink | null>(null);
-const sideVideos = ref<VideoLink[]>([]);
-const archiveVideos = ref<VideoLink[]>([]);
+const { data: videosRes, status } = useQuery({
+    key: ['page-media'],
+    query: () => get<VideoListResponse>('/videos', { per_page: 11 }),
+});
+
+const videosLoading = computed(() => status.value === 'pending');
 const autoplay = ref(false);
+const activeVideoId = ref<string | null>(null);
+
+const mainVideo = computed(() => {
+    const vids = videosRes.value?.data?.data ?? [];
+    if (vids.length === 0) return null;
+    if (activeVideoId.value) {
+        return vids.find((v: VideoLink) => v.id === activeVideoId.value) || vids[0] || null;
+    }
+    return vids[0] ?? null;
+});
+
+const sideVideos = computed(() => {
+    const vids = videosRes.value?.data?.data ?? [];
+    return vids.slice(1, 4);
+});
+
+const archiveVideos = computed(() => {
+    const vids = videosRes.value?.data?.data ?? [];
+    return vids.slice(4); // Or 5 if we want to skip 5
+});
 
 const getYouTubeId = (video: VideoLink): string | null => {
     if (video.video_id && video.video_id.length === 11) return video.video_id;
@@ -208,13 +231,13 @@ const mainVideoEmbedUrl = computed(() => {
     const id = getYouTubeId(mainVideo.value);
     if (!id) return null;
     const params = new URLSearchParams({ rel: '0', modestbranding: '1' });
-    if (autoplay.value) params.set('autoplay', '1');
+    if (autoplay.value || activeVideoId.value) params.set('autoplay', '1');
     return `https://www.youtube.com/embed/${id}?${params.toString()}`;
 });
 
 const selectVideo = (video: VideoLink) => {
     autoplay.value = true;
-    mainVideo.value = video;
+    activeVideoId.value = video.id;
 };
 
 const scrollToTop = () => {
@@ -230,20 +253,6 @@ const formatVideoDate = (dateStr?: string | null): string => {
     if (!dateStr) return '';
     return new Date(dateStr).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
 };
-
-onMounted(async () => {
-    try {
-        const response = await get<VideoListResponse>('/videos', { per_page: 11 });
-        const videos = response.data?.data ?? [];
-        mainVideo.value = videos[0] ?? null;
-        sideVideos.value = videos.slice(1, 5);
-        archiveVideos.value = videos.slice(5);
-    } catch (e) {
-        console.error('Failed to load videos:', e);
-    } finally {
-        videosLoading.value = false;
-    }
-});
 
 const worship = [
     { title: 'Praise Medley — Feb 2026', img: 'https://images.unsplash.com/photo-1415201364774-f6f0bb35f28f?w=300&h=200&fit=crop' },

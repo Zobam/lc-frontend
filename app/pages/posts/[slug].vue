@@ -102,18 +102,20 @@
 
 <script setup lang="ts">
 import type { Post } from '~/types/models';
+import { useQuery } from '@pinia/colada';
 
 const route = useRoute();
 const { get } = useApi();
 
 const slug = route.params.slug as string;
 
-const { data: postData, pending, error } = await useAsyncData(
-    `post-${slug}`,
-    () => get<{ status: string; data: Post }>(`/posts/${slug}`)
-);
+const { data: postRes, status, error } = useQuery({
+    key: ['post', slug],
+    query: () => get<{ status: string; data: Post }>(`/posts/${slug}`)
+});
 
-const post = computed(() => postData.value?.data);
+const pending = computed(() => status.value === 'pending');
+const post = computed(() => postRes.value?.data);
 
 useHead({
     title: post.value ? `${post.value.title} | Light City` : 'Post | Light City',

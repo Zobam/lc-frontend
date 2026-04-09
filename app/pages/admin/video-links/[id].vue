@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import { useQuery } from '@pinia/colada';
 import type { VideoLinkResponse } from "~/types/api";
 import { VideoCategory, VideoStatus } from "~/types/enums";
 import { validateVideoLink, hasErrors } from "~/utils/validation";
@@ -11,10 +12,11 @@ const route = useRoute();
 const router = useRouter();
 const videoId = route.params.id as string;
 
-const { data: videoRes, pending, refresh } = await useAsyncData(
-    `video-${videoId}`,
-    () => api.get<VideoLinkResponse>(`/videos/${videoId}`)
-);
+const { data: videoRes, status, refetch: refresh } = useQuery({
+    key: ['video', videoId],
+    query: () => api.get<VideoLinkResponse>(`/videos/${videoId}`)
+});
+const pending = computed(() => status.value === 'pending');
 
 const form = ref({
     title: "", url: "", description: "",

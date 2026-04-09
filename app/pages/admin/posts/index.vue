@@ -14,16 +14,16 @@ const search = ref((route.query.search as string) || "");
 const categoryFilter = ref((route.query.category as string) || "");
 const statusFilter = ref((route.query.status as string) || "");
 
-const { data: postsData, pending, refresh } = await useAsyncData(
-    "admin-posts",
-    () => api.get<PostsListResponse>("/posts", {
+const { data: postsData, status, refetch: refresh } = useQuery({
+    key: () => ["admin-posts", page.value, search.value, categoryFilter.value, statusFilter.value],
+    query: () => api.get<PostsListResponse>("/posts", {
         page: page.value, per_page: 15,
         search: search.value,
         category: categoryFilter.value,
         status: statusFilter.value,
     }),
-    { watch: [page, search, categoryFilter, statusFilter], lazy: true }
-);
+});
+const pending = computed(() => status.value === 'pending');
 
 let searchTimer: ReturnType<typeof setTimeout>;
 const handleSearch = () => { clearTimeout(searchTimer); searchTimer = setTimeout(() => { page.value = 1; }, 450); };

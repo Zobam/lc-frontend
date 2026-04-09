@@ -68,31 +68,18 @@
 </template>
 
 <script setup lang="ts">
-import { useAppResourceInfoStore } from '~/stores/appResourceInfo';
 import type { EventsListResponse } from '~/types/api';
-import type { Event } from '~/types/models';
 
 const { get } = useApi();
-const store = useAppResourceInfoStore();
 
-const eventsLoading = ref(true);
-const featuredEvent = ref<Event | null>(null);
-const sideEvents = ref<Event[]>([]);
-
-onMounted(async () => {
-    try {
-        const response = await get<EventsListResponse>('/events', { per_page: 5 });
-        const events = response.data ?? [];
-        featuredEvent.value = events[0] ?? null;
-        sideEvents.value = events.slice(1);
-        store.events = events;
-    } catch (e) {
-        console.error('Failed to load events:', e);
-    } finally {
-        eventsLoading.value = false;
-        store.eventsLoading = false;
-    }
+const { data: eventsRes, status } = useQuery({
+    key: ['home-events'],
+    query: () => get<EventsListResponse>('/events', { per_page: 5 }),
 });
+
+const eventsLoading = computed(() => status.value === 'pending');
+const featuredEvent = computed(() => (eventsRes.value?.data ?? [])[0] ?? null);
+const sideEvents = computed(() => (eventsRes.value?.data ?? []).slice(1));
 
 const formatEventDate = (dateStr?: string): string => {
     if (!dateStr) return '';

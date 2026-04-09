@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import { useQuery } from '@pinia/colada';
 import type { UserResponse, RolesListResponse } from "~/types/api";
 import { UserStatus } from "~/types/enums";
 
@@ -10,12 +11,16 @@ const route = useRoute();
 const router = useRouter();
 const userId = route.params.id as string;
 
-const { data: userRes, pending, refresh } = await useAsyncData(
-    `user-${userId}`,
-    () => api.get<UserResponse>(`/users/${userId}`)
-);
+const { data: userRes, status, refetch: refresh } = useQuery({
+    key: ['user', userId],
+    query: () => api.get<UserResponse>(`/users/${userId}`)
+});
+const pending = computed(() => status.value === 'pending');
 
-const { data: rolesRes } = await useAsyncData("roles-edit", () => api.get<RolesListResponse>("/roles"), { lazy: true });
+const { data: rolesRes } = useQuery({
+    key: ['roles'],
+    query: () => api.get<RolesListResponse>("/roles")
+});
 
 const form = ref({
     first_name: "",

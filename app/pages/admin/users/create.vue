@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import { useQuery } from '@pinia/colada';
 import type { UserResponse, RolesListResponse } from "~/types/api";
 import { UserStatus } from "~/types/enums";
 import { validateCreateUser, hasErrors } from "~/utils/validation";
@@ -22,7 +23,10 @@ const form = ref({
 const errors = ref<Record<string, string>>({});
 const loading = ref(false);
 
-const { data: rolesRes } = await useAsyncData("roles", () => api.get<RolesListResponse>("/roles"), { lazy: true });
+const { data: rolesRes } = useQuery({
+    key: ['roles'],
+    query: () => api.get<RolesListResponse>("/roles")
+});
 
 const validate = () => {
     errors.value = validateCreateUser(form.value);

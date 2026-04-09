@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import { useQuery } from '@pinia/colada';
 import type { EventResponse } from "~/types/api";
 // import { toast } from "vue-sonner";
 
@@ -10,10 +11,11 @@ const route = useRoute();
 const router = useRouter();
 const eventId = route.params.id as string;
 
-const { data: eventRes, pending, refresh } = await useAsyncData(
-    `event-${eventId}`,
-    () => api.get<EventResponse>(`/events/${eventId}/admin`)
-);
+const { data: eventRes, status, refetch: refresh } = useQuery({
+    key: ['event', eventId],
+    query: () => api.get<EventResponse>(`/events/${eventId}/admin`)
+});
+const pending = computed(() => status.value === 'pending');
 
 const form = ref({
     title: "", description: "", location: "",
@@ -49,10 +51,10 @@ const updateStatus = async (status: 'draft' | 'published' | 'cancelled') => {
         else if (status === 'cancelled') endpoint += 'cancel';
 
         await api.put(endpoint);
-        toast.success(`Event status updated to ${status}`);
+        alert(`Event status updated to ${status}`);
         refresh();
     } catch (e: any) {
-        toast.error(e.message || "Failed to update event status");
+        alert(e.message || "Failed to update event status");
     } finally {
         updatingStatus.value = null;
     }

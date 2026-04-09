@@ -12,15 +12,15 @@ const page = ref(Number(route.query.page) || 1);
 const search = ref((route.query.search as string) || "");
 const upcomingOnly = ref(route.query.upcoming === "true");
 
-const { data: eventsData, pending, refresh } = await useAsyncData(
-    "admin-events",
-    () => api.get<EventsListResponse>("/events/manage/all", {
+const { data: eventsData, status, refetch: refresh } = useQuery({
+    key: () => ["admin-events", page.value, search.value, upcomingOnly.value],
+    query: () => api.get<EventsListResponse>("/events/manage/all", {
         page: page.value, per_page: 15,
         search: search.value,
         upcoming: upcomingOnly.value || undefined,
     }),
-    { watch: [page, search, upcomingOnly], lazy: true }
-);
+});
+const pending = computed(() => status.value === 'pending');
 
 let searchTimer: ReturnType<typeof setTimeout>;
 const handleSearch = () => {

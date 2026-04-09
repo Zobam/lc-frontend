@@ -13,16 +13,16 @@ const page = ref(Number(route.query.page) || 1);
 const search = ref((route.query.search as string) || "");
 const statusFilter = ref((route.query.status as string) || "");
 
-const { data: usersData, pending, refresh } = await useAsyncData(
-    "admin-users",
-    () => api.get<UsersListResponse>("/users", {
+const { data: usersData, status, refetch: refresh } = useQuery({
+    key: () => ["admin-users", page.value, search.value, statusFilter.value],
+    query: () => api.get<UsersListResponse>("/users", {
         page: page.value,
         per_page: 15,
         search: search.value,
         status: statusFilter.value,
     }),
-    { watch: [page, search, statusFilter], lazy: true }
-);
+});
+const pending = computed(() => status.value === 'pending');
 
 let searchTimer: ReturnType<typeof setTimeout>;
 const handleSearch = () => {
