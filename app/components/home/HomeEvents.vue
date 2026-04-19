@@ -6,14 +6,9 @@
                 <NuxtLink to="/events" class="view-all">View All →</NuxtLink>
             </div>
             <!-- Full empty state when no events at all -->
-            <EmptyState
-                v-if="!eventsLoading && !featuredEvent"
-                icon="mdi:calendar-blank-outline"
-                title="No Upcoming Events"
-                message="Check back soon for exciting programs and services."
-                link-to="/events"
-                link-label="View Events →"
-            />
+            <EmptyState v-if="!eventsLoading && !featuredEvent" icon="mdi:calendar-blank-outline"
+                title="No Upcoming Events" message="Check back soon for exciting programs and services."
+                link-to="/events" link-label="View Events →" />
 
             <div class="broadcasts-grid" v-else :class="{ 'single-col': sideEvents.length === 0 }">
                 <!-- Featured Event -->
@@ -24,8 +19,7 @@
                     <div class="bc-info">
                         <span class="bc-tag">Live Event</span>
                         <h3>{{ featuredEvent.title }}</h3>
-                        <p>{{ featuredEvent.subtitle || featuredEvent.description.slice(0, 100) }}...</p>
-                        <NuxtLink to="/events" class="btn btn-gold-sm" @click.stop>See more</NuxtLink>
+                        <p>{{ featuredEvent.subtitle || featuredEvent.description.slice(0, 160) }}...</p>
                     </div>
                 </NuxtLink>
                 <!-- Featured Event Skeleton -->
