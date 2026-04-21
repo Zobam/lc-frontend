@@ -89,7 +89,7 @@ const latestTickerText = computed(() => {
 .hero-content {
     position: relative;
     z-index: 2;
-    padding: 0 10%;
+    padding: 0 5%;
     max-width: 680px;
 }
 

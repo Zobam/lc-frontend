@@ -129,7 +129,7 @@ const categories = Object.values(PostCategory);
                         </div>
                         <div class="field">
                             <label>Body</label>
-                            <textarea v-model="form.body" class="input textarea" rows="12"></textarea>
+                            <AdminTiptapEditor v-model="form.body" />
                         </div>
                         <div class="field">
                             <label>Excerpt</label>
