@@ -66,8 +66,7 @@ const categories = Object.values(PostCategory);
                     </div>
                     <div class="field" :class="{ errored: errors.body }">
                         <label>Body <span class="req">*</span></label>
-                        <textarea v-model="form.body" class="input textarea" rows="12"
-                            placeholder="Write your post content here…"></textarea>
+                        <AdminTiptapEditor v-model="form.body" :has-error="!!errors.body" />
                         <p v-if="errors.body" class="field-error">{{ errors.body }}</p>
                     </div>
                     <div class="field">
