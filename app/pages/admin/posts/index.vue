@@ -16,7 +16,7 @@ const statusFilter = ref((route.query.status as string) || "");
 
 const { data: postsData, status, refetch: refresh } = useQuery({
     key: () => ["admin-posts", page.value, search.value, categoryFilter.value, statusFilter.value],
-    query: () => api.get<PostsListResponse>("/posts", {
+    query: () => api.get<PostsListResponse>("/posts/manage/all", {
         page: page.value, per_page: 15,
         search: search.value,
         category: categoryFilter.value,
@@ -95,7 +95,7 @@ const categories = Object.values(PostCategory);
                     <div class="sk-cell narrow rounded-full"></div>
                 </div>
             </div>
-            <table v-else-if="postsData?.data?.data?.length" class="data-table">
+            <table v-else-if="postsData?.data?.length" class="data-table">
                 <thead>
                     <tr>
                         <th>Title</th>
@@ -107,7 +107,7 @@ const categories = Object.values(PostCategory);
                     </tr>
                 </thead>
                 <tbody>
-                    <tr v-for="post in postsData.data.data" :key="post.id">
+                    <tr v-for="post in postsData.data" :key="post.id">
                         <td class="font-medium">{{ post.title }}</td>
                         <td><span class="badge badge-blue">{{ post.category }}</span></td>
                         <td class="muted">{{ post.author ? `${post.author.first_name} ${post.author.last_name}` : "—" }}

@@ -90,9 +90,9 @@ const formatValue = (card: any) =>
                 <NuxtLink to="/admin/users/create" class="quick-btn">
                     <Icon name="mdi:account-plus" /> New User
                 </NuxtLink>
-                <NuxtLink to="/admin/comments" class="quick-btn">
+                <!-- <NuxtLink to="/admin/comments" class="quick-btn">
                     <Icon name="mdi:comment-check" /> Moderate Comments
-                </NuxtLink>
+                </NuxtLink> -->
             </div>
         </div>
     </div>

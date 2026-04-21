@@ -29,8 +29,8 @@ const navItems = [
     { label: "Posts", icon: "mdi:newspaper-variant-outline", to: "/admin/posts" },
     // { label: "Albums", icon: "mdi:image-album", to: "/admin/albums" },
     { label: "Videos", icon: "mdi:youtube", to: "/admin/video-links" },
-    { label: "Comments", icon: "mdi:comment-text-multiple", to: "/admin/comments" },
-    { label: "Donations", icon: "mdi:hand-heart", to: "/admin/donations" },
+    /* { label: "Comments", icon: "mdi:comment-text-multiple", to: "/admin/comments" },
+    { label: "Donations", icon: "mdi:hand-heart", to: "/admin/donations" }, */
 ];
 
 const sidebarOpen = ref(false);

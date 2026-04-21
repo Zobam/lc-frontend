@@ -14,7 +14,7 @@ const search = ref((route.query.search as string) || "");
 
 const { data: videosData, status, refetch: refresh } = useQuery({
     key: () => ["admin-videos", page.value, search.value],
-    query: () => api.get<any>("/videos", { page: page.value, per_page: 15, search: search.value }),
+    query: () => api.get<any>("/videos/manage/all", { page: page.value, per_page: 15, search: search.value }),
 });
 const pending = computed(() => status.value === 'pending');
 
@@ -26,7 +26,7 @@ const deletingId = ref<string | null>(null);
 const deleteVideo = async (id: string) => {
     if (!confirm("Delete this video link?")) return;
     deletingId.value = id;
-    try { await api.delete(`/video-links/${id}`); refresh(); }
+    try { await api.delete(`/videos/${id}`); refresh(); }
     catch (e: any) { alert(e.message); }
     finally { deletingId.value = null; }
 };
@@ -64,8 +64,8 @@ const deleteVideo = async (id: string) => {
             </div>
         </div>
 
-        <div v-else-if="videosData?.data?.data?.length" class="videos-grid">
-            <div v-for="video in videosData.data.data" :key="video.id" class="video-card">
+        <div v-else-if="videosData?.data?.length" class="videos-grid">
+            <div v-for="video in videosData.data" :key="video.id" class="video-card">
                 <div class="video-thumb-wrap">
                     <img v-if="video.hq_thumbnail_url || video.thumbnail_url"
                         :src="video.hq_thumbnail_url || video.thumbnail_url" class="video-thumb" />
