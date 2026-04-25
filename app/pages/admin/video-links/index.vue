@@ -36,11 +36,19 @@ const deleteVideo = async (id: string) => {
 };
 
 // ── Table drag-and-drop reorder ───────────────────────────────────────────────
-// Local ordered copy used only in table view; reset whenever server data changes.
+// Local ordered copy used only in table view; reset whenever server data arrives.
 const tableRows = ref<any[]>([]);
+
+// Snapshot of the server-authoritative ID order — used to detect real changes
+// and compute the minimal diff payload.
+const originalOrder = ref<string[]>([]);
+
 watch(
     () => videosData.value?.data,
-    (rows) => { tableRows.value = rows ? [...rows] : []; },
+    (rows) => {
+        tableRows.value = rows ? [...rows] : [];
+        originalOrder.value = rows ? rows.map((r: any) => r.id) : [];
+    },
     { immediate: true }
 );
 
@@ -58,20 +66,29 @@ const onDragEnd = () => { dragSrcIndex.value = null; };
 
 // ── Persist reorder ───────────────────────────────────────────────────────────
 const savingOrder = ref(false);
-const orderDirty = ref(false);
 
-// Track whether user has actually dragged something
-watch(tableRows, () => { orderDirty.value = true; }, { deep: false });
+// True only when at least one row has moved from its server-given position.
+const orderDirty = computed(() =>
+    tableRows.value.some((v, i) => v.id !== originalOrder.value[i])
+);
 
 const saveOrder = async () => {
     savingOrder.value = true;
-    const payload = {
-        videos: tableRows.value.map((v, i) => ({ id: v.id, order: i })),
-    };
+
+    // Build a map of original positions for O(1) lookup.
+    const originalIndexMap = new Map(originalOrder.value.map((id, i) => [id, i]));
+
+    // Only include videos whose current index differs from their original index.
+    const changed = tableRows.value
+        .map((v, newIndex) => ({ id: v.id, order: newIndex, originalIndex: originalIndexMap.get(v.id) }))
+        .filter(({ order, originalIndex }) => order !== originalIndex)
+        .map(({ id, order }) => ({ id, order }));
+
     try {
-        await api.put('/videos/reorder', payload);
+        await api.put('/videos/reorder', { videos: changed });
         alert("Video order saved.");
-        orderDirty.value = false;
+        // Sync snapshot so button goes back to disabled.
+        originalOrder.value = tableRows.value.map((r) => r.id);
         refresh();
     } catch (e: any) { alert(e.message); }
     finally { savingOrder.value = false; }
