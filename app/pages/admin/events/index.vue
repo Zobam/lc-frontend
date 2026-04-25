@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import type { EventsListResponse } from "~/types/api";
+import { toast } from 'vue-sonner';
 
 definePageMeta({ layout: "admin", middleware: "sidebase-auth" });
 useHead({ title: 'Manage Events | LC Admin' });
@@ -35,7 +36,7 @@ const deleteEvent = async (id: string) => {
     if (!confirm("Delete this event?")) return;
     deletingId.value = id;
     try { await api.delete(`/events/${id}`); refresh(); }
-    catch (e: any) { alert(e.message || "Failed to delete event"); }
+    catch (e: any) { toast.error(e.message || "Failed to delete event"); }
     finally { deletingId.value = null; }
 };
 

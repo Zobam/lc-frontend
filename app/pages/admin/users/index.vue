@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import type { UsersListResponse } from "~/types/api";
 import { UserStatus } from "~/types/enums";
+import { toast } from 'vue-sonner';
 
 definePageMeta({ layout: "admin", middleware: "sidebase-auth" });
 useHead({ title: 'Manage Users | LC Admin' });
@@ -51,7 +52,7 @@ const deleteUser = async (id: string) => {
         await api.delete(`/users/${id}`);
         refresh();
     } catch (e: any) {
-        alert(e.message || "Failed to delete user");
+        toast.error(e.message || "Failed to delete user");
     } finally {
         deletingId.value = null;
     }

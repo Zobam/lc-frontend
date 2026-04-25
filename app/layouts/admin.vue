@@ -1,5 +1,7 @@
 <script setup lang="ts">
 const { data: session, signOut } = useAuth();
+import 'vue-sonner/style.css'
+import { Toaster } from '@/components/ui/sonner'
 
 const route = useRoute();
 
@@ -122,6 +124,7 @@ const isActive = (to: string) => {
                 <slot />
             </main>
         </div>
+        <Toaster rich-colors />
     </div>
 </template>
 

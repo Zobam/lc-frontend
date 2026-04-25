@@ -8,6 +8,7 @@ import {
     DropdownMenuSeparator,
     DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu'
+import { toast } from 'vue-sonner';
 
 definePageMeta({ layout: "admin", middleware: "sidebase-auth" });
 useHead({ title: 'Manage Posts | LC Admin' });
@@ -42,22 +43,22 @@ const busyId = ref<string | null>(null);
 const deletePost = async (id: string) => {
     if (!confirm("Delete this post?")) return;
     busyId.value = id;
-    try { await api.delete(`/posts/${id}`); alert("Post deleted."); refresh(); }
-    catch (e: any) { alert(e.message); }
+    try { await api.delete(`/posts/${id}`); toast.success("Post deleted."); refresh(); }
+    catch (e: any) { toast.error(e.message); }
     finally { busyId.value = null; }
 };
 
 const publishPost = async (id: string) => {
     busyId.value = id;
-    try { await api.put(`/posts/${id}/approve`); alert("Post published."); refresh(); }
-    catch (e: any) { alert(e.message); }
+    try { await api.put(`/posts/${id}/approve`); toast.success("Post published."); refresh(); }
+    catch (e: any) { toast.error(e.message); }
     finally { busyId.value = null; }
 };
 
 const unpublishPost = async (id: string) => {
     busyId.value = id;
-    try { await api.put(`/posts/${id}/unpublish`); alert("Post unpublished."); refresh(); }
-    catch (e: any) { alert(e.message); }
+    try { await api.put(`/posts/${id}/unpublish`); toast.success("Post unpublished."); refresh(); }
+    catch (e: any) { toast.error(e.message); }
     finally { busyId.value = null; }
 };
 

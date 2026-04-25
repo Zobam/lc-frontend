@@ -2,6 +2,7 @@
 import { useQuery } from '@pinia/colada';
 import type { AlbumResponse, EventsListResponse } from "~/types/api";
 import { AlbumCategory, AlbumStatus } from "~/types/enums";
+import { toast } from 'vue-sonner';
 
 definePageMeta({ layout: "admin", middleware: "sidebase-auth" });
 useHead({ title: 'Edit Album | LC Admin' });
@@ -46,16 +47,16 @@ const updateAlbum = async () => {
     try {
         const payload = { ...form.value, event_id: form.value.event_id || undefined };
         await api.put<AlbumResponse>(`/albums/${albumId}`, payload);
-        alert("Album updated successfully");
+        toast.success("Album updated successfully");
         refresh();
-    } catch (e: any) { alert(e.message || "Failed to update album"); }
+    } catch (e: any) { toast.error(e.message || "Failed to update album"); }
     finally { loading.value = false; }
 };
 
 const deleteAlbum = async () => {
     if (!confirm("Delete this album? All images will be removed.")) return;
     try { await api.delete(`/albums/${albumId}`); router.push("/admin/albums"); }
-    catch (e: any) { alert(e.message); }
+    catch (e: any) { toast.error(e.message); }
 };
 
 const imageFiles = ref<File[]>([]);
@@ -67,28 +68,28 @@ const uploadImages = async () => {
     imageFiles.value.forEach(f => fd.append("images[]", f));
     try {
         await api.post(`/albums/${albumId}/images`, fd);
-        alert("Images uploaded successfully");
+        toast.success("Images uploaded successfully");
         refresh();
         imageFiles.value = [];
-    } catch (e: any) { alert(e.message || "Failed to upload images"); }
+    } catch (e: any) { toast.error(e.message || "Failed to upload images"); }
     finally { uploadingImages.value = false; }
 };
 
 const setCover = async (imageId: string) => {
     try { await api.put(`/albums/${albumId}/images/${imageId}/set-cover`); refresh(); }
-    catch (e: any) { alert(e.message); }
+    catch (e: any) { toast.error(e.message); }
 };
 const toggleVisibility = async (imageId: string, currentStatus: string) => {
     try {
         const newStatus = currentStatus === "visible" ? "hidden" : "visible";
         await api.put(`/albums/${albumId}/images/${imageId}/status`, { status: newStatus });
         refresh();
-    } catch (e: any) { alert(e.message); }
+    } catch (e: any) { toast.error(e.message); }
 };
 const deleteImage = async (imageId: string) => {
     if (!confirm("Delete this image permanently?")) return;
     try { await api.delete(`/albums/${albumId}/images/${imageId}`); refresh(); }
-    catch (e: any) { alert(e.message); }
+    catch (e: any) { toast.error(e.message); }
 };
 
 const categories = Object.values(AlbumCategory);

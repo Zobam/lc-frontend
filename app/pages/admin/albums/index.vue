@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import type { AlbumsListResponse } from "~/types/api";
 import { AlbumCategory, AlbumStatus } from "~/types/enums";
+import { toast } from 'vue-sonner';
 
 definePageMeta({ layout: "admin", middleware: "sidebase-auth" });
 useHead({ title: 'Manage Albums | LC Admin' });
@@ -26,7 +27,7 @@ const deleteAlbum = async (id: string) => {
     if (!confirm("Delete this album? All images will be removed.")) return;
     deletingId.value = id;
     try { await api.delete(`/albums/${id}`); refresh(); }
-    catch (e: any) { alert(e.message); }
+    catch (e: any) { toast.error(e.message); }
     finally { deletingId.value = null; }
 };
 </script>

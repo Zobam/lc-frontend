@@ -2,6 +2,7 @@
 import { useQuery } from '@pinia/colada';
 import type { UserResponse, RolesListResponse } from "~/types/api";
 import { UserStatus } from "~/types/enums";
+import { toast } from 'vue-sonner';
 
 definePageMeta({ layout: "admin", middleware: "sidebase-auth" });
 useHead({ title: 'Edit User | LC Admin' });
@@ -53,9 +54,9 @@ const updateUser = async () => {
     try {
         await api.put<UserResponse>(`/users/${userId}`, form.value);
         refresh();
-        alert("User updated successfully");
+        toast.success("User updated successfully");
     } catch (e: any) {
-        alert(e.message || "Failed to update user");
+        toast.error(e.message || "Failed to update user");
     } finally { loading.value = false; }
 };
 
@@ -64,9 +65,9 @@ const assignRoles = async () => {
     try {
         await api.post(`/users/${userId}/roles/sync`, { roles: roleNames.value });
         refresh();
-        alert("Roles updated successfully");
+        toast.success("Roles updated successfully");
     } catch (e: any) {
-        alert(e.message || "Failed to update roles");
+        toast.error(e.message || "Failed to update roles");
     } finally { loading.value = false; }
 };
 </script>

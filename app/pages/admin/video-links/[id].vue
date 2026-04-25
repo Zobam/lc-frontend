@@ -3,6 +3,7 @@ import { useQuery } from '@pinia/colada';
 import type { VideoLinkResponse } from "~/types/api";
 import { VideoCategory, VideoStatus } from "~/types/enums";
 import { validateVideoLink, hasErrors } from "~/utils/validation";
+import { toast } from 'vue-sonner';
 
 definePageMeta({ layout: "admin", middleware: "sidebase-auth" });
 useHead({ title: 'Edit Video | LC Admin' });
@@ -48,16 +49,16 @@ const updateVideo = async () => {
     loading.value = true;
     try {
         await api.put(`/videos/${videoId}`, form.value);
-        alert("Video updated successfully");
+        toast.success("Video updated successfully");
         refresh();
-    } catch (e: any) { alert(e.message); }
+    } catch (e: any) { toast.error(e.message); }
     finally { loading.value = false; }
 };
 
 const deleteVideo = async () => {
     if (!confirm("Delete this video permanently?")) return;
     try { await api.delete(`/videos/${videoId}`); router.push("/admin/video-links"); }
-    catch (e: any) { alert(e.message); }
+    catch (e: any) { toast.error(e.message); }
 };
 
 const categories = Object.values(VideoCategory);
@@ -137,7 +138,7 @@ const categories = Object.values(VideoCategory);
                     <div class="meta-row" v-if="videoRes.data.formatted_duration"><span>Duration:</span> <strong>{{
                         videoRes.data.formatted_duration }}</strong></div>
                     <div class="meta-row"><span>Views (Local tracking):</span> <strong>{{ videoRes.data.view_count
-                    }}</strong></div>
+                            }}</strong></div>
                 </div>
             </div>
         </div>

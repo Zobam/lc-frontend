@@ -2,6 +2,7 @@
 import type { PostResponse } from "~/types/api";
 import { PostCategory } from "~/types/enums";
 import { validatePost, hasErrors } from "~/utils/validation";
+import { toast } from 'vue-sonner';
 
 definePageMeta({ layout: "admin", middleware: "sidebase-auth" });
 useHead({ title: 'Create Post | LC Admin' });
@@ -36,7 +37,7 @@ const submit = async () => {
     try {
         await api.post<PostResponse>("/posts", form.value);
         router.push("/admin/posts");
-    } catch (e: any) { alert(e.message || "Failed to create post"); }
+    } catch (e: any) { toast.error(e.message || "Failed to create post"); }
     finally { loading.value = false; }
 };
 

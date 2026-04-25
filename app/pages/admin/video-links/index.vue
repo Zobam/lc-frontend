@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { useQuery } from '@pinia/colada';
 import type { VideoLinksListResponse } from "~/types/api";
+import { toast } from 'vue-sonner';
 
 definePageMeta({ layout: "admin", middleware: "sidebase-auth" });
 useHead({ title: 'Manage Videos | LC Admin' });
@@ -34,8 +35,8 @@ const deletingId = ref<string | null>(null);
 const deleteVideo = async (id: string) => {
     if (!confirm("Delete this video link?")) return;
     deletingId.value = id;
-    try { await api.delete(`/videos/${id}`); alert("Video deleted."); refresh(); }
-    catch (e: any) { alert(e.message); }
+    try { await api.delete(`/videos/${id}`); toast.success("Video deleted."); refresh(); }
+    catch (e: any) { toast.error(e.message); }
     finally { deletingId.value = null; }
 };
 
@@ -98,11 +99,11 @@ const saveOrder = async () => {
 
     try {
         await api.put('/videos/reorder', { videos: changed });
-        alert("Video order saved.");
+        toast.success("Video order saved.");
         // Sync snapshot so button goes back to disabled.
         originalOrder.value = tableRows.value.map((r) => r.id);
         refresh();
-    } catch (e: any) { alert(e.message); }
+    } catch (e: any) { toast.error(e.message); }
     finally { savingOrder.value = false; }
 };
 </script>

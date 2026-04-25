@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { useQuery } from '@pinia/colada';
 import type { EventResponse } from "~/types/api";
-// import { toast } from "vue-sonner";
+import { toast } from 'vue-sonner';
 
 definePageMeta({ layout: "admin", middleware: "sidebase-auth" });
 useHead({ title: 'Edit Event | LC Admin' });
@@ -51,10 +51,10 @@ const updateStatus = async (status: 'draft' | 'published' | 'cancelled') => {
         else if (status === 'cancelled') endpoint += 'cancel';
 
         await api.put(endpoint);
-        alert(`Event status updated to ${status}`);
+        toast.success(`Event status updated to ${status}`);
         refresh();
     } catch (e: any) {
-        alert(e.message || "Failed to update event status");
+        toast.error(e.message || "Failed to update event status");
     } finally {
         updatingStatus.value = null;
     }
@@ -67,10 +67,10 @@ const updateEvent = async () => {
             ...form.value,
             event_dates: form.value.event_dates.filter(Boolean),
         });
-        alert("Event updated successfully");
+        toast.success("Event updated successfully");
         refresh();
     } catch (e: any) {
-        alert(e.message || "Failed to update event");
+        toast.error(e.message || "Failed to update event");
     } finally { loading.value = false; }
 };
 
@@ -79,7 +79,7 @@ const deleteEvent = async () => {
     try {
         await api.delete(`/events/${eventId}`);
         router.push("/admin/events");
-    } catch (e: any) { alert(e.message || "Failed to delete event"); }
+    } catch (e: any) { toast.error(e.message || "Failed to delete event"); }
 };
 
 const imageFiles = ref<File[]>([]);
@@ -91,21 +91,21 @@ const uploadImages = async () => {
     imageFiles.value.forEach(f => fd.append("images[]", f));
     try {
         await api.post(`/events/${eventId}/images`, fd);
-        alert("Images uploaded");
+        toast.success("Images uploaded");
         refresh();
         imageFiles.value = [];
-    } catch (e: any) { alert(e.message || "Upload failed"); }
+    } catch (e: any) { toast.error(e.message || "Upload failed"); }
     finally { uploadingImages.value = false; }
 };
 
 const setPrimary = async (imageId: string) => {
     try { await api.put(`/events/${eventId}/images/${imageId}/set-primary`); refresh(); }
-    catch (e: any) { alert(e.message); }
+    catch (e: any) { toast.error(e.message); }
 };
 const deleteImage = async (imageId: string) => {
     if (!confirm("Delete this image?")) return;
     try { await api.delete(`/events/${eventId}/images/${imageId}`); refresh(); }
-    catch (e: any) { alert(e.message); }
+    catch (e: any) { toast.error(e.message); }
 };
 </script>
 

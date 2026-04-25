@@ -2,6 +2,7 @@
 import { useQuery } from '@pinia/colada';
 import type { PostResponse } from "~/types/api";
 import { PostCategory } from "~/types/enums";
+import { toast } from 'vue-sonner';
 
 definePageMeta({ layout: "admin", middleware: "sidebase-auth" });
 useHead({ title: 'Edit Post | LC Admin' });
@@ -51,16 +52,16 @@ const updatePost = async () => {
     loading.value = true;
     try {
         await api.put<PostResponse>(`/posts/${postId.value}`, form.value);
-        alert("Post updated successfully");
+        toast.success("Post updated successfully");
         refresh();
-    } catch (e: any) { alert(e.message); }
+    } catch (e: any) { toast.error(e.message); }
     finally { loading.value = false; }
 };
 
 const deletePost = async () => {
     if (!confirm("Delete this post permanently?")) return;
     try { await api.delete(`/posts/${postId.value}`); router.push("/admin/posts"); }
-    catch (e: any) { alert(e.message); }
+    catch (e: any) { toast.error(e.message); }
 };
 
 const imageFiles = ref<File[]>([]);
@@ -72,21 +73,21 @@ const uploadImages = async () => {
     imageFiles.value.forEach(f => fd.append("images[]", f));
     try {
         await api.post(`/posts/${postId.value}/images`, fd);
-        alert("Images uploaded");
+        toast.success("Images uploaded");
         refresh();
         imageFiles.value = [];
-    } catch (e: any) { alert(e.message); }
+    } catch (e: any) { toast.error(e.message); }
     finally { uploadingImages.value = false; }
 };
 
 const setFeatured = async (imageId: string) => {
     try { await api.put(`/posts/${postId.value}/images/${imageId}/set-featured`); refresh(); }
-    catch (e: any) { alert(e.message); }
+    catch (e: any) { toast.error(e.message); }
 };
 const deleteImage = async (imageId: string) => {
     if (!confirm("Delete this image?")) return;
     try { await api.delete(`/posts/${postId.value}/images/${imageId}`); refresh(); }
-    catch (e: any) { alert(e.message); }
+    catch (e: any) { toast.error(e.message); }
 };
 
 const categories = Object.values(PostCategory);

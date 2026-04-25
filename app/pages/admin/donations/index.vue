@@ -2,6 +2,7 @@
 import type { DonationsListResponse, DonationStatsResponse } from "~/types/api";
 import { DonationType, DonationStatus } from "~/types/enums";
 import { validateManualDonation, hasErrors } from "~/utils/validation";
+import { toast } from 'vue-sonner';
 
 definePageMeta({ layout: "admin", middleware: "sidebase-auth" });
 useHead({ title: 'Donations | LC Admin' });
@@ -47,8 +48,8 @@ const submitManual = async () => {
         await api.post("/donations/manual", form.value);
         showModal.value = false;
         refresh();
-        alert("Manual donation recorded.");
-    } catch (e: any) { alert(e.message); }
+        toast.success("Manual donation recorded.");
+    } catch (e: any) { toast.error(e.message); }
     finally { submitting.value = false; }
 };
 

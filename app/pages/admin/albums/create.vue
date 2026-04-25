@@ -3,6 +3,7 @@ import { useQuery } from '@pinia/colada';
 import type { AlbumResponse, EventsListResponse } from "~/types/api";
 import { AlbumCategory } from "~/types/enums";
 import { validateAlbum, hasErrors } from "~/utils/validation";
+import { toast } from 'vue-sonner';
 
 definePageMeta({ layout: "admin", middleware: "sidebase-auth" });
 useHead({ title: 'Create Album | LC Admin' });
@@ -36,7 +37,7 @@ const submit = async () => {
         const payload = { ...form.value, event_id: form.value.event_id || undefined };
         const res = await api.post<AlbumResponse>("/albums", payload);
         router.push(`/admin/albums/${res.data?.id}`); // Redirect to edit so they can upload images
-    } catch (e: any) { alert(e.message || "Failed to create album"); }
+    } catch (e: any) { toast.error(e.message || "Failed to create album"); }
     finally { loading.value = false; }
 };
 

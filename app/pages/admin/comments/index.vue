@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { useQuery } from '@pinia/colada';
 import type { CommentsListResponse } from "~/types/api";
+import { toast } from 'vue-sonner';
 
 definePageMeta({ layout: "admin", middleware: "sidebase-auth" });
 useHead({ title: 'Moderate Comments | LC Admin' });
@@ -30,7 +31,7 @@ const toggleApproval = async (comment: any) => {
     try {
         await api.put(`/comments/${comment.id}/${comment.is_approved ? "reject" : "approve"}`);
         refresh();
-    } catch (e: any) { alert(e.message); }
+    } catch (e: any) { toast.error(e.message); }
     finally { togglingId.value = null; }
 };
 
@@ -39,7 +40,7 @@ const deleteComment = async (id: string) => {
     if (!confirm("Delete this comment permanently?")) return;
     deletingId.value = id;
     try { await api.delete(`/comments/${id}`); refresh(); }
-    catch (e: any) { alert(e.message); }
+    catch (e: any) { toast.error(e.message); }
     finally { deletingId.value = null; }
 };
 </script>

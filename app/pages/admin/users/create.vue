@@ -3,6 +3,7 @@ import { useQuery } from '@pinia/colada';
 import type { UserResponse, RolesListResponse } from "~/types/api";
 import { UserStatus } from "~/types/enums";
 import { validateCreateUser, hasErrors } from "~/utils/validation";
+import { toast } from 'vue-sonner';
 
 definePageMeta({ layout: "admin", middleware: "sidebase-auth" });
 useHead({ title: 'Create User | LC Admin' });
@@ -40,7 +41,7 @@ const submit = async () => {
         await api.post<UserResponse>("/users", form.value);
         router.push("/admin/users");
     } catch (e: any) {
-        alert(e.message || "Failed to create user");
+        toast.error(e.message || "Failed to create user");
     } finally {
         loading.value = false;
     }

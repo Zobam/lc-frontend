@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import type { EventResponse } from "~/types/api";
 import { validateEvent, hasErrors } from "~/utils/validation";
+import { toast } from 'vue-sonner';
 
 definePageMeta({ layout: "admin", middleware: "sidebase-auth" });
 useHead({ title: 'Create Event | LC Admin' });
@@ -41,7 +42,7 @@ const submit = async () => {
         await api.post<EventResponse>("/events", payload);
         router.push("/admin/events");
     } catch (e: any) {
-        alert(e.message || "Failed to create event");
+        toast.error(e.message || "Failed to create event");
     } finally { loading.value = false; }
 };
 </script>
