@@ -44,7 +44,7 @@ const tableRows = ref<any[]>([]);
 const originalOrder = ref<string[]>([]);
 
 watch(
-    () => videosData.value?.data,
+    () => videosData.value?.data?.data,
     (rows) => {
         tableRows.value = rows ? [...rows] : [];
         originalOrder.value = rows ? rows.map((r: any) => r.id) : [];
@@ -144,8 +144,8 @@ const saveOrder = async () => {
                 </div>
             </div>
 
-            <div v-else-if="videosData?.data?.length" class="videos-grid">
-                <div v-for="video in videosData.data" :key="video.id" class="video-card">
+            <div v-else-if="videosData?.data?.data?.length" class="videos-grid">
+                <div v-for="video in videosData.data.data" :key="video.id" class="video-card">
                     <div class="video-thumb-wrap">
                         <img v-if="video.hq_thumbnail_url || video.thumbnail_url"
                             :src="video.hq_thumbnail_url || video.thumbnail_url" class="video-thumb" />
