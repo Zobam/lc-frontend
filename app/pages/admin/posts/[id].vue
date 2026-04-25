@@ -28,7 +28,7 @@ const pending = computed(() => status.value === 'pending');
 const form = ref({
     title: "", subtitle: "", body: "", excerpt: "",
     category: "", tags: [] as string[],
-    is_published: false, meta_description: "",
+    meta_description: "",
 });
 const tagInput = ref("");
 const loading = ref(false);
@@ -39,8 +39,7 @@ watch(postRes, (r) => {
         form.value = {
             title: r.data.title, subtitle: r.data.subtitle ?? "",
             body: r.data.body, excerpt: r.data.excerpt ?? "",
-            category: r.data.category, tags: r.data.tags ?? [],
-            is_published: r.data.is_published, meta_description: r.data.meta_description ?? "",
+            category: r.data.category, tags: r.data.tags ?? [], meta_description: r.data.meta_description ?? "",
         };
     }
 }, { immediate: true });
@@ -161,10 +160,6 @@ const categories = Object.values(PostCategory);
                                 </div>
                             </div>
                         </div>
-                        <label class="checkbox-item">
-                            <input v-model="form.is_published" type="checkbox" />
-                            <span>{{ form.is_published ? "Published" : "Draft" }}</span>
-                        </label>
                         <div class="form-actions">
                             <button type="submit" :disabled="loading" class="btn-primary w-full">{{ loading ? "Saving…"
                                 : "Save Changes" }}</button>
@@ -176,7 +171,7 @@ const categories = Object.values(PostCategory);
             <div v-if="activeImageTab" class="form-card">
                 <h3 class="section-label">Upload Images</h3>
                 <input type="file" multiple accept="image/*"
-                    @change="(e) => imageFiles = Array.from((e.target as HTMLInputElement).files ?? [])"
+                    @change="(e: any) => imageFiles = Array.from((e.target as HTMLInputElement).files ?? [])"
                     class="file-input" />
                 <button @click="uploadImages" :disabled="!imageFiles.length || uploadingImages"
                     class="btn-primary mt-2">{{ uploadingImages ? "Uploading…" : "Upload Images" }}</button>

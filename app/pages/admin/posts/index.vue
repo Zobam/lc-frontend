@@ -1,6 +1,13 @@
 <script setup lang="ts">
 import type { PostsListResponse } from "~/types/api";
 import { PostCategory } from "~/types/enums";
+import {
+    DropdownMenu,
+    DropdownMenuContent,
+    DropdownMenuItem,
+    DropdownMenuSeparator,
+    DropdownMenuTrigger,
+} from '@/components/ui/dropdown-menu'
 
 definePageMeta({ layout: "admin", middleware: "sidebase-auth" });
 useHead({ title: 'Manage Posts | LC Admin' });
@@ -29,23 +36,29 @@ let searchTimer: ReturnType<typeof setTimeout>;
 const handleSearch = () => { clearTimeout(searchTimer); searchTimer = setTimeout(() => { page.value = 1; }, 450); };
 const goToPage = (n: number) => { page.value = n; };
 
-const deletingId = ref<string | null>(null);
+// Single busy-id covers delete, publish AND unpublish
+const busyId = ref<string | null>(null);
+
 const deletePost = async (id: string) => {
     if (!confirm("Delete this post?")) return;
-    deletingId.value = id;
-    try { await api.delete(`/posts/${id}`); refresh(); }
+    busyId.value = id;
+    try { await api.delete(`/posts/${id}`); alert("Post deleted."); refresh(); }
     catch (e: any) { alert(e.message); }
-    finally { deletingId.value = null; }
+    finally { busyId.value = null; }
 };
 
-const toggling = ref<string | null>(null);
-const togglePublish = async (post: any) => {
-    toggling.value = post.id;
-    try {
-        await api.post(`/posts/${post.id}/${post.is_published ? "unpublish" : "publish"}`);
-        refresh();
-    } catch (e: any) { alert(e.message); }
-    finally { toggling.value = null; }
+const publishPost = async (id: string) => {
+    busyId.value = id;
+    try { await api.put(`/posts/${id}/approve`); alert("Post published."); refresh(); }
+    catch (e: any) { alert(e.message); }
+    finally { busyId.value = null; }
+};
+
+const unpublishPost = async (id: string) => {
+    busyId.value = id;
+    try { await api.put(`/posts/${id}/unpublish`); alert("Post unpublished."); refresh(); }
+    catch (e: any) { alert(e.message); }
+    finally { busyId.value = null; }
 };
 
 const categories = Object.values(PostCategory);
@@ -113,16 +126,37 @@ const categories = Object.values(PostCategory);
                         <td class="muted">{{ post.author ? `${post.author.first_name} ${post.author.last_name}` : "—" }}
                         </td>
                         <td>
-                            <button @click="togglePublish(post)" :disabled="toggling === post.id" class="status-toggle"
-                                :class="post.is_published ? 'published' : 'draft'">
-                                {{ toggling === post.id ? "…" : post.is_published ? "Published" : "Draft" }}
-                            </button>
+                            <span class="status-pill" :class="post.is_published ? 'published' : 'draft'">
+                                {{ post.is_published ? "Published" : "Draft" }}
+                            </span>
                         </td>
                         <td class="muted">{{ post.views ?? 0 }}</td>
                         <td class="text-right">
-                            <NuxtLink :to="`/admin/posts/${post.id}_${post.slug}`" class="action-link">Edit</NuxtLink>
-                            <button @click="deletePost(post.id)" :disabled="deletingId === post.id"
-                                class="action-del">{{ deletingId === post.id ? "…" : "Delete" }}</button>
+                            <DropdownMenu>
+                                <DropdownMenuTrigger as-child>
+                                    <button class="action-trigger" :disabled="busyId === post.id">
+                                        <Icon v-if="busyId === post.id" name="mdi:loading" class="spin" />
+                                        <Icon v-else name="mdi:dots-horizontal" />
+                                    </button>
+                                </DropdownMenuTrigger>
+                                <DropdownMenuContent align="end" class="w-40">
+                                    <DropdownMenuItem as-child>
+                                        <NuxtLink :to="`/admin/posts/${post.id}_${post.slug}`" class="menu-item-link">
+                                            <Icon name="mdi:pencil-outline" /> Edit
+                                        </NuxtLink>
+                                    </DropdownMenuItem>
+                                    <DropdownMenuItem
+                                        @click="post.is_published ? unpublishPost(post.id) : publishPost(post.id)"
+                                        :class="post.is_published ? 'text-amber-600' : 'text-green-600'">
+                                        <Icon :name="post.is_published ? 'mdi:eye-off-outline' : 'mdi:eye-outline'" />
+                                        {{ post.is_published ? 'Unpublish' : 'Publish' }}
+                                    </DropdownMenuItem>
+                                    <DropdownMenuSeparator />
+                                    <DropdownMenuItem @click="deletePost(post.id)" class="text-red-600">
+                                        <Icon name="mdi:trash-can-outline" /> Delete
+                                    </DropdownMenuItem>
+                                </DropdownMenuContent>
+                            </DropdownMenu>
                         </td>
                     </tr>
                 </tbody>
@@ -333,52 +367,69 @@ const categories = Object.values(PostCategory);
     color: #2563eb;
 }
 
-.status-toggle {
+/* Status pill (read-only badge, no longer a button) */
+.status-pill {
+    display: inline-block;
     padding: 0.2rem 0.65rem;
     border-radius: 99px;
     font-size: 0.72rem;
     font-weight: 700;
-    border: none;
-    cursor: pointer;
 }
 
-.status-toggle.published {
+.status-pill.published {
     background: #dcfce7;
     color: #16a34a;
 }
 
-.status-toggle.draft {
+.status-pill.draft {
     background: #f4f4f5;
     color: #52525b;
 }
 
-.status-toggle:disabled {
-    opacity: 0.5;
-}
-
-.action-link {
-    font-size: 0.8rem;
-    font-weight: 600;
-    color: #E05615;
-    text-decoration: none;
-    margin-right: 0.75rem;
-}
-
-.action-link:hover {
-    text-decoration: underline;
-}
-
-.action-del {
-    font-size: 0.8rem;
-    font-weight: 600;
-    color: #dc2626;
-    background: none;
-    border: none;
+/* Dropdown trigger button */
+.action-trigger {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 30px;
+    height: 30px;
+    border-radius: 6px;
+    border: 1px solid #e4e4e7;
+    background: #fff;
     cursor: pointer;
+    color: #52525b;
+    transition: background 0.15s, border-color 0.15s;
 }
 
-.action-del:disabled {
+.action-trigger:hover:not(:disabled) {
+    background: #f4f4f5;
+    border-color: #d4d4d8;
+}
+
+.action-trigger:disabled {
     opacity: 0.5;
+    cursor: not-allowed;
+}
+
+/* Inline link inside a DropdownMenuItem */
+.menu-item-link {
+    display: flex;
+    align-items: center;
+    gap: 0.4rem;
+    width: 100%;
+    text-decoration: none;
+    color: inherit;
+}
+
+/* Spinner animation */
+.spin {
+    animation: spin 0.7s linear infinite;
+}
+
+@keyframes spin {
+    to {
+        transform: rotate(360deg);
+    }
 }
 
 .empty-state {

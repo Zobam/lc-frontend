@@ -38,9 +38,8 @@ export enum VideoCategory {
     SERMON = "sermon",
     WORSHIP = "worship",
     TESTIMONY = "testimony",
-    TEACHING = "teaching",
     ANNOUNCEMENT = "announcement",
-    EVENT = "event",
+    GENERAL = "general",
 }
 
 // Video Status

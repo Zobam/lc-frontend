@@ -13,7 +13,7 @@ const form = ref({
     title: "", subtitle: "", body: "", excerpt: "",
     category: PostCategory.SERMON as string,
     tags: [] as string[],
-    is_published: false, meta_description: "",
+    meta_description: "",
 });
 const tagInput = ref("");
 const errors = ref<Record<string, string>>({});
@@ -103,13 +103,9 @@ const categories = Object.values(PostCategory);
                             </div>
                         </div>
                     </div>
-                    <label class="checkbox-item">
-                        <input v-model="form.is_published" type="checkbox" />
-                        <span>Publish immediately</span>
-                    </label>
                     <div class="form-actions">
                         <button type="submit" :disabled="loading" class="btn-primary w-full">
-                            {{ loading ? "Creating…" : form.is_published ? "Publish Post" : "Save as Draft" }}
+                            {{ loading ? "Creating…" : "Create Post" }}
                         </button>
                     </div>
                 </div>
