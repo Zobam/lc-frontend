@@ -11,13 +11,17 @@ const route = useRoute();
 const page = ref(Number(route.query.page) || 1);
 const search = ref((route.query.search as string) || "");
 
+// ── Per page ─────────────────────────────────────────────────────────────────
+const perPage = ref(15);
+watch(perPage, () => { page.value = 1; });
+
 // ── View mode ────────────────────────────────────────────────────────────────
 const viewMode = ref<'grid' | 'table'>('grid');
 
 // ── Data ─────────────────────────────────────────────────────────────────────
 const { data: videosData, status, refetch: refresh } = useQuery({
-    key: () => ["admin-videos", page.value, search.value],
-    query: () => api.get<any>("/videos/manage/all", { page: page.value, per_page: 15, search: search.value }),
+    key: () => ["admin-videos", page.value, search.value, perPage.value],
+    query: () => api.get<any>("/videos/manage/all", { page: page.value, per_page: perPage.value, search: search.value }),
 });
 const pending = computed(() => status.value === 'pending');
 
@@ -132,10 +136,18 @@ const saveOrder = async () => {
         <!-- Filters -->
         <div class="filter-card">
             <div class="filter-row">
-                <div class="filter-item">
+                <div class="filter-item search-item">
                     <label>Search Videos</label>
                     <input v-model="search" @input="handleSearch" type="text" placeholder="Title or category..."
                         class="input" />
+                </div>
+                <div class="filter-item per-page-item">
+                    <label>Per Page</label>
+                    <select v-model="perPage" class="input">
+                        <option :value="10">10</option>
+                        <option :value="15">15</option>
+                        <option :value="20">20</option>
+                    </select>
                 </div>
             </div>
         </div>
@@ -385,15 +397,25 @@ const saveOrder = async () => {
 
 .filter-row {
     display: flex;
+    justify-content: space-between;
     gap: 1rem;
-    max-width: 400px;
+    width: 100%;
 }
 
 .filter-item {
     display: flex;
     flex-direction: column;
     gap: 0.35rem;
+}
+
+.search-item {
     flex: 1;
+    max-width: 400px;
+}
+
+.per-page-item {
+    width: auto;
+    min-width: 100px;
 }
 
 .filter-item label {
