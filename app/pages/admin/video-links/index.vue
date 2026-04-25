@@ -7,11 +7,14 @@ useHead({ title: 'Manage Videos | LC Admin' });
 
 const api = useApi();
 const route = useRoute();
-const router = useRouter();
 
 const page = ref(Number(route.query.page) || 1);
 const search = ref((route.query.search as string) || "");
 
+// ── View mode ────────────────────────────────────────────────────────────────
+const viewMode = ref<'grid' | 'table'>('grid');
+
+// ── Data ─────────────────────────────────────────────────────────────────────
 const { data: videosData, status, refetch: refresh } = useQuery({
     key: () => ["admin-videos", page.value, search.value],
     query: () => api.get<any>("/videos/manage/all", { page: page.value, per_page: 15, search: search.value }),
@@ -22,28 +25,86 @@ let searchTimer: ReturnType<typeof setTimeout>;
 const handleSearch = () => { clearTimeout(searchTimer); searchTimer = setTimeout(() => { page.value = 1; }, 450); };
 const goToPage = (n: number) => { page.value = n; };
 
+// ── Delete ───────────────────────────────────────────────────────────────────
 const deletingId = ref<string | null>(null);
 const deleteVideo = async (id: string) => {
     if (!confirm("Delete this video link?")) return;
     deletingId.value = id;
-    try { await api.delete(`/videos/${id}`); refresh(); }
+    try { await api.delete(`/videos/${id}`); alert("Video deleted."); refresh(); }
     catch (e: any) { alert(e.message); }
     finally { deletingId.value = null; }
+};
+
+// ── Table drag-and-drop reorder ───────────────────────────────────────────────
+// Local ordered copy used only in table view; reset whenever server data changes.
+const tableRows = ref<any[]>([]);
+watch(
+    () => videosData.value?.data,
+    (rows) => { tableRows.value = rows ? [...rows] : []; },
+    { immediate: true }
+);
+
+const dragSrcIndex = ref<number | null>(null);
+
+const onDragStart = (index: number) => { dragSrcIndex.value = index; };
+const onDragOver = (e: DragEvent, index: number) => {
+    e.preventDefault();
+    if (dragSrcIndex.value === null || dragSrcIndex.value === index) return;
+    const moved = tableRows.value.splice(dragSrcIndex.value, 1)[0];
+    tableRows.value.splice(index, 0, moved);
+    dragSrcIndex.value = index;
+};
+const onDragEnd = () => { dragSrcIndex.value = null; };
+
+// ── Persist reorder ───────────────────────────────────────────────────────────
+const savingOrder = ref(false);
+const orderDirty = ref(false);
+
+// Track whether user has actually dragged something
+watch(tableRows, () => { orderDirty.value = true; }, { deep: false });
+
+const saveOrder = async () => {
+    savingOrder.value = true;
+    const payload = {
+        videos: tableRows.value.map((v, i) => ({ id: v.id, order: i })),
+    };
+    try {
+        await api.put('/videos/reorder', payload);
+        alert("Video order saved.");
+        orderDirty.value = false;
+        refresh();
+    } catch (e: any) { alert(e.message); }
+    finally { savingOrder.value = false; }
 };
 </script>
 
 <template>
     <div>
+        <!-- Page Header -->
         <div class="page-header">
             <div>
                 <h2 class="page-title">Video Links</h2>
                 <p class="page-desc">Manage external video links (YouTube).</p>
             </div>
-            <NuxtLink to="/admin/video-links/create" class="btn-primary">
-                <Icon name="mdi:video-plus" /> Add Video
-            </NuxtLink>
+            <div class="header-right">
+                <!-- View toggle -->
+                <div class="view-toggle">
+                    <button class="toggle-btn" :class="{ active: viewMode === 'grid' }" @click="viewMode = 'grid'"
+                        title="Grid view">
+                        <Icon name="mdi:view-grid-outline" />
+                    </button>
+                    <button class="toggle-btn" :class="{ active: viewMode === 'table' }" @click="viewMode = 'table'"
+                        title="Table view">
+                        <Icon name="mdi:table" />
+                    </button>
+                </div>
+                <NuxtLink to="/admin/video-links/create" class="btn-primary">
+                    <Icon name="mdi:video-plus" /> Add Video
+                </NuxtLink>
+            </div>
         </div>
 
+        <!-- Filters -->
         <div class="filter-card">
             <div class="filter-row">
                 <div class="filter-item">
@@ -54,47 +115,136 @@ const deleteVideo = async (id: string) => {
             </div>
         </div>
 
-        <div v-if="pending" class="videos-grid">
-            <div v-for="i in 8" :key="i" class="video-card sk-card">
-                <div class="sk-img"></div>
-                <div class="sk-body">
-                    <div class="sk-line wide"></div>
-                    <div class="sk-line narrow"></div>
-                </div>
-            </div>
-        </div>
-
-        <div v-else-if="videosData?.data?.length" class="videos-grid">
-            <div v-for="video in videosData.data" :key="video.id" class="video-card">
-                <div class="video-thumb-wrap">
-                    <img v-if="video.hq_thumbnail_url || video.thumbnail_url"
-                        :src="video.hq_thumbnail_url || video.thumbnail_url" class="video-thumb" />
-                    <div v-else class="video-placeholder">
-                        <Icon name="mdi:youtube" />
-                    </div>
-                    <div class="video-duration" v-if="video.formatted_duration">{{ video.formatted_duration }}</div>
-                    <div class="video-badges">
-                        <span class="badge" :class="video.status === 'active' ? 'badge-green' : 'badge-gray'">{{
-                            video.status }}</span>
-                    </div>
-                </div>
-                <div class="video-body">
-                    <h3 class="video-title">{{ video.title }}</h3>
-                    <p class="video-meta">{{ video.category }} &bull; {{ new Date(video.created_at).toLocaleDateString()
-                    }}</p>
-                    <div class="video-actions">
-                        <NuxtLink :to="`/admin/video-links/${video.id}`" class="action-link">Edit</NuxtLink>
-                        <button @click="deleteVideo(video.id)" :disabled="deletingId === video.id"
-                            class="action-del">Delete</button>
+        <!-- ── GRID VIEW ─────────────────────────────────────────────────── -->
+        <template v-if="viewMode === 'grid'">
+            <div v-if="pending" class="videos-grid">
+                <div v-for="i in 8" :key="i" class="video-card sk-card">
+                    <div class="sk-img"></div>
+                    <div class="sk-body">
+                        <div class="sk-line wide"></div>
+                        <div class="sk-line narrow"></div>
                     </div>
                 </div>
             </div>
-        </div>
 
-        <div v-else class="empty-state">
-            <Icon name="mdi:video-off-outline" />
-            <p>No videos found.</p>
-        </div>
+            <div v-else-if="videosData?.data?.length" class="videos-grid">
+                <div v-for="video in videosData.data" :key="video.id" class="video-card">
+                    <div class="video-thumb-wrap">
+                        <img v-if="video.hq_thumbnail_url || video.thumbnail_url"
+                            :src="video.hq_thumbnail_url || video.thumbnail_url" class="video-thumb" />
+                        <div v-else class="video-placeholder">
+                            <Icon name="mdi:youtube" />
+                        </div>
+                        <div class="video-duration" v-if="video.formatted_duration">{{ video.formatted_duration }}</div>
+                        <div class="video-badges">
+                            <span class="badge" :class="video.status === 'active' ? 'badge-green' : 'badge-gray'">{{
+                                video.status }}</span>
+                        </div>
+                    </div>
+                    <div class="video-body">
+                        <h3 class="video-title">{{ video.title }}</h3>
+                        <p class="video-meta">{{ video.category }} &bull; {{ new
+                            Date(video.created_at).toLocaleDateString() }}</p>
+                        <div class="video-actions">
+                            <NuxtLink :to="`/admin/video-links/${video.id}`" class="action-link">Edit</NuxtLink>
+                            <button @click="deleteVideo(video.id)" :disabled="deletingId === video.id"
+                                class="action-del">
+                                <Icon v-if="deletingId === video.id" name="mdi:loading" class="spin" />
+                                <span v-else>Delete</span>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div v-else class="empty-state">
+                <Icon name="mdi:video-off-outline" />
+                <p>No videos found.</p>
+            </div>
+        </template>
+
+        <!-- ── TABLE VIEW ────────────────────────────────────────────────── -->
+        <template v-else>
+            <!-- Save order bar -->
+            <div v-if="orderDirty" class="reorder-bar">
+                <span>
+                    <Icon name="mdi:information-outline" /> Drag rows to reorder. Save when done.
+                </span>
+                <button class="btn-save-order" :disabled="savingOrder" @click="saveOrder">
+                    <Icon v-if="savingOrder" name="mdi:loading" class="spin" />
+                    <span v-else>Save Order</span>
+                </button>
+            </div>
+            <div v-else class="reorder-hint">
+                <Icon name="mdi:drag" /> Drag rows in the table to reorder videos.
+            </div>
+
+            <div class="table-card">
+                <div v-if="pending" class="loading-rows">
+                    <div v-for="i in 6" :key="i" class="sk-row">
+                        <div class="sk-cell narrow"></div>
+                        <div class="sk-cell mid"></div>
+                        <div class="sk-cell wide"></div>
+                        <div class="sk-cell narrow"></div>
+                    </div>
+                </div>
+
+                <table v-else-if="tableRows.length" class="data-table">
+                    <thead>
+                        <tr>
+                            <th class="col-handle" title="Drag to reorder"></th>
+                            <th>Thumbnail</th>
+                            <th>Title</th>
+                            <th>Category</th>
+                            <th>Status</th>
+                            <th>Added</th>
+                            <th class="text-right">Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr v-for="(video, index) in tableRows" :key="video.id" draggable="true"
+                            @dragstart="onDragStart(index)" @dragover="onDragOver($event, index)" @dragend="onDragEnd"
+                            :class="{ 'dragging': dragSrcIndex === index }">
+                            <!-- Drag handle column -->
+                            <td class="col-handle">
+                                <Icon name="mdi:drag-vertical" class="drag-icon" />
+                            </td>
+                            <td>
+                                <div class="thumb-cell">
+                                    <img v-if="video.hq_thumbnail_url || video.thumbnail_url"
+                                        :src="video.hq_thumbnail_url || video.thumbnail_url" class="table-thumb" />
+                                    <div v-else class="thumb-placeholder">
+                                        <Icon name="mdi:youtube" />
+                                    </div>
+                                </div>
+                            </td>
+                            <td class="font-medium">{{ video.title }}</td>
+                            <td class="muted capitalize">{{ video.category }}</td>
+                            <td>
+                                <span class="status-pill"
+                                    :class="video.status === 'active' ? 'pill-green' : 'pill-gray'">
+                                    {{ video.status }}
+                                </span>
+                            </td>
+                            <td class="muted">{{ new Date(video.created_at).toLocaleDateString() }}</td>
+                            <td class="text-right">
+                                <NuxtLink :to="`/admin/video-links/${video.id}`" class="action-link">Edit</NuxtLink>
+                                <button @click="deleteVideo(video.id)" :disabled="deletingId === video.id"
+                                    class="action-del">
+                                    <Icon v-if="deletingId === video.id" name="mdi:loading" class="spin" />
+                                    <span v-else>Delete</span>
+                                </button>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+
+                <div v-else class="empty-state">
+                    <Icon name="mdi:video-off-outline" />
+                    <p>No videos found.</p>
+                </div>
+            </div>
+        </template>
 
         <AdminPagination v-if="videosData?.data?.last_page" :current-page="videosData.data.current_page"
             :total-pages="videosData.data.last_page" :total="videosData.data.total" :from="videosData.data.from"
@@ -103,6 +253,7 @@ const deleteVideo = async (id: string) => {
 </template>
 
 <style scoped>
+/* ── Layout ── */
 .page-header {
     display: flex;
     align-items: flex-start;
@@ -124,6 +275,48 @@ const deleteVideo = async (id: string) => {
     margin: 0;
 }
 
+.header-right {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    flex-shrink: 0;
+}
+
+/* ── View toggle ── */
+.view-toggle {
+    display: flex;
+    gap: 2px;
+    background: #f4f4f5;
+    border-radius: 8px;
+    padding: 3px;
+}
+
+.toggle-btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 32px;
+    height: 32px;
+    border: none;
+    background: transparent;
+    border-radius: 6px;
+    cursor: pointer;
+    color: #71717a;
+    font-size: 1.1rem;
+    transition: background 0.15s, color 0.15s;
+}
+
+.toggle-btn:hover {
+    color: #1A0E08;
+}
+
+.toggle-btn.active {
+    background: #fff;
+    color: #E05615;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+}
+
+/* ── Primary button ── */
 .btn-primary {
     display: flex;
     align-items: center;
@@ -142,6 +335,7 @@ const deleteVideo = async (id: string) => {
     background: #B84410;
 }
 
+/* ── Filters ── */
 .filter-card {
     background: #fff;
     border-radius: 12px;
@@ -187,6 +381,235 @@ const deleteVideo = async (id: string) => {
     background: #fff;
 }
 
+/* ── Reorder bar / hint ── */
+.reorder-bar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+    background: #fef9ec;
+    border: 1px solid #F5C842;
+    border-radius: 10px;
+    padding: 0.65rem 1rem;
+    margin-bottom: 1rem;
+    font-size: 0.85rem;
+    color: #92400e;
+}
+
+.reorder-hint {
+    display: flex;
+    align-items: center;
+    gap: 0.35rem;
+    font-size: 0.82rem;
+    color: #a1a1aa;
+    margin-bottom: 0.75rem;
+}
+
+.btn-save-order {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.35rem;
+    padding: 0.4rem 1rem;
+    background: #E05615;
+    color: #fff;
+    border: none;
+    border-radius: 7px;
+    font-size: 0.82rem;
+    font-weight: 600;
+    cursor: pointer;
+    white-space: nowrap;
+}
+
+.btn-save-order:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+}
+
+/* ── Table card ── */
+.table-card {
+    background: #fff;
+    border-radius: 12px;
+    border: 1px solid #f4f4f5;
+    overflow: hidden;
+    margin-bottom: 1.5rem;
+}
+
+.loading-rows {
+    padding: 1.25rem 1.5rem;
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+}
+
+.sk-row {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+}
+
+.sk-cell {
+    background: #f4f4f5;
+    border-radius: 6px;
+    animation: pulse 1.5s ease-in-out infinite;
+    height: 14px;
+    flex-shrink: 0;
+}
+
+.sk-cell.wide {
+    width: 200px;
+}
+
+.sk-cell.mid {
+    width: 120px;
+}
+
+.sk-cell.narrow {
+    width: 60px;
+}
+
+/* ── Data table ── */
+.data-table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+.data-table th {
+    padding: 0.75rem 1rem;
+    text-align: left;
+    font-size: 0.72rem;
+    font-weight: 700;
+    color: #71717a;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    background: #fafafa;
+    border-bottom: 1px solid #f4f4f5;
+}
+
+.data-table td {
+    padding: 0.75rem 1rem;
+    font-size: 0.875rem;
+    color: #27272a;
+    border-bottom: 1px solid #f9f9f9;
+    vertical-align: middle;
+}
+
+.data-table tr:last-child td {
+    border-bottom: none;
+}
+
+.data-table tr:hover td {
+    background: #fafafa;
+}
+
+.data-table tr.dragging td {
+    background: #fff7f4;
+    opacity: 0.75;
+}
+
+/* Drag handle column */
+.col-handle {
+    width: 36px;
+    text-align: center !important;
+    padding: 0 0.5rem !important;
+    cursor: grab;
+}
+
+.drag-icon {
+    font-size: 1.2rem;
+    color: #a1a1aa;
+    display: block;
+}
+
+/* Thumbnail in table */
+.thumb-cell {
+    width: 72px;
+}
+
+.table-thumb {
+    width: 72px;
+    height: 42px;
+    object-fit: cover;
+    border-radius: 5px;
+    display: block;
+}
+
+.thumb-placeholder {
+    width: 72px;
+    height: 42px;
+    border-radius: 5px;
+    background: #1A0E08;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.4rem;
+    color: #3f3f46;
+}
+
+.font-medium {
+    font-weight: 600;
+}
+
+.muted {
+    color: #71717a !important;
+}
+
+.capitalize {
+    text-transform: capitalize;
+}
+
+.text-right {
+    text-align: right !important;
+}
+
+/* Status pill */
+.status-pill {
+    display: inline-block;
+    padding: 0.2rem 0.6rem;
+    border-radius: 99px;
+    font-size: 0.72rem;
+    font-weight: 700;
+    text-transform: capitalize;
+}
+
+.pill-green {
+    background: #dcfce7;
+    color: #16a34a;
+}
+
+.pill-gray {
+    background: #f4f4f5;
+    color: #52525b;
+}
+
+/* Action buttons in table */
+.action-link {
+    font-size: 0.8rem;
+    font-weight: 600;
+    color: #E05615;
+    text-decoration: none;
+    margin-right: 0.75rem;
+}
+
+.action-link:hover {
+    text-decoration: underline;
+}
+
+.action-del {
+    font-size: 0.8rem;
+    font-weight: 600;
+    color: #dc2626;
+    background: none;
+    border: none;
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+}
+
+.action-del:disabled {
+    opacity: 0.5;
+}
+
+/* ── Grid view ── */
 .videos-grid {
     display: grid;
     grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
@@ -300,30 +723,7 @@ const deleteVideo = async (id: string) => {
     padding-top: 0.85rem;
 }
 
-.action-link {
-    font-size: 0.8rem;
-    font-weight: 600;
-    color: #E05615;
-    text-decoration: none;
-}
-
-.action-link:hover {
-    text-decoration: underline;
-}
-
-.action-del {
-    font-size: 0.8rem;
-    font-weight: 600;
-    color: #dc2626;
-    background: none;
-    border: none;
-    cursor: pointer;
-}
-
-.action-del:hover {
-    text-decoration: underline;
-}
-
+/* ── Skeletons ── */
 .sk-card {
     display: flex;
     flex-direction: column;
@@ -333,7 +733,6 @@ const deleteVideo = async (id: string) => {
     width: 100%;
     aspect-ratio: 16/9;
     background: #f4f4f5;
-    padding: 0;
     animation: pulse 1.5s ease-in-out infinite;
 }
 
@@ -360,6 +759,17 @@ const deleteVideo = async (id: string) => {
     opacity: 0.7;
 }
 
+/* ── Spinner ── */
+.spin {
+    animation: spin 0.7s linear infinite;
+}
+
+@keyframes spin {
+    to {
+        transform: rotate(360deg);
+    }
+}
+
 @keyframes pulse {
 
     0%,
@@ -372,6 +782,7 @@ const deleteVideo = async (id: string) => {
     }
 }
 
+/* ── Empty state ── */
 .empty-state {
     padding: 4rem;
     text-align: center;
@@ -379,11 +790,5 @@ const deleteVideo = async (id: string) => {
     background: #fff;
     border-radius: 12px;
     border: 1px solid #f4f4f5;
-}
-
-.empty-state icon {
-    font-size: 2.5rem;
-    margin-bottom: 0.75rem;
-    display: block;
 }
 </style>
