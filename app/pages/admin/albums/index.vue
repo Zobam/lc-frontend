@@ -24,7 +24,7 @@ const goToPage = (n: number) => { page.value = n; };
 
 const deletingId = ref<string | null>(null);
 const deleteAlbum = async (id: string) => {
-    if (!confirm("Delete this album? All images will be removed.")) return;
+    if (!await useConfirmDialog().showConfirm("Delete this album? All images will be removed.", "Delete Album")) return;
     deletingId.value = id;
     try { await api.delete(`/albums/${id}`); refresh(); }
     catch (e: any) { toast.error(e.message); }

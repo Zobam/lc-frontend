@@ -33,7 +33,7 @@ const goToPage = (n: number) => { page.value = n; };
 
 const deletingId = ref<string | null>(null);
 const deleteEvent = async (id: string) => {
-    if (!confirm("Delete this event?")) return;
+    if (!await useConfirmDialog().showConfirm("Delete this event?", "Delete Event")) return;
     deletingId.value = id;
     try { await api.delete(`/events/${id}`); refresh(); }
     catch (e: any) { toast.error(e.message || "Failed to delete event"); }

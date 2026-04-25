@@ -2,6 +2,7 @@
 const { data: session, signOut } = useAuth();
 import 'vue-sonner/style.css'
 import { Toaster } from '@/components/ui/sonner'
+import AdminConfirmDialog from '~/components/admin/AdminConfirmDialog.vue'
 
 const route = useRoute();
 
@@ -124,6 +125,7 @@ const isActive = (to: string) => {
                 <slot />
             </main>
         </div>
+        <AdminConfirmDialog />
         <Toaster rich-colors />
     </div>
 </template>

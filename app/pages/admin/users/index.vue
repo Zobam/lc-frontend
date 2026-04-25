@@ -46,7 +46,7 @@ const goToPage = (n: number) => {
 
 const deletingId = ref<string | null>(null);
 const deleteUser = async (id: string) => {
-    if (!confirm("Delete this user? This cannot be undone.")) return;
+    if (!await useConfirmDialog().showConfirm("Delete this user? This cannot be undone.", "Delete User")) return;
     deletingId.value = id;
     try {
         await api.delete(`/users/${id}`);

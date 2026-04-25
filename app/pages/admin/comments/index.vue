@@ -37,7 +37,7 @@ const toggleApproval = async (comment: any) => {
 
 const deletingId = ref<string | null>(null);
 const deleteComment = async (id: string) => {
-    if (!confirm("Delete this comment permanently?")) return;
+    if (!await useConfirmDialog().showConfirm("Delete this comment permanently?", "Delete Comment")) return;
     deletingId.value = id;
     try { await api.delete(`/comments/${id}`); refresh(); }
     catch (e: any) { toast.error(e.message); }

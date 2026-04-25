@@ -75,7 +75,7 @@ const updateEvent = async () => {
 };
 
 const deleteEvent = async () => {
-    if (!confirm("Delete this event permanently?")) return;
+    if (!await useConfirmDialog().showConfirm("Delete this event permanently?", "Delete Event")) return;
     try {
         await api.delete(`/events/${eventId}`);
         router.push("/admin/events");
@@ -103,7 +103,7 @@ const setPrimary = async (imageId: string) => {
     catch (e: any) { toast.error(e.message); }
 };
 const deleteImage = async (imageId: string) => {
-    if (!confirm("Delete this image?")) return;
+    if (!await useConfirmDialog().showConfirm("Delete this image?", "Delete Image")) return;
     try { await api.delete(`/events/${eventId}/images/${imageId}`); refresh(); }
     catch (e: any) { toast.error(e.message); }
 };

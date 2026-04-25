@@ -54,7 +54,7 @@ const updateAlbum = async () => {
 };
 
 const deleteAlbum = async () => {
-    if (!confirm("Delete this album? All images will be removed.")) return;
+    if (!await useConfirmDialog().showConfirm("Delete this album? All images will be removed.", "Delete Album")) return;
     try { await api.delete(`/albums/${albumId}`); router.push("/admin/albums"); }
     catch (e: any) { toast.error(e.message); }
 };
@@ -87,7 +87,7 @@ const toggleVisibility = async (imageId: string, currentStatus: string) => {
     } catch (e: any) { toast.error(e.message); }
 };
 const deleteImage = async (imageId: string) => {
-    if (!confirm("Delete this image permanently?")) return;
+    if (!await useConfirmDialog().showConfirm("Delete this image permanently?", "Delete Image")) return;
     try { await api.delete(`/albums/${albumId}/images/${imageId}`); refresh(); }
     catch (e: any) { toast.error(e.message); }
 };

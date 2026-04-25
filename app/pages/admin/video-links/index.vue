@@ -33,7 +33,7 @@ const goToPage = (n: number) => { page.value = n; };
 // ── Delete ───────────────────────────────────────────────────────────────────
 const deletingId = ref<string | null>(null);
 const deleteVideo = async (id: string) => {
-    if (!confirm("Delete this video link?")) return;
+    if (!await useConfirmDialog().showConfirm("Delete this video link?", "Delete Video")) return;
     deletingId.value = id;
     try { await api.delete(`/videos/${id}`); toast.success("Video deleted."); refresh(); }
     catch (e: any) { toast.error(e.message); }

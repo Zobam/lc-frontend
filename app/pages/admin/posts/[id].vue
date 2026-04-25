@@ -59,7 +59,7 @@ const updatePost = async () => {
 };
 
 const deletePost = async () => {
-    if (!confirm("Delete this post permanently?")) return;
+    if (!await useConfirmDialog().showConfirm("Delete this post permanently?", "Delete Post")) return;
     try { await api.delete(`/posts/${postId.value}`); router.push("/admin/posts"); }
     catch (e: any) { toast.error(e.message); }
 };
@@ -85,7 +85,7 @@ const setFeatured = async (imageId: string) => {
     catch (e: any) { toast.error(e.message); }
 };
 const deleteImage = async (imageId: string) => {
-    if (!confirm("Delete this image?")) return;
+    if (!await useConfirmDialog().showConfirm("Delete this image?", "Delete Image")) return;
     try { await api.delete(`/posts/${postId.value}/images/${imageId}`); refresh(); }
     catch (e: any) { toast.error(e.message); }
 };

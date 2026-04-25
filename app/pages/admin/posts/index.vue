@@ -41,7 +41,7 @@ const goToPage = (n: number) => { page.value = n; };
 const busyId = ref<string | null>(null);
 
 const deletePost = async (id: string) => {
-    if (!confirm("Delete this post?")) return;
+    if (!await useConfirmDialog().showConfirm("Delete this post?", "Delete Post")) return;
     busyId.value = id;
     try { await api.delete(`/posts/${id}`); toast.success("Post deleted."); refresh(); }
     catch (e: any) { toast.error(e.message); }

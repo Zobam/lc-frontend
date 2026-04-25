@@ -56,7 +56,7 @@ const updateVideo = async () => {
 };
 
 const deleteVideo = async () => {
-    if (!confirm("Delete this video permanently?")) return;
+    if (!await useConfirmDialog().showConfirm("Delete this video permanently?", "Delete Video")) return;
     try { await api.delete(`/videos/${videoId}`); router.push("/admin/video-links"); }
     catch (e: any) { toast.error(e.message); }
 };
