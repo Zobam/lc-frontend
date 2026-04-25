@@ -64,6 +64,14 @@ const onDragOver = (e: DragEvent, index: number) => {
 };
 const onDragEnd = () => { dragSrcIndex.value = null; };
 
+// Move a row one step up (−1) or down (+1) — same effect as a single drag step.
+const moveRow = (index: number, direction: -1 | 1) => {
+    const target = index + direction;
+    if (target < 0 || target >= tableRows.value.length) return;
+    const moved = tableRows.value.splice(index, 1)[0];
+    tableRows.value.splice(target, 0, moved);
+};
+
 // ── Persist reorder ───────────────────────────────────────────────────────────
 const savingOrder = ref(false);
 
@@ -210,6 +218,7 @@ const saveOrder = async () => {
                     <thead>
                         <tr>
                             <th class="col-handle" title="Drag to reorder"></th>
+                            <th class="col-order">Order</th>
                             <th>Thumbnail</th>
                             <th>Title</th>
                             <th>Category</th>
@@ -225,6 +234,19 @@ const saveOrder = async () => {
                             <!-- Drag handle column -->
                             <td class="col-handle">
                                 <Icon name="mdi:drag-vertical" class="drag-icon" />
+                            </td>
+                            <!-- Up / Down buttons -->
+                            <td class="col-order">
+                                <div class="order-btns">
+                                    <button class="order-btn" :disabled="index === 0"
+                                        @click.stop="moveRow(index, -1)" title="Move up">
+                                        <Icon name="mdi:chevron-up" />
+                                    </button>
+                                    <button class="order-btn" :disabled="index === tableRows.length - 1"
+                                        @click.stop="moveRow(index, 1)" title="Move down">
+                                        <Icon name="mdi:chevron-down" />
+                                    </button>
+                                </div>
                             </td>
                             <td>
                                 <div class="thumb-cell">
@@ -521,6 +543,46 @@ const saveOrder = async () => {
 .data-table tr.dragging td {
     background: #fff7f4;
     opacity: 0.75;
+}
+
+/* Order column */
+.col-order {
+    width: 68px;
+    text-align: center !important;
+    padding: 0 0.25rem !important;
+}
+
+.order-btns {
+    display: inline-flex;
+    flex-direction: column;
+    gap: 1px;
+}
+
+.order-btn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 22px;
+    height: 22px;
+    border: 1px solid #e4e4e7;
+    border-radius: 4px;
+    background: #fff;
+    cursor: pointer;
+    color: #52525b;
+    font-size: 0.9rem;
+    transition: background 0.12s, border-color 0.12s, color 0.12s;
+    padding: 0;
+}
+
+.order-btn:hover:not(:disabled) {
+    background: rgba(224, 86, 21, 0.08);
+    border-color: #E05615;
+    color: #E05615;
+}
+
+.order-btn:disabled {
+    opacity: 0.3;
+    cursor: not-allowed;
 }
 
 /* Drag handle column */
