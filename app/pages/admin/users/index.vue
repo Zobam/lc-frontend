@@ -130,7 +130,10 @@ const statusClass = (s: string) =>
                         <td class="muted">{{ new Date(user.created_at).toLocaleDateString() }}</td>
                         <td class="text-right">
                             <NuxtLink :to="`/admin/users/${user.id}`" class="action-link">Edit</NuxtLink>
-                            <button @click="deleteUser(user.id)" :disabled="deletingId === user.id" class="action-del">
+                            <button @click="deleteUser(user.id)" 
+                                :disabled="deletingId === user.id || user.roles?.some((r: any) => ['admin', 'super-admin'].includes(r.name))" 
+                                class="action-del"
+                                :title="user.roles?.some((r: any) => ['admin', 'super-admin'].includes(r.name)) ? 'Admins cannot be deleted' : ''">
                                 {{ deletingId === user.id ? "…" : "Delete" }}
                             </button>
                         </td>

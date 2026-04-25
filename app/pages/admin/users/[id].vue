@@ -30,7 +30,7 @@ const form = ref({
     status: UserStatus.ACTIVE,
 });
 
-const roleIds = ref<string[]>([]);
+const roleNames = ref<string[]>([]);
 const loading = ref(false);
 const tab = ref<"details" | "roles">("details");
 
@@ -44,7 +44,7 @@ watch(userRes, (r) => {
             phone_number: r.data.phone_number ?? "",
             status: r.data.status,
         };
-        roleIds.value = r.data.roles?.map(r => r.id) ?? [];
+        roleNames.value = r.data.roles?.map(r => r.name) ?? [];
     }
 }, { immediate: true });
 
@@ -62,7 +62,7 @@ const updateUser = async () => {
 const assignRoles = async () => {
     loading.value = true;
     try {
-        await api.post(`/users/${userId}/assign-roles`, { role_ids: roleIds.value });
+        await api.post(`/users/${userId}/roles/sync`, { roles: roleNames.value });
         refresh();
         alert("Roles updated successfully");
     } catch (e: any) {
@@ -140,7 +140,7 @@ const assignRoles = async () => {
             <div v-if="tab === 'roles'">
                 <div v-if="rolesRes?.data" class="checkbox-group">
                     <label v-for="role in rolesRes.data.data" :key="role.id" class="checkbox-item">
-                        <input v-model="roleIds" type="checkbox" :value="role.id" />
+                        <input v-model="roleNames" type="checkbox" :value="role.name" />
                         <span>{{ role.name }}</span>
                     </label>
                 </div>
