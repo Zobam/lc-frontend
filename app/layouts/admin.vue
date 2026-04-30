@@ -41,19 +41,42 @@ const isActive = (to: string) => {
     if (to === "/admin") return route.path === "/admin";
     return route.path.startsWith(to);
 };
+
+const mobileWarningDismissed = ref(false);
+
+const dismissMobileWarning = () => {
+    mobileWarningDismissed.value = true;
+    // Store in localStorage to persist across sessions
+    if (process.client) {
+        localStorage.setItem('admin-mobile-warning-dismissed', 'true');
+    }
+};
+
+// Check if warning was previously dismissed
+onMounted(() => {
+    if (process.client) {
+        const dismissed = localStorage.getItem('admin-mobile-warning-dismissed');
+        if (dismissed === 'true') {
+            mobileWarningDismissed.value = true;
+        }
+    }
+});
 </script>
 
 <template>
     <div class="admin-shell">
-        <!-- Mobile guard overlay -->
-        <div class="mobile-guard">
+        <!-- Mobile warning overlay (dismissible) -->
+        <div v-if="!mobileWarningDismissed" class="mobile-guard">
             <div class="mobile-guard-card">
                 <Icon name="mdi:monitor-dashboard" class="mobile-guard-icon" />
                 <h2>Best Viewed on Larger Screens</h2>
                 <p>
-                    The admin panel is designed for tablets, laptops and desktop computers.
-                    Please switch to a larger device for the best experience.
+                    The admin panel is optimized for tablets, laptops and desktop computers.
+                    For the best experience, we recommend using a larger device.
                 </p>
+                <button @click="dismissMobileWarning" class="continue-btn">
+                    Continue Anyway
+                </button>
             </div>
         </div>
 
@@ -145,7 +168,8 @@ const isActive = (to: string) => {
     display: none;
     position: fixed;
     inset: 0;
-    background: #1A0E08;
+    background: rgba(26, 14, 8, 0.95);
+    backdrop-filter: blur(8px);
     z-index: 9999;
     align-items: center;
     justify-content: center;
@@ -185,6 +209,29 @@ const isActive = (to: string) => {
     color: rgba(255, 255, 255, 0.65);
     font-size: 0.95rem;
     line-height: 1.6;
+}
+
+.continue-btn {
+    margin-top: 1.5rem;
+    padding: 0.75rem 2rem;
+    background: #E05615;
+    color: #fff;
+    border: none;
+    border-radius: 8px;
+    font-size: 0.95rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s;
+    width: 100%;
+}
+
+.continue-btn:hover {
+    background: #c94a0f;
+    transform: translateY(-1px);
+}
+
+.continue-btn:active {
+    transform: translateY(0);
 }
 
 /* ─── Sidebar ─── */
