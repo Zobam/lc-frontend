@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { useQuery } from '@pinia/colada';
 import type { CommentsListResponse } from "~/types/api";
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "~/components/ui/table";
 import { toast } from 'vue-sonner';
 
 definePageMeta({ layout: "admin", middleware: "sidebase-auth" });
@@ -79,45 +80,45 @@ const deleteComment = async (id: string) => {
                 </div>
             </div>
 
-            <table v-else-if="commentsData?.data?.length" class="data-table">
-                <thead>
-                    <tr>
-                        <th>Comment</th>
-                        <th>User</th>
-                        <th>Status</th>
-                        <th>Date</th>
-                        <th class="text-right">Actions</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <tr v-for="comment in commentsData.data" :key="comment.id"
+            <Table v-else-if="commentsData?.data?.length">
+                <TableHeader>
+                    <TableRow>
+                        <TableHead>Comment</TableHead>
+                        <TableHead>User</TableHead>
+                        <TableHead>Status</TableHead>
+                        <TableHead>Date</TableHead>
+                        <TableHead class="text-right">Actions</TableHead>
+                    </TableRow>
+                </TableHeader>
+                <TableBody>
+                    <TableRow v-for="comment in commentsData.data" :key="comment.id"
                         :class="{ 'row-unapproved': !comment.is_approved }">
-                        <td class="col-content">
+                        <TableCell class="col-content">
                             <div class="comment-content">{{ comment.content }}</div>
                             <div class="comment-post-title" v-if="comment.post?.title">
                                 On: <NuxtLink :to="`/admin/posts/${comment.post.id}`" class="post-link" target="_blank">
                                     {{ comment.post.title }}</NuxtLink>
                             </div>
-                        </td>
-                        <td class="col-user muted">{{ comment.user ? `${comment.user.first_name}
-                            ${comment.user.last_name}` : 'Unknown' }}</td>
-                        <td class="col-status">
+                        </TableCell>
+                        <TableCell class="col-user muted">{{ comment.user ? `${comment.user.first_name}
+                            ${comment.user.last_name}` : 'Unknown' }}</TableCell>
+                        <TableCell class="col-status">
                             <span class="badge" :class="comment.is_approved ? 'badge-green' : 'badge-yellow'">
                                 {{ comment.is_approved ? 'Approved' : 'Pending' }}
                             </span>
-                        </td>
-                        <td class="col-date muted">{{ new Date(comment.created_at).toLocaleDateString() }}</td>
-                        <td class="col-actions text-right">
+                        </TableCell>
+                        <TableCell class="col-date muted">{{ new Date(comment.created_at).toLocaleDateString() }}</TableCell>
+                        <TableCell class="col-actions text-right">
                             <button @click="toggleApproval(comment)" :disabled="togglingId === comment.id"
                                 class="action-btn" :class="comment.is_approved ? 'btn-warn' : 'btn-ok'">
                                 {{ togglingId === comment.id ? "…" : (comment.is_approved ? "Reject" : "Approve") }}
                             </button>
                             <button @click="deleteComment(comment.id)" :disabled="deletingId === comment.id"
                                 class="action-del">Delete</button>
-                        </td>
-                    </tr>
-                </tbody>
-            </table>
+                        </TableCell>
+                    </TableRow>
+                </TableBody>
+            </Table>
 
             <div v-else class="empty-state">
                 <Icon name="mdi:comment-check-outline" />
@@ -272,46 +273,6 @@ const deleteComment = async (id: string) => {
 
 .text-right {
     text-align: right !important;
-}
-
-.comment-content {
-    font-size: 0.9rem;
-    margin-bottom: 0.4rem;
-    line-height: 1.4;
-    display: -webkit-box;
-    -webkit-line-clamp: 3;
-    -webkit-box-orient: vertical;
-    overflow: hidden;
-}
-
-.comment-post-title {
-    font-size: 0.75rem;
-    color: #a1a1aa;
-    display: flex;
-    align-items: center;
-    gap: 0.25rem;
-}
-
-.post-link {
-    color: #E05615;
-    text-decoration: none;
-    max-width: 250px;
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
-    display: inline-block;
-    vertical-align: bottom;
-}
-
-.post-link:hover {
-    text-decoration: underline;
-}
-
-.badge {
-    padding: 0.2rem 0.6rem;
-    border-radius: 99px;
-    font-size: 0.72rem;
-    font-weight: 700;
 }
 
 .badge-green {

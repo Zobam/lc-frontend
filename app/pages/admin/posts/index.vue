@@ -8,6 +8,7 @@ import {
     DropdownMenuSeparator,
     DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu'
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "~/components/ui/table";
 import { toast } from 'vue-sonner';
 
 definePageMeta({ layout: "admin", middleware: "sidebase-auth" });
@@ -109,30 +110,30 @@ const categories = Object.values(PostCategory);
                     <div class="sk-cell narrow rounded-full"></div>
                 </div>
             </div>
-            <table v-else-if="postsData?.data?.length" class="data-table">
-                <thead>
-                    <tr>
-                        <th>Title</th>
-                        <th>Category</th>
-                        <th>Author</th>
-                        <th>Status</th>
-                        <th>Views</th>
-                        <th class="text-right">Actions</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <tr v-for="post in postsData.data" :key="post.id">
-                        <td class="font-medium">{{ post.title }}</td>
-                        <td><span class="badge badge-blue">{{ post.category }}</span></td>
-                        <td class="muted">{{ post.author ? `${post.author.first_name} ${post.author.last_name}` : "—" }}
-                        </td>
-                        <td>
+            <Table v-else-if="postsData?.data?.length">
+                <TableHeader>
+                    <TableRow>
+                        <TableHead>Title</TableHead>
+                        <TableHead>Category</TableHead>
+                        <TableHead>Author</TableHead>
+                        <TableHead>Status</TableHead>
+                        <TableHead>Views</TableHead>
+                        <TableHead class="text-right">Actions</TableHead>
+                    </TableRow>
+                </TableHeader>
+                <TableBody>
+                    <TableRow v-for="post in postsData.data" :key="post.id">
+                        <TableCell class="font-medium">{{ post.title }}</TableCell>
+                        <TableCell><span class="badge badge-blue">{{ post.category }}</span></TableCell>
+                        <TableCell class="muted">{{ post.author ? `${post.author.first_name} ${post.author.last_name}` : "—" }}
+                        </TableCell>
+                        <TableCell>
                             <span class="status-pill" :class="post.is_published ? 'published' : 'draft'">
                                 {{ post.is_published ? "Published" : "Draft" }}
                             </span>
-                        </td>
-                        <td class="muted">{{ post.views ?? 0 }}</td>
-                        <td class="text-right">
+                        </TableCell>
+                        <TableCell class="muted">{{ post.views ?? 0 }}</TableCell>
+                        <TableCell class="text-right">
                             <DropdownMenu>
                                 <DropdownMenuTrigger as-child>
                                     <button class="action-trigger" :disabled="busyId === post.id">
@@ -158,10 +159,10 @@ const categories = Object.values(PostCategory);
                                     </DropdownMenuItem>
                                 </DropdownMenuContent>
                             </DropdownMenu>
-                        </td>
-                    </tr>
-                </tbody>
-            </table>
+                        </TableCell>
+                    </TableRow>
+                </TableBody>
+            </Table>
             <div v-else class="empty-state">
                 <Icon name="mdi:newspaper-remove" />
                 <p>No posts found</p>
@@ -353,14 +354,6 @@ const categories = Object.values(PostCategory);
 
 .text-right {
     text-align: right !important;
-}
-
-.badge {
-    padding: 0.2rem 0.6rem;
-    border-radius: 99px;
-    font-size: 0.72rem;
-    font-weight: 700;
-    text-transform: capitalize;
 }
 
 .badge-blue {

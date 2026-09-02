@@ -3,6 +3,7 @@ import type { DonationsListResponse, DonationStatsResponse } from "~/types/api";
 import { DonationType, DonationStatus } from "~/types/enums";
 import { validateManualDonation, hasErrors } from "~/utils/validation";
 import { toast } from 'vue-sonner';
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "~/components/ui/table";
 
 definePageMeta({ layout: "admin", middleware: "sidebase-auth" });
 useHead({ title: 'Donations | LC Admin' });
@@ -110,33 +111,33 @@ const formatMoney = (amount: number) => `₦${Number(amount).toLocaleString()}`;
                     <div class="sk-cell w-full"></div>
                 </div>
             </div>
-            <table v-else-if="donationsData?.data?.donations?.length" class="data-table">
-                <thead>
-                    <tr>
-                        <th>Reference</th>
-                        <th>Donor Email</th>
-                        <th>Amount</th>
-                        <th>Type</th>
-                        <th>Status</th>
-                        <th>Date</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <tr v-for="tx in donationsData.data.donations" :key="tx.id">
-                        <td class="font-mono text-sm muted">{{ tx.reference }}</td>
-                        <td class="font-medium">{{ tx.email }}</td>
-                        <td class="font-bold amount">{{ tx.formatted_amount || formatMoney(tx.amount) }}</td>
-                        <td><span class="badge badge-gray">{{ tx.type_label || tx.type.replace('_', ' ') }}</span></td>
-                        <td>
+            <Table v-else-if="donationsData?.data?.donations?.length">
+                <TableHeader>
+                    <TableRow>
+                        <TableHead>Reference</TableHead>
+                        <TableHead>Donor Email</TableHead>
+                        <TableHead>Amount</TableHead>
+                        <TableHead>Type</TableHead>
+                        <TableHead>Status</TableHead>
+                        <TableHead>Date</TableHead>
+                    </TableRow>
+                </TableHeader>
+                <TableBody>
+                    <TableRow v-for="tx in donationsData.data.donations" :key="tx.id">
+                        <TableCell class="font-mono text-sm muted">{{ tx.reference }}</TableCell>
+                        <TableCell class="font-medium">{{ tx.email }}</TableCell>
+                        <TableCell class="font-bold amount">{{ tx.formatted_amount || formatMoney(tx.amount) }}</TableCell>
+                        <TableCell><span class="badge badge-gray">{{ tx.type_label || tx.type.replace('_', ' ') }}</span></TableCell>
+                        <TableCell>
                             <span class="badge"
                                 :style="{ backgroundColor: tx.status_color + '20', color: tx.status_color }">
                                 {{ tx.status_label || tx.status }}
                             </span>
-                        </td>
-                        <td class="muted">{{ new Date(tx.created_at).toLocaleDateString() }}</td>
-                    </tr>
-                </tbody>
-            </table>
+                        </TableCell>
+                        <TableCell class="muted">{{ new Date(tx.created_at).toLocaleDateString() }}</TableCell>
+                    </TableRow>
+                </TableBody>
+            </Table>
             <div v-else class="empty-state">
                 <Icon name="mdi:cash-remove" />
                 <p>No donations match your search.</p>
@@ -378,15 +379,6 @@ const formatMoney = (amount: number) => `₦${Number(amount).toLocaleString()}`;
 
 .muted {
     color: #71717a !important;
-}
-
-.badge {
-    padding: 0.2rem 0.6rem;
-    border-radius: 99px;
-    font-size: 0.72rem;
-    font-weight: 700;
-    text-transform: capitalize;
-    display: inline-block;
 }
 
 .badge-gray {

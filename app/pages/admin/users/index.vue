@@ -2,6 +2,7 @@
 import type { UsersListResponse } from "~/types/api";
 import { UserStatus } from "~/types/enums";
 import { toast } from 'vue-sonner';
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "~/components/ui/table";
 
 definePageMeta({ layout: "admin", middleware: "sidebase-auth" });
 useHead({ title: 'Manage Users | LC Admin' });
@@ -105,31 +106,31 @@ const statusClass = (s: string) =>
                 </div>
             </div>
 
-            <table v-else-if="usersData?.data?.length" class="data-table">
-                <thead>
-                    <tr>
-                        <th>User</th>
-                        <th>Email</th>
-                        <th>Status</th>
-                        <th>Roles</th>
-                        <th>Joined</th>
-                        <th class="text-right">Actions</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <tr v-for="user in usersData.data" :key="user.id">
-                        <td>
+            <Table v-else-if="usersData?.data?.length">
+                <TableHeader>
+                    <TableRow>
+                        <TableHead>User</TableHead>
+                        <TableHead>Email</TableHead>
+                        <TableHead>Status</TableHead>
+                        <TableHead>Roles</TableHead>
+                        <TableHead>Joined</TableHead>
+                        <TableHead class="text-right">Actions</TableHead>
+                    </TableRow>
+                </TableHeader>
+                <TableBody>
+                    <TableRow v-for="user in usersData.data" :key="user.id">
+                        <TableCell>
                             <div class="user-cell">
                                 <div class="user-avatar">{{ (user.first_name?.[0] ?? "") + (user.last_name?.[0] ?? "")
                                 }}</div>
                                 <span>{{ user.first_name }} {{ user.last_name }}</span>
                             </div>
-                        </td>
-                        <td class="muted">{{ user.email }}</td>
-                        <td><span class="badge" :class="statusClass(user.status)">{{ user.status }}</span></td>
-                        <td class="muted">{{user.roles?.map(r => r.name).join(", ") || "—"}}</td>
-                        <td class="muted">{{ new Date(user.created_at).toLocaleDateString() }}</td>
-                        <td class="text-right">
+                        </TableCell>
+                        <TableCell class="text-muted-foreground">{{ user.email }}</TableCell>
+                        <TableCell><span class="badge" :class="statusClass(user.status)">{{ user.status }}</span></TableCell>
+                        <TableCell class="text-muted-foreground">{{user.roles?.map(r => r.name).join(", ") || "—"}}</TableCell>
+                        <TableCell class="text-muted-foreground">{{ new Date(user.created_at).toLocaleDateString() }}</TableCell>
+                        <TableCell class="text-right">
                             <NuxtLink :to="`/admin/users/${user.id}`" class="action-link">Edit</NuxtLink>
                             <button @click="deleteUser(user.id)" 
                                 :disabled="deletingId === user.id || user.roles?.some((r: any) => ['admin', 'super-admin'].includes(r.name))" 
@@ -137,10 +138,10 @@ const statusClass = (s: string) =>
                                 :title="user.roles?.some((r: any) => ['admin', 'super-admin'].includes(r.name)) ? 'Admins cannot be deleted' : ''">
                                 {{ deletingId === user.id ? "…" : "Delete" }}
                             </button>
-                        </td>
-                    </tr>
-                </tbody>
-            </table>
+                        </TableCell>
+                    </TableRow>
+                </TableBody>
+            </Table>
 
             <div v-else class="empty-state">
                 <Icon name="mdi:account-off" />
@@ -282,41 +283,7 @@ const statusClass = (s: string) =>
     }
 }
 
-.data-table {
-    width: 100%;
-    border-collapse: collapse;
-}
 
-.data-table th {
-    padding: 0.75rem 1.25rem;
-    text-align: left;
-    font-size: 0.72rem;
-    font-weight: 700;
-    color: #71717a;
-    text-transform: uppercase;
-    letter-spacing: 0.05em;
-    background: #fafafa;
-    border-bottom: 1px solid #f4f4f5;
-}
-
-.data-table td {
-    padding: 0.9rem 1.25rem;
-    font-size: 0.875rem;
-    color: #27272a;
-    border-bottom: 1px solid #f9f9f9;
-}
-
-.data-table tr:last-child td {
-    border-bottom: none;
-}
-
-.data-table tr:hover td {
-    background: #fafafa;
-}
-
-.muted {
-    color: #71717a !important;
-}
 
 .text-right {
     text-align: right !important;
