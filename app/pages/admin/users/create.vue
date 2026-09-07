@@ -23,6 +23,7 @@ const form = ref({
 
 const errors = ref<Record<string, string>>({});
 const loading = ref(false);
+const showPassword = ref(false);
 
 const { data: rolesRes } = useQuery({
     key: ['roles'],
@@ -76,7 +77,13 @@ const submit = async () => {
                 </div>
                 <div class="field" :class="{ errored: errors.password }">
                     <label>Password <span class="req">*</span></label>
-                    <input v-model="form.password" type="password" class="input" />
+                    <div class="password-input-wrapper">
+                        <input v-model="form.password" :type="showPassword ? 'text' : 'password'" class="input" />
+                        <button type="button" @click="showPassword = !showPassword" class="password-toggle"
+                            :aria-label="showPassword ? 'Hide password' : 'Show password'">
+                            <Icon :name="showPassword ? 'mdi:eye-off' : 'mdi:eye'" />
+                        </button>
+                    </div>
                     <p v-if="errors.password" class="field-error">{{ errors.password }}</p>
                 </div>
                 <div class="field">
@@ -195,6 +202,43 @@ const submit = async () => {
 .input:focus {
     border-color: #E05615;
     background: #fff;
+}
+
+.password-input-wrapper {
+    position: relative;
+    display: flex;
+    align-items: center;
+}
+
+.password-input-wrapper .input {
+    width: 100%;
+    padding-right: 2.5rem;
+}
+
+.password-toggle {
+    position: absolute;
+    right: 0.5rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0.4rem;
+    background: transparent;
+    border: none;
+    color: #71717a;
+    cursor: pointer;
+    font-size: 1.15rem;
+    transition: color 0.15s;
+    border-radius: 4px;
+}
+
+.password-toggle:hover {
+    color: #E05615;
+    background: #fef3f2;
+}
+
+.password-toggle:focus {
+    outline: 2px solid #E05615;
+    outline-offset: 2px;
 }
 
 .errored .input {

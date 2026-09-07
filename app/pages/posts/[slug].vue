@@ -61,6 +61,12 @@
                     </div>
                 </div>
 
+                <!-- Post Excerpt -->
+                <blockquote v-if="post.excerpt && post.excerpt.trim()" class="post-excerpt">
+                    <Icon name="mdi:format-quote-open" class="quote-icon" />
+                    <p>{{ post.excerpt }}</p>
+                </blockquote>
+
                 <!-- Post Body -->
                 <div class="post-body" v-html="post.body"></div>
 
@@ -247,6 +253,34 @@ const formatDate = (dateString: string) => {
     display: flex;
     align-items: center;
     gap: 0.35rem;
+}
+
+.post-excerpt {
+    position: relative;
+    margin: 2.5rem 0;
+    padding: 1.75rem 2rem 1.75rem 4.5rem;
+    background: linear-gradient(135deg, #fff9e6 0%, #fffbf0 100%);
+    border-left: 5px solid var(--lc-gold);
+    border-radius: 8px;
+    box-shadow: 0 2px 8px rgba(212, 175, 55, 0.1);
+}
+
+.post-excerpt .quote-icon {
+    position: absolute;
+    left: 1.25rem;
+    top: 1.5rem;
+    font-size: 2rem;
+    color: var(--lc-gold);
+    opacity: 0.6;
+}
+
+.post-excerpt p {
+    font-size: 1.15rem;
+    line-height: 1.7;
+    color: #52525b;
+    font-style: italic;
+    font-weight: 500;
+    margin: 0;
 }
 
 .post-body {
@@ -450,6 +484,21 @@ const formatDate = (dateString: string) => {
     .post-stats {
         width: 100%;
         justify-content: space-between;
+    }
+
+    .post-excerpt {
+        padding: 1.25rem 1.25rem 1.25rem 3.5rem;
+        margin: 2rem 0;
+    }
+
+    .post-excerpt .quote-icon {
+        font-size: 1.5rem;
+        left: 0.75rem;
+        top: 1rem;
+    }
+
+    .post-excerpt p {
+        font-size: 1rem;
     }
 
     .post-body {

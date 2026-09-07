@@ -11,7 +11,10 @@ const api = useApi();
 const router = useRouter();
 
 const form = ref({
-    title: "", subtitle: "", body: "", excerpt: "",
+    title: "", 
+    subtitle: "", 
+    body: "", 
+    excerpt: "",
     category: PostCategory.SERMON as string,
     tags: [] as string[],
     meta_description: "",
@@ -19,6 +22,9 @@ const form = ref({
 const tagInput = ref("");
 const errors = ref<Record<string, string>>({});
 const loading = ref(false);
+
+const MAX_EXCERPT_LENGTH = 500;
+const excerptLength = computed(() => form.value.excerpt.length);
 
 const addTag = () => {
     const t = tagInput.value.trim();
@@ -73,7 +79,11 @@ const categories = Object.values(PostCategory);
                     <div class="field">
                         <label>Excerpt</label>
                         <textarea v-model="form.excerpt" class="input textarea" rows="3"
+                            :maxlength="MAX_EXCERPT_LENGTH"
                             placeholder="Short summary shown on the post listing…"></textarea>
+                        <p class="char-counter" :class="{ 'char-limit-near': excerptLength > 450 }">
+                            {{ excerptLength }} / {{ MAX_EXCERPT_LENGTH }}
+                        </p>
                     </div>
                     <div class="field">
                         <label>Meta Description (SEO)</label>
@@ -218,6 +228,19 @@ const categories = Object.values(PostCategory);
     font-size: 0.78rem;
     color: #dc2626;
     margin: 0;
+}
+
+.char-counter {
+    font-size: 0.75rem;
+    color: #71717a;
+    text-align: right;
+    margin: 0;
+    font-weight: 500;
+}
+
+.char-counter.char-limit-near {
+    color: #E05615;
+    font-weight: 600;
 }
 
 .tags-input {
