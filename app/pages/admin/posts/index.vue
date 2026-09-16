@@ -40,13 +40,32 @@ const goToPage = (n: number) => { page.value = n; };
 
 // Single busy-id covers delete, publish AND unpublish
 const busyId = ref<string | null>(null);
+const showDeleteDialog = ref(false);
+const postToDelete = ref<string | null>(null);
 
-const deletePost = async (id: string) => {
-    if (!await useConfirmDialog().showConfirm("Delete this post?", "Delete Post")) return;
+const openDeleteDialog = (id: string) => {
+    postToDelete.value = id;
+    showDeleteDialog.value = true;
+};
+
+const deletePost = async () => {
+    if (!postToDelete.value) return;
+
+    const id = postToDelete.value;
     busyId.value = id;
-    try { await api.delete(`/posts/${id}`); toast.success("Post deleted."); refresh(); }
-    catch (e: any) { toast.error(e.message); }
-    finally { busyId.value = null; }
+    try {
+        await api.delete(`/posts/${id}`);
+        toast.success("Post deleted.");
+        refresh();
+    }
+    catch (e: any) {
+        toast.error(e.message);
+    }
+    finally {
+        busyId.value = null;
+        showDeleteDialog.value = false;
+        postToDelete.value = null;
+    }
 };
 
 const publishPost = async (id: string) => {
@@ -125,7 +144,8 @@ const categories = Object.values(PostCategory);
                     <TableRow v-for="post in postsData.data" :key="post.id">
                         <TableCell class="font-medium">{{ post.title }}</TableCell>
                         <TableCell><span class="badge badge-blue">{{ post.category }}</span></TableCell>
-                        <TableCell class="muted">{{ post.author ? `${post.author.first_name} ${post.author.last_name}` : "—" }}
+                        <TableCell class="muted">{{ post.author ? `${post.author.first_name} ${post.author.last_name}` :
+                            "—" }}
                         </TableCell>
                         <TableCell>
                             <span class="status-pill" :class="post.is_published ? 'published' : 'draft'">
@@ -154,7 +174,7 @@ const categories = Object.values(PostCategory);
                                         {{ post.is_published ? 'Unpublish' : 'Publish' }}
                                     </DropdownMenuItem>
                                     <DropdownMenuSeparator />
-                                    <DropdownMenuItem @click="deletePost(post.id)" class="text-red-600">
+                                    <DropdownMenuItem @click="openDeleteDialog(post.id)" class="text-red-600">
                                         <Icon name="mdi:trash-can-outline" /> Delete
                                     </DropdownMenuItem>
                                 </DropdownMenuContent>
@@ -171,6 +191,12 @@ const categories = Object.values(PostCategory);
                 :total-pages="postsData.data.last_page" :total="postsData.data.total" :from="postsData.data.from"
                 :to="postsData.data.to" @change="goToPage" />
         </div>
+
+        <!-- Delete Confirmation Dialog -->
+        <DialogsConfirmDialog :open="showDeleteDialog" title="Delete Post"
+            description="This post will be permanently deleted and cannot be recovered. Are you sure?"
+            confirm-text="Delete" cancel-text="Cancel" is-destructive @confirm="deletePost"
+            @update:open="showDeleteDialog = $event" />
     </div>
 </template>
 
