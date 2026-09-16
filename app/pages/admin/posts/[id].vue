@@ -35,6 +35,51 @@ const tagInput = ref("");
 const loading = ref(false);
 const activeImageTab = ref(false);
 
+// Delete post dialog
+const showDeletePostDialog = ref(false);
+
+// Delete image dialog
+const showDeleteImageDialog = ref(false);
+const imageToDelete = ref<string | null>(null);
+
+const openDeletePostDialog = () => {
+    showDeletePostDialog.value = true;
+};
+
+const openDeleteImageDialog = (imageId: string) => {
+    imageToDelete.value = imageId;
+    showDeleteImageDialog.value = true;
+};
+
+const deletePost = async () => {
+    try {
+        await api.delete(`/posts/${postId.value}`);
+        router.push("/admin/posts");
+    }
+    catch (e: any) {
+        toast.error(e.message);
+    }
+    finally {
+        showDeletePostDialog.value = false;
+    }
+};
+
+const deleteImage = async () => {
+    if (!imageToDelete.value) return;
+
+    try {
+        await api.delete(`/posts/${postId.value}/images/${imageToDelete.value}`);
+        refresh();
+    }
+    catch (e: any) {
+        toast.error(e.message);
+    }
+    finally {
+        showDeleteImageDialog.value = false;
+        imageToDelete.value = null;
+    }
+};
+
 watch(postRes, (r) => {
     if (r?.data) {
         form.value = {
@@ -58,12 +103,6 @@ const updatePost = async () => {
     finally { loading.value = false; }
 };
 
-const deletePost = async () => {
-    if (!await useConfirmDialog().showConfirm("Delete this post permanently?", "Delete Post")) return;
-    try { await api.delete(`/posts/${postId.value}`); router.push("/admin/posts"); }
-    catch (e: any) { toast.error(e.message); }
-};
-
 const imageFiles = ref<File[]>([]);
 const uploadingImages = ref(false);
 const uploadImages = async () => {
@@ -84,11 +123,6 @@ const setFeatured = async (imageId: string) => {
     try { await api.put(`/posts/${postId.value}/images/${imageId}/set-featured`); refresh(); }
     catch (e: any) { toast.error(e.message); }
 };
-const deleteImage = async (imageId: string) => {
-    if (!await useConfirmDialog().showConfirm("Delete this image?", "Delete Image")) return;
-    try { await api.delete(`/posts/${postId.value}/images/${imageId}`); refresh(); }
-    catch (e: any) { toast.error(e.message); }
-};
 
 const categories = Object.values(PostCategory);
 </script>
@@ -99,7 +133,7 @@ const categories = Object.values(PostCategory);
             <NuxtLink to="/admin/posts" class="back-link">
                 <Icon name="mdi:arrow-left" /> Back to Posts
             </NuxtLink>
-            <button @click="deletePost" class="btn-danger">
+            <button @click="openDeletePostDialog" class="btn-danger">
                 <Icon name="mdi:trash-can" /> Delete Post
             </button>
         </div>
@@ -183,13 +217,25 @@ const categories = Object.values(PostCategory);
                         <div class="img-actions">
                             <span v-if="img.is_featured" class="badge-primary">Featured</span>
                             <button v-else @click="setFeatured(img.id)" class="img-btn">Set Featured</button>
-                            <button @click="deleteImage(img.id)" class="img-btn danger">Delete</button>
+                            <button @click="openDeleteImageDialog(img.id)" class="img-btn danger">Delete</button>
                         </div>
                     </div>
                 </div>
                 <p v-else class="muted-text">No images attached.</p>
             </div>
         </div>
+
+        <!-- Delete Post Confirmation Dialog -->
+        <DialogsConfirmDialog :open="showDeletePostDialog" title="Delete Post"
+            description="This post will be permanently deleted and cannot be recovered. Are you sure?"
+            confirm-text="Delete" cancel-text="Cancel" is-destructive @confirm="deletePost"
+            @update:open="showDeletePostDialog = $event" />
+
+        <!-- Delete Image Confirmation Dialog -->
+        <DialogsConfirmDialog :open="showDeleteImageDialog" title="Delete Image"
+            description="This image will be permanently deleted and cannot be recovered. Are you sure?"
+            confirm-text="Delete" cancel-text="Cancel" is-destructive @confirm="deleteImage"
+            @update:open="showDeleteImageDialog = $event" />
     </div>
 </template>
 
