@@ -15,7 +15,7 @@ const form = ref({
     subtitle: "", 
     body: "", 
     excerpt: "",
-    category: PostCategory.SERMON as string,
+    category: PostCategory.DEVOTIONAL as string,
     tags: [] as string[],
     meta_description: "",
 });
