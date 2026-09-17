@@ -34,7 +34,7 @@
                             </span>
                             <div>
                                 <h4>Phone</h4>
-                                <p>{{ appResourceInfoStore.phone }}</p>
+                                <p v-for="(phone, index) in appResourceInfoStore.phone" :key="index">{{ phone }}</p>
                             </div>
                         </div>
                         <div class="contact-item">
@@ -80,7 +80,7 @@
                                         :class="{ 'input-error': touched.email && errors.email }"
                                         @blur="touched.email = true" />
                                     <span class="error-msg" v-if="touched.email && errors.email">{{ errors.email
-                                        }}</span>
+                                    }}</span>
                                 </div>
                                 <div class="form-group">
                                     <label>Phone (optional)</label>
@@ -88,7 +88,7 @@
                                         :class="{ 'input-error': touched.phone && errors.phone }"
                                         @blur="touched.phone = true" />
                                     <span class="error-msg" v-if="touched.phone && errors.phone">{{ errors.phone
-                                        }}</span>
+                                    }}</span>
                                 </div>
                             </div>
                             <div class="form-group">
@@ -103,7 +103,7 @@
                                     <option value="partnership">Partnership</option>
                                 </select>
                                 <span class="error-msg" v-if="touched.subject && errors.subject">{{ errors.subject
-                                    }}</span>
+                                }}</span>
                             </div>
                             <div class="form-group">
                                 <label>Your Message</label>
@@ -111,7 +111,7 @@
                                     :class="{ 'input-error': touched.message && errors.message }"
                                     @blur="touched.message = true"></textarea>
                                 <span class="error-msg" v-if="touched.message && errors.message">{{ errors.message
-                                    }}</span>
+                                }}</span>
                             </div>
 
                             <div class="error-msg api-error" v-if="apiError">{{ apiError }}</div>

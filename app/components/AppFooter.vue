@@ -70,8 +70,8 @@
                         <li>
                             <Icon name="mdi:map-marker" /> {{ appResourceInfoStore.address }}
                         </li>
-                        <li>
-                            <Icon name="mdi:phone" /> {{ appResourceInfoStore.phone }}
+                        <li v-for="(phone, index) in appResourceInfoStore.phone" :key="index">
+                            <Icon name="mdi:phone" /> {{ phone }}
                         </li>
                         <li>
                             <Icon name="mdi:email" /> {{ appResourceInfoStore.email }}
