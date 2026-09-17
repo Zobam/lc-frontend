@@ -62,7 +62,16 @@
                                 <div class="bank-details">
                                     <div v-for="d in subsection.details" :key="d.label" class="bd-row">
                                         <span class="bd-label">{{ d.label }}</span>
-                                        <span class="bd-value">{{ d.value }}</span>
+                                        <div class="bd-value-wrapper">
+                                            <span class="bd-value">{{ d.value }}</span>
+                                            <button v-if="d.label === 'Account Number'"
+                                                @click="copyToClipboard(d.value)" class="copy-btn"
+                                                :class="{ copied: copiedAccountNumber === d.value }"
+                                                :title="copiedAccountNumber === d.value ? 'Copied!' : 'Copy'">
+                                                <Icon
+                                                    :name="copiedAccountNumber === d.value ? 'mdi:check' : 'mdi:content-copy'" />
+                                            </button>
+                                        </div>
                                     </div>
                                 </div>
                             </div>
@@ -127,6 +136,7 @@ import {
     DialogContent,
     DialogTrigger,
 } from '@/components/ui/dialog'
+import { toast } from 'vue-sonner'
 
 useHead({
     title: 'Give | Light City Evangelical Center',
@@ -139,6 +149,7 @@ useHead({
 });
 
 const isGiveDialogOpen = ref(false);
+const copiedAccountNumber = ref<string | null>(null);
 
 const handleCtaClick = (ctaText: string) => {
     if (ctaText === 'Give Online Now') {
@@ -146,6 +157,18 @@ const handleCtaClick = (ctaText: string) => {
     } else {
         // Handle other CTAs
     }
+};
+
+const copyToClipboard = (text: string) => {
+    navigator.clipboard.writeText(text).then(() => {
+        copiedAccountNumber.value = text;
+        toast.success('Account number copied!');
+        setTimeout(() => {
+            copiedAccountNumber.value = null;
+        }, 2000);
+    }).catch(() => {
+        toast.error('Failed to copy');
+    });
 };
 
 const amounts = [1000, 5000, 10000, 20000, 50000];
@@ -342,8 +365,12 @@ const givingOptions = [
 
 .giving-grid {
     display: grid;
-    grid-template-columns: repeat(3, 1fr);
+    grid-template-columns: repeat(2, 1fr);
     gap: 1.5rem;
+}
+
+.giving-card:first-child {
+    grid-column: 1 / -1;
 }
 
 .giving-card {
@@ -389,11 +416,18 @@ const givingOptions = [
     margin: 1.25rem 0;
 }
 
+@media (min-width: 1024px) {
+    .bank-subsections {
+        flex-direction: row;
+    }
+}
+
 .subsection {
     border: 1px solid #e0e0e0;
     border-radius: 8px;
     padding: 1rem;
     background: #f9f9fb;
+    flex: 1;
 }
 
 .subsection-heading {
@@ -411,6 +445,7 @@ const givingOptions = [
     padding: 0.4rem 0;
     border-bottom: 1px solid #eee;
     font-size: 0.82rem;
+    align-items: center;
 }
 
 .bd-row:last-child {
@@ -422,9 +457,39 @@ const givingOptions = [
     font-weight: 600;
 }
 
+.bd-value-wrapper {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
 .bd-value {
     color: var(--lc-dark);
     font-weight: 700;
+}
+
+.copy-btn {
+    width: 24px;
+    height: 24px;
+    border: none;
+    background: transparent;
+    color: #999;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 4px;
+    transition: all 0.2s;
+    font-size: 0.9rem;
+}
+
+.copy-btn:hover {
+    color: var(--lc-gold);
+    background: rgba(212, 175, 55, 0.1);
+}
+
+.copy-btn.copied {
+    color: #22c55e;
 }
 
 .btn-give {

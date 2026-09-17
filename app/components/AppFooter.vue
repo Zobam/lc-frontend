@@ -59,7 +59,7 @@
                     <ul>
                         <li>Sunday — 4:00 PM</li>
                         <li>Wednesday — 7:00 PM</li>
-                        <li>Friday Youth — 6:00 PM</li>
+                        <li>1<sup class="-ml-1">st</sup> Fri. Vigil — 10:00 PM</li>
                     </ul>
                 </div>
 
