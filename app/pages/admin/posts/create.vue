@@ -11,9 +11,9 @@ const api = useApi();
 const router = useRouter();
 
 const form = ref({
-    title: "", 
-    subtitle: "", 
-    body: "", 
+    title: "",
+    subtitle: "",
+    body: "",
     excerpt: "",
     category: PostCategory.DEVOTIONAL as string,
     tags: [] as string[],
@@ -25,6 +25,30 @@ const loading = ref(false);
 
 const MAX_EXCERPT_LENGTH = 500;
 const excerptLength = computed(() => form.value.excerpt.length);
+
+const imageFile = ref<File | null>(null);
+const imagePreview = ref<string>("");
+const fileInputRef = ref<HTMLInputElement>();
+
+const handleFileSelect = (e: Event) => {
+    const files = Array.from((e.target as HTMLInputElement).files ?? []);
+    if (files.length) {
+        imageFile.value = files[0];
+        const reader = new FileReader();
+        reader.onload = (event) => {
+            imagePreview.value = event.target?.result as string;
+        };
+        reader.readAsDataURL(files[0]);
+    }
+};
+
+const clearImage = () => {
+    imageFile.value = null;
+    imagePreview.value = "";
+    if (fileInputRef.value) {
+        fileInputRef.value.value = "";
+    }
+};
 
 const addTag = () => {
     const t = tagInput.value.trim();
@@ -41,7 +65,22 @@ const submit = async () => {
     if (!validate()) return;
     loading.value = true;
     try {
-        await api.post<PostResponse>("/posts", form.value);
+        const formData = new FormData();
+        // Add form fields
+        Object.entries(form.value).forEach(([key, value]) => {
+            if (Array.isArray(value)) {
+                value.forEach((item, index) => {
+                    formData.append(`${key}[${index}]`, item);
+                });
+            } else {
+                formData.append(key, value as string);
+            }
+        });
+        // Add image if selected
+        if (imageFile.value) {
+            formData.append("image", imageFile.value);
+        }
+        await api.post<PostResponse>("/posts", formData);
         router.push("/admin/posts");
     } catch (e: any) { toast.error(e.message || "Failed to create post"); }
     finally { loading.value = false; }
@@ -78,8 +117,7 @@ const categories = Object.values(PostCategory);
                     </div>
                     <div class="field">
                         <label>Excerpt</label>
-                        <textarea v-model="form.excerpt" class="input textarea" rows="3"
-                            :maxlength="MAX_EXCERPT_LENGTH"
+                        <textarea v-model="form.excerpt" class="input textarea" rows="3" :maxlength="MAX_EXCERPT_LENGTH"
                             placeholder="Short summary shown on the post listing…"></textarea>
                         <p class="char-counter" :class="{ 'char-limit-near': excerptLength > 450 }">
                             {{ excerptLength }} / {{ MAX_EXCERPT_LENGTH }}
@@ -88,6 +126,28 @@ const categories = Object.values(PostCategory);
                     <div class="field">
                         <label>Meta Description (SEO)</label>
                         <input v-model="form.meta_description" type="text" class="input" />
+                    </div>
+
+                    <!-- Image Upload -->
+                    <div class="field">
+                        <label>Post Image</label>
+                        <div class="upload-area">
+                            <input ref="fileInputRef" type="file" accept="image/*" style="display: none"
+                                @change="handleFileSelect" />
+
+                            <!-- Upload Icon or Preview -->
+                            <div v-if="!imageFile" @click="$refs.fileInputRef?.click()" class="upload-trigger">
+                                <Icon name="mdi:plus" class="upload-icon" />
+                                <p class="upload-text">Click to select image</p>
+                            </div>
+
+                            <div v-else class="preview-container">
+                                <img :src="imagePreview" :alt="imageFile.name" class="preview-image" />
+                                <button type="button" @click="clearImage" class="clear-btn" title="Remove image">
+                                    <Icon name="mdi:close" />
+                                </button>
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -317,5 +377,76 @@ const categories = Object.values(PostCategory);
 
 .w-full {
     width: 100%;
+}
+
+.upload-area {
+    margin-bottom: 0;
+}
+
+.upload-trigger {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 2rem;
+    border: 2px dashed #e4e4e7;
+    border-radius: 12px;
+    cursor: pointer;
+    transition: all 0.15s;
+    background: #fafafa;
+}
+
+.upload-trigger:hover {
+    border-color: #E05615;
+    background: #fff9f5;
+}
+
+.upload-icon {
+    font-size: 2.5rem;
+    color: #E05615;
+    margin-bottom: 0.5rem;
+}
+
+.upload-text {
+    font-size: 0.875rem;
+    color: #71717a;
+    margin: 0;
+    font-weight: 500;
+}
+
+.preview-container {
+    position: relative;
+    display: inline-block;
+}
+
+.preview-image {
+    max-width: 200px;
+    max-height: 200px;
+    border-radius: 8px;
+    border: 1px solid #e4e4e7;
+    display: block;
+    object-fit: cover;
+}
+
+.clear-btn {
+    position: absolute;
+    top: -8px;
+    right: -8px;
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    background: #dc2626;
+    color: #fff;
+    border: none;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    font-size: 1.2rem;
+    transition: background 0.15s;
+}
+
+.clear-btn:hover {
+    background: #991b1b;
 }
 </style>
