@@ -142,7 +142,17 @@ const categories = Object.values(PostCategory);
                 </TableHeader>
                 <TableBody>
                     <TableRow v-for="post in postsData.data" :key="post.id">
-                        <TableCell class="font-medium">{{ post.title }}</TableCell>
+                        <TableCell class="font-medium">
+                            <div class="title-with-image">
+                                <div v-if="post.featured_image" class="post-thumbnail">
+                                    <img :src="post.featured_image.image_url" :alt="post.title" class="thumbnail-img" />
+                                </div>
+                                <div v-else class="post-thumbnail placeholder"></div>
+                                <NuxtLink :to="`/admin/posts/${post.id}_${post.slug}`" class="post-title-link">
+                                    {{ post.title }}
+                                </NuxtLink>
+                            </div>
+                        </TableCell>
                         <TableCell><span class="badge badge-blue">{{ post.category }}</span></TableCell>
                         <TableCell class="muted">{{ post.author ? `${post.author.first_name} ${post.author.last_name}` :
                             "—" }}
@@ -456,5 +466,44 @@ const categories = Object.values(PostCategory);
     padding: 4rem;
     text-align: center;
     color: #a1a1aa;
+}
+
+.title-with-image {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+}
+
+.post-thumbnail {
+    flex-shrink: 0;
+    width: 45px;
+    height: 45px;
+    border-radius: 8px;
+    overflow: hidden;
+    border: 1px solid #e4e4e7;
+}
+
+.post-thumbnail.placeholder {
+    background: #f4f4f5;
+}
+
+.thumbnail-img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+}
+
+.post-title-link {
+    color: #E05615;
+    text-decoration: none;
+    font-weight: 600;
+    transition: all 0.15s;
+    flex: 1;
+}
+
+.post-title-link:hover {
+    color: #B84410;
+    text-decoration: underline;
 }
 </style>
