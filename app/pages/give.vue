@@ -54,12 +54,28 @@
                         </div>
                         <h3>{{ option.title }}</h3>
                         <p>{{ option.desc }}</p>
-                        <div v-if="option.details" class="bank-details">
+
+                        <!-- Bank Transfer Subsections -->
+                        <div v-if="option.subsections" class="bank-subsections">
+                            <div v-for="subsection in option.subsections" :key="subsection.heading" class="subsection">
+                                <h4 class="subsection-heading">{{ subsection.heading }}</h4>
+                                <div class="bank-details">
+                                    <div v-for="d in subsection.details" :key="d.label" class="bd-row">
+                                        <span class="bd-label">{{ d.label }}</span>
+                                        <span class="bd-value">{{ d.value }}</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Regular bank details (for non-subsection cards) -->
+                        <div v-else-if="option.details" class="bank-details">
                             <div v-for="d in option.details" :key="d.label" class="bd-row">
                                 <span class="bd-label">{{ d.label }}</span>
                                 <span class="bd-value">{{ d.value }}</span>
                             </div>
                         </div>
+
                         <button v-if="option.cta" @click.prevent="handleCtaClick(option.cta)" class="btn-give">{{
                             option.cta }}</button>
                     </div>
@@ -142,12 +158,25 @@ const givingOptions = [
     {
         title: 'Bank Transfer',
         icon: 'mdi:bank',
-        desc: 'Give directly to our church bank account. Use your name as reference.',
-        details: [
-            { label: 'Bank', value: 'First Bank' },
-            { label: 'Account Name', value: 'Light City Evangelical Center Int\'l' },
-            { label: 'Account Number', value: '**********' },
-        ],
+        desc: 'Give directly to our church bank accounts.',
+        subsections: [
+            {
+                heading: 'Offering & Tithe',
+                details: [
+                    { label: 'Account Name', value: 'Light City Evangelical Centre International' },
+                    { label: 'Account Number', value: '1711162922' },
+                    { label: 'Bank', value: 'Access Bank' },
+                ]
+            },
+            {
+                heading: 'Mission Support',
+                details: [
+                    { label: 'Account Name', value: 'Light City Evangelical Centre International' },
+                    { label: 'Account Number', value: '5210061912' },
+                    { label: 'Bank', value: 'Fidelity Bank' },
+                ]
+            }
+        ]
     },
     {
         title: 'Online Giving',
@@ -351,6 +380,29 @@ const givingOptions = [
     border-radius: 8px;
     padding: 1rem;
     text-align: left;
+}
+
+.bank-subsections {
+    display: flex;
+    flex-direction: column;
+    gap: 1.25rem;
+    margin: 1.25rem 0;
+}
+
+.subsection {
+    border: 1px solid #e0e0e0;
+    border-radius: 8px;
+    padding: 1rem;
+    background: #f9f9fb;
+}
+
+.subsection-heading {
+    font-size: 0.9rem;
+    font-weight: 700;
+    color: var(--lc-gold);
+    margin: 0 0 0.75rem;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
 }
 
 .bd-row {
