@@ -20,11 +20,18 @@ const pending = computed(() => status.value === 'pending');
 const form = ref({
     title: "", description: "", location: "",
     event_dates: [""] as string[],
-    is_recurring: false, recurrence_pattern: "",
+    is_recurring: false, recurring_frequency: "",
 });
 
 const loading = ref(false);
 const activeImageTab = ref(false);
+
+const eventFrequencies = [
+    { value: "daily", label: "Daily" },
+    { value: "weekly", label: "Weekly" },
+    { value: "monthly", label: "Monthly" },
+    { value: "monthly_first_friday", label: "Monthly - First Friday" },
+];
 
 watch(eventRes, (r) => {
     if (r?.data) {
@@ -33,7 +40,7 @@ watch(eventRes, (r) => {
             location: r.data.location,
             event_dates: r.data.event_dates?.length ? r.data.event_dates : [""],
             is_recurring: r.data.is_recurring,
-            recurrence_pattern: r.data.recurrence_pattern ?? "",
+            recurring_frequency: r.data.recurring_event?.frequency ?? "",
         };
     }
 }, { immediate: true });
@@ -186,8 +193,13 @@ const deleteImage = async (imageId: string) => {
                     <span>Recurring Event</span>
                 </label>
                 <div class="field" v-if="form.is_recurring">
-                    <label>Recurrence Pattern</label>
-                    <input v-model="form.recurrence_pattern" type="text" class="input" />
+                    <label>Recurring Frequency</label>
+                    <select v-model="form.recurring_frequency" class="input">
+                        <option value="">Select frequency</option>
+                        <option v-for="freq in eventFrequencies" :key="freq.value" :value="freq.value">
+                            {{ freq.label }}
+                        </option>
+                    </select>
                 </div>
                 <div class="form-actions">
                     <button type="submit" :disabled="loading" class="btn-primary">
