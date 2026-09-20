@@ -28,21 +28,61 @@ const eventFrequencies = [
     { value: "monthly_first_friday", label: "Monthly - First Friday" },
 ];
 
+const validateForm = () => {
+    const newErrors: Record<string, string> = {};
+
+    // Title validation
+    if (form.value.title.length < 3) {
+        newErrors.title = "Title must be at least 3 characters";
+    } else if (form.value.title.length > 150) {
+        newErrors.title = "Title must not exceed 150 characters";
+    }
+
+    // Description validation
+    if (form.value.description.length < 10) {
+        newErrors.description = "Description must be at least 10 characters";
+    } else if (form.value.description.length > 1500) {
+        newErrors.description = "Description must not exceed 1500 characters";
+    }
+
+    // Location validation
+    if (form.value.location.length < 3) {
+        newErrors.location = "Location must be at least 3 characters";
+    } else if (form.value.location.length > 150) {
+        newErrors.location = "Location must not exceed 150 characters";
+    }
+
+    // Event dates validation
+    const validDates = form.value.event_dates.filter(d => d.trim());
+    if (validDates.length < 2) {
+        newErrors.event_dates = "At least 2 dates (start and end) are required";
+    }
+
+    // Recurring frequency validation
+    if (form.value.is_recurring && !form.value.recurring_frequency) {
+        newErrors.recurring_frequency = "Frequency is required for recurring events";
+    }
+
+    errors.value = newErrors;
+    return Object.keys(newErrors).length === 0;
+};
+
+const isFormValid = computed(() => {
+    const validDates = form.value.event_dates.filter(d => d.trim());
+    const titleValid = form.value.title.length >= 3 && form.value.title.length <= 150;
+    const descriptionValid = form.value.description.length >= 10 && form.value.description.length <= 1500;
+    const locationValid = form.value.location.length >= 3 && form.value.location.length <= 150;
+    const datesValid = validDates.length >= 2;
+    const frequencyValid = !form.value.is_recurring || form.value.recurring_frequency;
+
+    return titleValid && descriptionValid && locationValid && datesValid && frequencyValid;
+});
+
 const addDate = () => form.value.event_dates.push("");
 const removeDate = (i: number) => form.value.event_dates.splice(i, 1);
 
-const validate = () => {
-    errors.value = validateEvent({
-        title: form.value.title,
-        description: form.value.description,
-        location: form.value.location,
-        event_dates: form.value.event_dates.filter(Boolean),
-    });
-    return !hasErrors(errors.value);
-};
-
 const submit = async () => {
-    if (!validate()) return;
+    if (!validateForm()) return;
     loading.value = true;
     try {
         const payload = { ...form.value, event_dates: form.value.event_dates.filter(Boolean) };
@@ -103,7 +143,7 @@ const submit = async () => {
                         <span>Recurring Event</span>
                     </label>
                 </div>
-                <div class="field" v-if="form.is_recurring">
+                <div class="field" :class="{ errored: errors.recurring_frequency }" v-if="form.is_recurring">
                     <label>Recurring Frequency</label>
                     <select v-model="form.recurring_frequency" class="input">
                         <option value="">Select frequency</option>
@@ -111,13 +151,15 @@ const submit = async () => {
                             {{ freq.label }}
                         </option>
                     </select>
+                    <p v-if="errors.recurring_frequency" class="field-error">{{ errors.recurring_frequency }}</p>
                 </div>
             </div>
 
             <div class="form-actions">
                 <NuxtLink to="/admin/events" class="btn-ghost">Cancel</NuxtLink>
-                <button type="submit" :disabled="loading" class="btn-primary">{{ loading ? "Creating…" : "Create Event"
-                }}</button>
+                <button type="submit" :disabled="!isFormValid || loading" class="btn-primary">{{ loading ? "Creating…" :
+                    "Create Event"
+                    }}</button>
             </div>
         </form>
     </div>
