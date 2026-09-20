@@ -143,7 +143,30 @@ const deleteEvent = async () => {
 };
 
 const imageFiles = ref<File[]>([]);
+const imagePreview = ref<string>("");
+const fileInputRef = ref<HTMLInputElement>();
 const uploadingImages = ref(false);
+
+const handleFileSelect = (e: Event) => {
+    const files = Array.from((e.target as HTMLInputElement).files ?? []);
+    if (files.length) {
+        imageFiles.value = files.slice(0, 1); // Only take the first file
+        const reader = new FileReader();
+        reader.onload = (event) => {
+            imagePreview.value = event.target?.result as string;
+        };
+        reader.readAsDataURL(files[0]);
+    }
+};
+
+const clearImage = () => {
+    imageFiles.value = [];
+    imagePreview.value = "";
+    if (fileInputRef.value) {
+        fileInputRef.value.value = "";
+    }
+};
+
 const uploadImages = async () => {
     if (!imageFiles.value.length) return;
     uploadingImages.value = true;
@@ -151,9 +174,9 @@ const uploadImages = async () => {
     imageFiles.value.forEach(f => fd.append("images[]", f));
     try {
         await api.post(`/events/${eventId}/images`, fd);
-        toast.success("Images uploaded");
+        toast.success(eventRes.value?.data?.images?.length ? "Event image replaced" : "Image uploaded");
         refresh();
-        imageFiles.value = [];
+        clearImage();
     } catch (e: any) { toast.error(e.message || "Upload failed"); }
     finally { uploadingImages.value = false; }
 };
@@ -268,26 +291,48 @@ const deleteImage = async (imageId: string) => {
 
             <!-- Images -->
             <div v-if="activeImageTab" class="form-card">
-                <h3 class="section-label">Upload New Images</h3>
-                <input type="file" multiple accept="image/*"
-                    @change="(e) => imageFiles = Array.from((e.target as HTMLInputElement).files ?? [])"
-                    class="file-input" />
-                <button @click="uploadImages" :disabled="!imageFiles.length || uploadingImages"
-                    class="btn-primary mt-2">
-                    {{ uploadingImages ? "Uploading…" : "Upload Images" }}
+                <h3 class="section-label">Upload Image</h3>
+
+                <!-- Image Upload Area -->
+                <div class="upload-area">
+                    <input ref="fileInputRef" type="file" accept="image/*" style="display: none"
+                        @change="handleFileSelect" />
+
+                    <!-- Upload Icon or Preview -->
+                    <div v-if="!imageFiles.length" @click="$refs.fileInputRef?.click()" class="upload-trigger">
+                        <Icon name="mdi:plus" class="upload-icon" />
+                        <p class="upload-text">Click to select image</p>
+                    </div>
+
+                    <div v-else class="preview-container">
+                        <img :src="imagePreview" :alt="imageFiles[0].name" class="preview-image" />
+                        <button type="button" @click="clearImage" class="clear-btn" title="Remove image">
+                            <Icon name="mdi:close" />
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Upload Button -->
+                <button type="button" @click="uploadImages" :disabled="!imageFiles.length || uploadingImages"
+                    class="btn-primary">
+                    {{
+                        uploadingImages ? "Uploading…" : (eventRes.data.images?.length ?
+                            "Replace event image" : "Upload image") }}
                 </button>
 
-                <div class="images-grid" v-if="eventRes.data.images?.length">
-                    <div v-for="img in eventRes.data.images" :key="img.id" class="img-card">
-                        <img :src="img.image_url" :alt="img.caption ?? 'Event image'" class="img-thumb" />
-                        <div class="img-actions">
-                            <span v-if="img.is_primary" class="badge-primary">Primary</span>
-                            <button v-else @click="setPrimary(img.id)" class="img-btn">Set Primary</button>
-                            <button @click="deleteImage(img.id)" class="img-btn danger">Delete</button>
+                <!-- Current Images -->
+                <div v-if="eventRes.data.images?.length" class="current-images">
+                    <h4 class="current-images-title">Current image</h4>
+                    <div class="current-image-item">
+                        <img :src="eventRes.data.images[0].image_url"
+                            :alt="eventRes.data.images[0].caption ?? 'Event image'" class="current-image" />
+                        <div class="current-image-actions">
+                            <button @click="deleteImage(eventRes.data.images[0].id)" class="img-btn danger">
+                                <Icon name="mdi:trash-can-outline" /> Delete
+                            </button>
                         </div>
                     </div>
                 </div>
-                <p v-else class="muted-text">No images yet.</p>
             </div>
         </div>
     </div>
@@ -562,6 +607,110 @@ const deleteImage = async (imageId: string) => {
     margin: 0;
 }
 
+.upload-area {
+    margin-bottom: 1rem;
+}
+
+.upload-trigger {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 2rem;
+    border: 2px dashed #e4e4e7;
+    border-radius: 12px;
+    cursor: pointer;
+    transition: all 0.15s;
+    background: #fafafa;
+}
+
+.upload-trigger:hover {
+    border-color: #E05615;
+    background: #fff9f5;
+}
+
+.upload-icon {
+    font-size: 2.5rem;
+    color: #E05615;
+    margin-bottom: 0.5rem;
+}
+
+.upload-text {
+    font-size: 0.875rem;
+    color: #71717a;
+    margin: 0;
+    font-weight: 500;
+}
+
+.preview-container {
+    position: relative;
+    display: inline-block;
+    margin-bottom: 1rem;
+}
+
+.preview-image {
+    max-width: 200px;
+    max-height: 200px;
+    border-radius: 8px;
+    border: 1px solid #e4e4e7;
+    display: block;
+    object-fit: cover;
+}
+
+.clear-btn {
+    position: absolute;
+    top: -8px;
+    right: -8px;
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    background: #dc2626;
+    color: #fff;
+    border: none;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    font-size: 1.2rem;
+    transition: background 0.15s;
+}
+
+.clear-btn:hover {
+    background: #991b1b;
+}
+
+.current-images {
+    margin-top: 2rem;
+    padding-top: 2rem;
+    border-top: 1px solid #e4e4e7;
+}
+
+.current-images-title {
+    font-size: 0.9rem;
+    font-weight: 700;
+    color: #27272a;
+    margin: 0 0 1rem;
+}
+
+.current-image-item {
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+}
+
+.current-image {
+    max-width: 200px;
+    max-height: 200px;
+    border-radius: 8px;
+    border: 1px solid #e4e4e7;
+    object-fit: cover;
+}
+
+.current-image-actions {
+    display: flex;
+    gap: 0.5rem;
+}
+
 .file-input {
     font-size: 0.85rem;
 }
@@ -594,13 +743,17 @@ const deleteImage = async (imageId: string) => {
 }
 
 .img-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.35rem;
     font-size: 0.72rem;
     font-weight: 600;
-    padding: 0.25rem 0.5rem;
+    padding: 0.35rem 0.75rem;
     border-radius: 5px;
     border: 1px solid #e4e4e7;
     background: #fff;
     cursor: pointer;
+    transition: all 0.15s;
 }
 
 .img-btn:hover {
