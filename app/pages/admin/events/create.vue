@@ -15,11 +15,18 @@ const form = ref({
     location: "",
     event_dates: [""] as string[],
     is_recurring: false,
-    recurrence_pattern: "",
+    recurring_frequency: "",
 });
 
 const errors = ref<Record<string, string>>({});
 const loading = ref(false);
+
+const eventFrequencies = [
+    { value: "daily", label: "Daily" },
+    { value: "weekly", label: "Weekly" },
+    { value: "monthly", label: "Monthly" },
+    { value: "monthly_first_friday", label: "Monthly - First Friday" },
+];
 
 const addDate = () => form.value.event_dates.push("");
 const removeDate = (i: number) => form.value.event_dates.splice(i, 1);
@@ -97,16 +104,20 @@ const submit = async () => {
                     </label>
                 </div>
                 <div class="field" v-if="form.is_recurring">
-                    <label>Recurrence Pattern</label>
-                    <input v-model="form.recurrence_pattern" type="text" class="input"
-                        placeholder="e.g. Every Sunday" />
+                    <label>Recurring Frequency</label>
+                    <select v-model="form.recurring_frequency" class="input">
+                        <option value="">Select frequency</option>
+                        <option v-for="freq in eventFrequencies" :key="freq.value" :value="freq.value">
+                            {{ freq.label }}
+                        </option>
+                    </select>
                 </div>
             </div>
 
             <div class="form-actions">
                 <NuxtLink to="/admin/events" class="btn-ghost">Cancel</NuxtLink>
                 <button type="submit" :disabled="loading" class="btn-primary">{{ loading ? "Creating…" : "Create Event"
-                    }}</button>
+                }}</button>
             </div>
         </form>
     </div>
