@@ -33,6 +33,58 @@ const eventFrequencies = [
     { value: "monthly_first_friday", label: "Monthly - First Friday" },
 ];
 
+const errors = ref<Record<string, string>>({});
+
+const validateForm = () => {
+    const newErrors: Record<string, string> = {};
+
+    // Title validation
+    if (form.value.title.length < 3) {
+        newErrors.title = "Title must be at least 3 characters";
+    } else if (form.value.title.length > 150) {
+        newErrors.title = "Title must not exceed 150 characters";
+    }
+
+    // Description validation
+    if (form.value.description.length < 10) {
+        newErrors.description = "Description must be at least 10 characters";
+    } else if (form.value.description.length > 1500) {
+        newErrors.description = "Description must not exceed 1500 characters";
+    }
+
+    // Location validation
+    if (form.value.location.length < 3) {
+        newErrors.location = "Location must be at least 3 characters";
+    } else if (form.value.location.length > 150) {
+        newErrors.location = "Location must not exceed 150 characters";
+    }
+
+    // Event dates validation
+    const validDates = form.value.event_dates.filter(d => d.trim());
+    if (validDates.length < 2) {
+        newErrors.event_dates = "At least 2 dates (start and end) are required";
+    }
+
+    // Recurring frequency validation
+    if (form.value.is_recurring && !form.value.recurring_frequency) {
+        newErrors.recurring_frequency = "Frequency is required for recurring events";
+    }
+
+    errors.value = newErrors;
+    return Object.keys(newErrors).length === 0;
+};
+
+const isFormValid = computed(() => {
+    const validDates = form.value.event_dates.filter(d => d.trim());
+    const titleValid = form.value.title.length >= 3 && form.value.title.length <= 150;
+    const descriptionValid = form.value.description.length >= 10 && form.value.description.length <= 1500;
+    const locationValid = form.value.location.length >= 3 && form.value.location.length <= 150;
+    const datesValid = validDates.length >= 2;
+    const frequencyValid = !form.value.is_recurring || form.value.recurring_frequency;
+
+    return titleValid && descriptionValid && locationValid && datesValid && frequencyValid;
+});
+
 watch(eventRes, (r) => {
     if (r?.data) {
         form.value = {
@@ -68,6 +120,7 @@ const updateStatus = async (status: 'draft' | 'published' | 'cancelled') => {
 };
 
 const updateEvent = async () => {
+    if (!validateForm()) return;
     loading.value = true;
     try {
         await api.put<EventResponse>(`/events/${eventId}`, {
@@ -164,16 +217,19 @@ const deleteImage = async (imageId: string) => {
                 <div class="field">
                     <label>Title</label>
                     <input v-model="form.title" type="text" class="input" />
+                    <p v-if="errors.title" class="field-error">{{ errors.title }}</p>
                 </div>
                 <div class="field">
                     <label>Description</label>
                     <textarea v-model="form.description" class="input textarea" rows="4"></textarea>
+                    <p v-if="errors.description" class="field-error">{{ errors.description }}</p>
                 </div>
                 <div class="field">
                     <label>Location</label>
                     <input v-model="form.location" type="text" class="input" />
+                    <p v-if="errors.location" class="field-error">{{ errors.location }}</p>
                 </div>
-                <div class="field">
+                <div class="field" :class="{ errored: errors.event_dates }">
                     <label>Event Dates</label>
                     <div class="dates-list">
                         <div v-for="(_, i) in form.event_dates" :key="i" class="date-row">
@@ -187,12 +243,13 @@ const deleteImage = async (imageId: string) => {
                     <button type="button" @click="addDate" class="add-date-btn">
                         <Icon name="mdi:plus" /> Add Date
                     </button>
+                    <p v-if="errors.event_dates" class="field-error">{{ errors.event_dates }}</p>
                 </div>
                 <label class="checkbox-item">
                     <input v-model="form.is_recurring" type="checkbox" />
                     <span>Recurring Event</span>
                 </label>
-                <div class="field" v-if="form.is_recurring">
+                <div class="field" :class="{ errored: errors.recurring_frequency }" v-if="form.is_recurring">
                     <label>Recurring Frequency</label>
                     <select v-model="form.recurring_frequency" class="input">
                         <option value="">Select frequency</option>
@@ -200,9 +257,10 @@ const deleteImage = async (imageId: string) => {
                             {{ freq.label }}
                         </option>
                     </select>
+                    <p v-if="errors.recurring_frequency" class="field-error">{{ errors.recurring_frequency }}</p>
                 </div>
                 <div class="form-actions">
-                    <button type="submit" :disabled="loading" class="btn-primary">
+                    <button type="submit" :disabled="!isFormValid || loading" class="btn-primary">
                         {{ loading ? "Saving…" : "Save Changes" }}
                     </button>
                 </div>
@@ -376,6 +434,16 @@ const deleteImage = async (imageId: string) => {
     color: #52525b;
     text-transform: uppercase;
     letter-spacing: 0.04em;
+}
+
+.field-error {
+    font-size: 0.78rem;
+    color: #dc2626;
+    margin: 0;
+}
+
+.errored .input {
+    border-color: #dc2626;
 }
 
 .input {
