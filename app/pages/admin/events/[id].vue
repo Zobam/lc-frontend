@@ -171,7 +171,7 @@ const uploadImages = async () => {
     if (!imageFiles.value.length) return;
     uploadingImages.value = true;
     const fd = new FormData();
-    imageFiles.value.forEach(f => fd.append("images[]", f));
+    fd.append("image", imageFiles.value[0]);
     try {
         await api.post(`/events/${eventId}/images`, fd);
         toast.success(eventRes.value?.data?.images?.length ? "Event image replaced" : "Image uploaded");
