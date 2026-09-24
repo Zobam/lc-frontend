@@ -201,7 +201,7 @@ const submit = async () => {
                 <NuxtLink to="/admin/events" class="btn-ghost">Cancel</NuxtLink>
                 <button type="submit" :disabled="!isFormValid || loading" class="btn-primary">{{ loading ? "Creating…" :
                     "Create Event"
-                }}</button>
+                    }}</button>
             </div>
         </form>
     </div>

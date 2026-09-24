@@ -281,7 +281,7 @@ const deleteImage = async (imageId: string) => {
                         <label>Event Dates <span class="req">*</span></label>
                         <div class="multi-day-switch">
                             <label class="switch-label">Is Multi-day</label>
-                            <Switch v-model:checked="form.is_multi_day" />
+                            <Switch v-model="form.is_multi_day" />
                         </div>
                     </div>
                     <div class="dates-list">
