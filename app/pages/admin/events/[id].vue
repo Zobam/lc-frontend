@@ -105,6 +105,14 @@ watch(eventRes, (r) => {
 const addDate = () => form.value.event_dates.push({ start: "", end: "" });
 const removeDate = (i: number) => { if (form.value.event_dates.length > 1) form.value.event_dates.splice(i, 1); };
 
+// Watch for multi_day toggle to remove extra dates when toggled off
+watch(() => form.value.is_multi_day, (isMultiDay) => {
+    if (!isMultiDay && form.value.event_dates.length > 1) {
+        // Keep only the first date when toggling off
+        form.value.event_dates = [form.value.event_dates[0]];
+    }
+});
+
 const updateStartDate = (index: number, value: string) => {
     form.value.event_dates[index].start = value;
 
