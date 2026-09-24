@@ -174,38 +174,47 @@ const formatFullDate = (dateString: string) => {
 };
 
 const formatEventDate = (dateObj: { start: string; end: string }) => {
-    const startDate = new Date(dateObj.start);
-    const endDate = new Date(dateObj.end);
+    try {
+        const startDate = new Date(dateObj.start);
+        const endDate = new Date(dateObj.end);
 
-    const startFormatted = startDate.toLocaleDateString('en-US', {
-        weekday: 'long',
-        year: 'numeric',
-        month: 'long',
-        day: 'numeric',
-    });
+        // Check if dates are valid
+        if (isNaN(startDate.getTime()) || isNaN(endDate.getTime())) {
+            return "The event date format is not correct";
+        }
 
-    const startTime = startDate.toLocaleTimeString('en-US', {
-        hour: '2-digit',
-        minute: '2-digit',
-    });
-
-    const endTime = endDate.toLocaleTimeString('en-US', {
-        hour: '2-digit',
-        minute: '2-digit',
-    });
-
-    // If same day, show: "Friday, January 3, 2027 - 09:00 AM to 05:00 PM"
-    // If different days, show: "Friday, January 3, 2027 at 09:00 AM - Saturday, January 4, 2027 at 05:00 PM"
-    if (startDate.toDateString() === endDate.toDateString()) {
-        return `${startFormatted} - ${startTime} to ${endTime}`;
-    } else {
-        const endFormatted = endDate.toLocaleDateString('en-US', {
+        const startFormatted = startDate.toLocaleDateString('en-US', {
             weekday: 'long',
             year: 'numeric',
             month: 'long',
             day: 'numeric',
         });
-        return `${startFormatted} at ${startTime} - ${endFormatted} at ${endTime}`;
+
+        const startTime = startDate.toLocaleTimeString('en-US', {
+            hour: '2-digit',
+            minute: '2-digit',
+        });
+
+        const endTime = endDate.toLocaleTimeString('en-US', {
+            hour: '2-digit',
+            minute: '2-digit',
+        });
+
+        // If same day, show: "Friday, January 3, 2027 - 09:00 AM to 05:00 PM"
+        // If different days, show: "Friday, January 3, 2027 at 09:00 AM - Saturday, January 4, 2027 at 05:00 PM"
+        if (startDate.toDateString() === endDate.toDateString()) {
+            return `${startFormatted} - ${startTime} to ${endTime}`;
+        } else {
+            const endFormatted = endDate.toLocaleDateString('en-US', {
+                weekday: 'long',
+                year: 'numeric',
+                month: 'long',
+                day: 'numeric',
+            });
+            return `${startFormatted} at ${startTime} - ${endFormatted} at ${endTime}`;
+        }
+    } catch (error) {
+        return "The event date format is not correct";
     }
 };
 </script>
