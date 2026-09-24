@@ -46,8 +46,8 @@
                         </div>
                         <div>
                             <p class="info-label">Event Date{{ event.event_dates?.length > 1 ? 's' : '' }}</p>
-                            <p class="info-value" v-for="(dateObj, idx) in event.event_dates" :key="idx">
-                                {{ formatEventDate(dateObj) }}
+                            <p class="info-value" v-for="(dateStr, idx) in formattedEventDates" :key="idx">
+                                {{ dateStr }}
                             </p>
                         </div>
                     </div>
@@ -149,6 +149,71 @@ watch(event, () => {
     hasDateFormatError.value = false;
 });
 
+const formattedEventDates = computed(() => {
+    if (!event.value?.event_dates) return [];
+
+    let hasError = false;
+    const results: (string | null)[] = [];
+
+    for (const dateObj of event.value.event_dates) {
+        try {
+            const startDate = new Date(dateObj.start);
+            const endDate = new Date(dateObj.end);
+
+            // Check if dates are valid
+            if (isNaN(startDate.getTime()) || isNaN(endDate.getTime())) {
+                if (!hasError) {
+                    results.push("The event date format is not correct");
+                    hasError = true;
+                    hasDateFormatError.value = true;
+                }
+                // Skip additional bad dates
+                continue;
+            }
+
+            const startFormatted = startDate.toLocaleDateString('en-US', {
+                weekday: 'long',
+                year: 'numeric',
+                month: 'long',
+                day: 'numeric',
+            });
+
+            const startTime = startDate.toLocaleTimeString('en-US', {
+                hour: '2-digit',
+                minute: '2-digit',
+            });
+
+            const endTime = endDate.toLocaleTimeString('en-US', {
+                hour: '2-digit',
+                minute: '2-digit',
+            });
+
+            // If same day, show: "Friday, January 3, 2027 - 09:00 AM to 05:00 PM"
+            // If different days, show: "Friday, January 3, 2027 at 09:00 AM - Saturday, January 4, 2027 at 05:00 PM"
+            if (startDate.toDateString() === endDate.toDateString()) {
+                results.push(`${startFormatted} - ${startTime} to ${endTime}`);
+            } else {
+                const endFormatted = endDate.toLocaleDateString('en-US', {
+                    weekday: 'long',
+                    year: 'numeric',
+                    month: 'long',
+                    day: 'numeric',
+                });
+                results.push(`${startFormatted} at ${startTime} - ${endFormatted} at ${endTime}`);
+            }
+        } catch (error) {
+            if (!hasError) {
+                results.push("The event date format is not correct");
+                hasError = true;
+                hasDateFormatError.value = true;
+            }
+            // Skip additional errors
+        }
+    }
+
+    return results;
+});
+
 const eventStatus = computed((): 'upcoming' | 'ongoing' | 'finished' => {
     if (!event.value?.event_dates || event.value.event_dates.length === 0) return 'upcoming';
 
@@ -177,59 +242,6 @@ const formatFullDate = (dateString: string) => {
         month: 'long',
         day: 'numeric',
     });
-};
-
-const formatEventDate = (dateObj: { start: string; end: string }) => {
-    try {
-        const startDate = new Date(dateObj.start);
-        const endDate = new Date(dateObj.end);
-
-        // Check if dates are valid
-        if (isNaN(startDate.getTime()) || isNaN(endDate.getTime())) {
-            if (!hasDateFormatError.value) {
-                hasDateFormatError.value = true;
-                return "The event date format is not correct";
-            }
-            return ""; // Return empty string for subsequent bad dates
-        }
-
-        const startFormatted = startDate.toLocaleDateString('en-US', {
-            weekday: 'long',
-            year: 'numeric',
-            month: 'long',
-            day: 'numeric',
-        });
-
-        const startTime = startDate.toLocaleTimeString('en-US', {
-            hour: '2-digit',
-            minute: '2-digit',
-        });
-
-        const endTime = endDate.toLocaleTimeString('en-US', {
-            hour: '2-digit',
-            minute: '2-digit',
-        });
-
-        // If same day, show: "Friday, January 3, 2027 - 09:00 AM to 05:00 PM"
-        // If different days, show: "Friday, January 3, 2027 at 09:00 AM - Saturday, January 4, 2027 at 05:00 PM"
-        if (startDate.toDateString() === endDate.toDateString()) {
-            return `${startFormatted} - ${startTime} to ${endTime}`;
-        } else {
-            const endFormatted = endDate.toLocaleDateString('en-US', {
-                weekday: 'long',
-                year: 'numeric',
-                month: 'long',
-                day: 'numeric',
-            });
-            return `${startFormatted} at ${startTime} - ${endFormatted} at ${endTime}`;
-        }
-    } catch (error) {
-        if (!hasDateFormatError.value) {
-            hasDateFormatError.value = true;
-            return "The event date format is not correct";
-        }
-        return ""; // Return empty string for subsequent bad dates
-    }
 };
 </script>
 
