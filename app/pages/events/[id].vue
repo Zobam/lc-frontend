@@ -143,6 +143,12 @@ const descriptionParagraphs = computed(() => {
     return event.value.description.split('\n').filter(p => p.trim().length > 0);
 });
 
+const hasDateFormatError = ref(false);
+
+watch(event, () => {
+    hasDateFormatError.value = false;
+});
+
 const eventStatus = computed((): 'upcoming' | 'ongoing' | 'finished' => {
     if (!event.value?.event_dates || event.value.event_dates.length === 0) return 'upcoming';
 
@@ -180,7 +186,11 @@ const formatEventDate = (dateObj: { start: string; end: string }) => {
 
         // Check if dates are valid
         if (isNaN(startDate.getTime()) || isNaN(endDate.getTime())) {
-            return "The event date format is not correct";
+            if (!hasDateFormatError.value) {
+                hasDateFormatError.value = true;
+                return "The event date format is not correct";
+            }
+            return ""; // Return empty string for subsequent bad dates
         }
 
         const startFormatted = startDate.toLocaleDateString('en-US', {
@@ -214,7 +224,11 @@ const formatEventDate = (dateObj: { start: string; end: string }) => {
             return `${startFormatted} at ${startTime} - ${endFormatted} at ${endTime}`;
         }
     } catch (error) {
-        return "The event date format is not correct";
+        if (!hasDateFormatError.value) {
+            hasDateFormatError.value = true;
+            return "The event date format is not correct";
+        }
+        return ""; // Return empty string for subsequent bad dates
     }
 };
 </script>
