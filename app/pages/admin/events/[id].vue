@@ -2,6 +2,9 @@
 import { useQuery } from '@pinia/colada';
 import type { EventResponse } from "~/types/api";
 import { toast } from 'vue-sonner';
+import {
+    Switch,
+} from '@/components/ui/switch'
 
 definePageMeta({ layout: "admin", middleware: "sidebase-auth" });
 useHead({ title: 'Edit Event | LC Admin' });
@@ -19,8 +22,9 @@ const pending = computed(() => status.value === 'pending');
 
 const form = ref({
     title: "", description: "", location: "",
-    event_dates: [""] as string[],
+    event_dates: [{ start: "", end: "" }] as Array<{ start: string; end: string }>,
     is_recurring: false, recurring_frequency: "",
+    is_multi_day: false,
 });
 
 const loading = ref(false);
@@ -60,9 +64,9 @@ const validateForm = () => {
     }
 
     // Event dates validation
-    const validDates = form.value.event_dates.filter(d => d.trim());
-    if (validDates.length < 2) {
-        newErrors.event_dates = "At least 2 dates (start and end) are required";
+    const validDates = form.value.event_dates.filter(d => d.start && d.end);
+    if (validDates.length < 1) {
+        newErrors.event_dates = "At least one event date with start and end time is required";
     }
 
     // Recurring frequency validation
@@ -75,11 +79,11 @@ const validateForm = () => {
 };
 
 const isFormValid = computed(() => {
-    const validDates = form.value.event_dates.filter(d => d.trim());
+    const validDates = form.value.event_dates.filter(d => d.start && d.end);
     const titleValid = form.value.title.length >= 3 && form.value.title.length <= 150;
     const descriptionValid = form.value.description.length >= 10 && form.value.description.length <= 1500;
     const locationValid = form.value.location.length >= 3 && form.value.location.length <= 150;
-    const datesValid = validDates.length >= 2;
+    const datesValid = validDates.length >= 1;
     const frequencyValid = !form.value.is_recurring || form.value.recurring_frequency;
 
     return titleValid && descriptionValid && locationValid && datesValid && frequencyValid;
@@ -90,15 +94,27 @@ watch(eventRes, (r) => {
         form.value = {
             title: r.data.title, description: r.data.description,
             location: r.data.location,
-            event_dates: r.data.event_dates?.length ? r.data.event_dates : [""],
+            event_dates: r.data.event_dates?.length ? r.data.event_dates : [{ start: "", end: "" }],
             is_recurring: r.data.is_recurring,
             recurring_frequency: r.data.recurring_event?.frequency ?? "",
+            is_multi_day: r.data.is_multi_day ?? false,
         };
     }
 }, { immediate: true });
 
-const addDate = () => form.value.event_dates.push("");
+const addDate = () => form.value.event_dates.push({ start: "", end: "" });
 const removeDate = (i: number) => { if (form.value.event_dates.length > 1) form.value.event_dates.splice(i, 1); };
+
+const updateStartDate = (index: number, value: string) => {
+    form.value.event_dates[index].start = value;
+
+    // Auto-fill end date if single-day event and end date is empty
+    if (!form.value.is_multi_day && !form.value.event_dates[index].end && value) {
+        const startDate = new Date(value);
+        const endDate = new Date(startDate.getTime() + 2 * 60 * 60 * 1000); // Add 2 hours
+        form.value.event_dates[index].end = endDate.toISOString().slice(0, 16);
+    }
+};
 
 const updatingStatus = ref<string | null>(null);
 const updateStatus = async (status: 'draft' | 'published' | 'cancelled') => {
@@ -125,7 +141,7 @@ const updateEvent = async () => {
     try {
         await api.put<EventResponse>(`/events/${eventId}`, {
             ...form.value,
-            event_dates: form.value.event_dates.filter(Boolean),
+            event_dates: form.value.event_dates.filter(d => d.start && d.end),
         });
         toast.success("Event updated successfully");
         refresh();
@@ -253,18 +269,35 @@ const deleteImage = async (imageId: string) => {
                     <p v-if="errors.location" class="field-error">{{ errors.location }}</p>
                 </div>
                 <div class="field" :class="{ errored: errors.event_dates }">
-                    <label>Event Dates</label>
+                    <div class="dates-header">
+                        <label>Event Dates <span class="req">*</span></label>
+                        <div class="multi-day-switch">
+                            <label class="switch-label">Is Multi-day</label>
+                            <Switch v-model:checked="form.is_multi_day" />
+                        </div>
+                    </div>
                     <div class="dates-list">
-                        <div v-for="(_, i) in form.event_dates" :key="i" class="date-row">
-                            <input v-model="form.event_dates[i]" type="datetime-local" class="input date-input" />
+                        <div v-for="(_, i) in form.event_dates" :key="i" class="date-pair">
+                            <div class="date-input-group">
+                                <label class="date-label">Start <span v-if="!form.is_multi_day"
+                                        class="date-sublabel">(auto fills end)</span></label>
+                                <input :value="form.event_dates[i].start"
+                                    @input="(e: any) => updateStartDate(i, e.target.value)" type="datetime-local"
+                                    class="input date-input" />
+                            </div>
+                            <div class="date-input-group">
+                                <label class="date-label">End</label>
+                                <input v-model="form.event_dates[i].end" type="datetime-local"
+                                    class="input date-input" />
+                            </div>
                             <button type="button" @click="removeDate(i)" v-if="form.event_dates.length > 1"
                                 class="remove-btn">
                                 <Icon name="mdi:close" />
                             </button>
                         </div>
                     </div>
-                    <button type="button" @click="addDate" class="add-date-btn">
-                        <Icon name="mdi:plus" /> Add Date
+                    <button v-if="form.is_multi_day" type="button" @click="addDate" class="add-date-btn">
+                        <Icon name="mdi:plus" /> Add Another Date
                     </button>
                     <p v-if="errors.event_dates" class="field-error">{{ errors.event_dates }}</p>
                 </div>
@@ -481,6 +514,10 @@ const deleteImage = async (imageId: string) => {
     letter-spacing: 0.04em;
 }
 
+.req {
+    color: #E05615;
+}
+
 .field-error {
     font-size: 0.78rem;
     color: #dc2626;
@@ -515,7 +552,66 @@ const deleteImage = async (imageId: string) => {
 .dates-list {
     display: flex;
     flex-direction: column;
+    gap: 0.75rem;
+}
+
+.dates-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 1rem;
+}
+
+.dates-header label {
+    margin: 0;
+}
+
+.multi-day-switch {
+    display: flex;
+    align-items: center;
+    gap: 0.4rem;
+}
+
+.switch-label {
+    font-size: 0.75rem;
+    font-weight: 600;
+    color: #52525b;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    margin: 0;
+}
+
+.date-pair {
+    display: grid;
+    grid-template-columns: 1fr 1fr auto;
     gap: 0.5rem;
+    align-items: flex-end;
+    padding: 0.75rem;
+    background: #f9fafb;
+    border-radius: 8px;
+    border: 1px solid #e5e7eb;
+}
+
+.date-input-group {
+    display: flex;
+    flex-direction: column;
+    gap: 0.3rem;
+}
+
+.date-label {
+    font-size: 0.7rem;
+    font-weight: 600;
+    color: #6b7280;
+    text-transform: uppercase;
+    letter-spacing: 0.03em;
+}
+
+.date-sublabel {
+    font-size: 0.65rem;
+    color: #9ca3af;
+    font-weight: 400;
+    text-transform: none;
+    letter-spacing: 0;
 }
 
 .date-row {
