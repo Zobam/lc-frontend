@@ -46,8 +46,8 @@
                         </div>
                         <div>
                             <p class="info-label">Event Date{{ event.event_dates?.length > 1 ? 's' : '' }}</p>
-                            <p class="info-value" v-for="(date, idx) in event.event_dates" :key="idx">
-                                {{ formatFullDate(date) }}
+                            <p class="info-value" v-for="(dateObj, idx) in event.event_dates" :key="idx">
+                                {{ formatEventDate(dateObj) }}
                             </p>
                         </div>
                     </div>
@@ -146,9 +146,9 @@ const descriptionParagraphs = computed(() => {
 const eventStatus = computed((): 'upcoming' | 'ongoing' | 'finished' => {
     if (!event.value?.event_dates || event.value.event_dates.length === 0) return 'upcoming';
 
-    const dates = event.value.event_dates.map(d => new Date(d));
+    const dates = event.value.event_dates.map(d => new Date(d.start));
     const start = Math.min(...dates.map(d => d.getTime()));
-    const end = Math.max(...dates.map(d => d.getTime()));
+    const end = Math.max(...event.value.event_dates.map(d => new Date(d.end).getTime()));
 
     const now = new Date();
     const today = new Date(now.getFullYear(), now.getMonth(), now.getDate()).getTime();
@@ -171,6 +171,42 @@ const formatFullDate = (dateString: string) => {
         month: 'long',
         day: 'numeric',
     });
+};
+
+const formatEventDate = (dateObj: { start: string; end: string }) => {
+    const startDate = new Date(dateObj.start);
+    const endDate = new Date(dateObj.end);
+
+    const startFormatted = startDate.toLocaleDateString('en-US', {
+        weekday: 'long',
+        year: 'numeric',
+        month: 'long',
+        day: 'numeric',
+    });
+
+    const startTime = startDate.toLocaleTimeString('en-US', {
+        hour: '2-digit',
+        minute: '2-digit',
+    });
+
+    const endTime = endDate.toLocaleTimeString('en-US', {
+        hour: '2-digit',
+        minute: '2-digit',
+    });
+
+    // If same day, show: "Friday, January 3, 2027 - 09:00 AM to 05:00 PM"
+    // If different days, show: "Friday, January 3, 2027 at 09:00 AM - Saturday, January 4, 2027 at 05:00 PM"
+    if (startDate.toDateString() === endDate.toDateString()) {
+        return `${startFormatted} - ${startTime} to ${endTime}`;
+    } else {
+        const endFormatted = endDate.toLocaleDateString('en-US', {
+            weekday: 'long',
+            year: 'numeric',
+            month: 'long',
+            day: 'numeric',
+        });
+        return `${startFormatted} at ${startTime} - ${endFormatted} at ${endTime}`;
+    }
 };
 </script>
 
