@@ -197,9 +197,9 @@ const categories = Object.values(PostCategory);
                 <Icon name="mdi:newspaper-remove" />
                 <p>No posts found</p>
             </div>
-            <AdminPagination v-if="postsData?.data?.last_page" :current-page="postsData.data.current_page"
-                :total-pages="postsData.data.last_page" :total="postsData.data.total" :from="postsData.data.from"
-                :to="postsData.data.to" @change="goToPage" />
+            <AdminPagination v-if="postsData?.data && postsData.data.last_page"
+                :current-page="postsData.data.current_page" :total-pages="postsData.data.last_page"
+                :total="postsData.data.total" :from="postsData.data.from" :to="postsData.data.to" @change="goToPage" />
         </div>
 
         <!-- Delete Confirmation Dialog -->
